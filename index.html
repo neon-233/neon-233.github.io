@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>纪算 - 纪玉金老师课题组</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+        }
+        :root {
+            --primary-color: #165DFF;
+            --secondary-color: #f5f7fa;
+            --text-color: #333;
+            --light-text: #666;
+            --border-color: #e5e7eb;
+            --hover-color: #0e4bdb;
+        }
+        body {
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        a {
+            text-decoration: none;
+            color: var(--primary-color);
+        }
+        a:hover {
+            color: var(--hover-color);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        /* 导航栏 */
+        header {
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        .logo span {
+            color: var(--text-color);
+        }
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+        .nav-menu li {
+            margin-left: 30px;
+        }
+        .nav-menu a {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-color);
+            padding: 8px 0;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .nav-menu a:hover {
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        /* 横幅 */
+        .banner {
+            background: linear-gradient(135deg, var(--primary-color), #4080ff);
+            color: #fff;
+            padding: 60px 0;
+            text-align: center;
+        }
+        .banner h1 {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+        .banner p {
+            font-size: 18px;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        /* 通用板块样式 */
+        .section {
+            padding: 80px 0;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 30px;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        .section-title::after {
+            content: "";
+            width: 60px;
+            height: 3px;
+            background: var(--primary-color);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        /* 课题组简介 */
+        .intro {
+            background: var(--secondary-color);
+        }
+        .intro-content {
+            max-width: 900px;
+            margin: 0 auto;
+            font-size: 18px;
+            text-align: center;
+            line-height: 1.8;
+            color: var(--light-text);
+        }
+        /* 老师简历 - 新增照片样式 */
+        .resume-content {
+            display: grid;
+            grid-template-columns: 280px 1fr 1fr; /* 新增照片列 */
+            gap: 40px;
+            align-items: start;
+        }
+        .teacher-photo {
+            text-align: center;
+        }
+        .teacher-photo img {
+            width: 220px;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 4px solid var(--secondary-color);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .teacher-photo p {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        .resume-card h3 {
+            font-size: 22px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .resume-card h3 i {
+            margin-right: 10px;
+        }
+        .resume-card ul {
+            list-style: none;
+        }
+        .resume-card li {
+            margin-bottom: 16px;
+            font-size: 16px;
+            color: var(--light-text);
+        }
+        .resume-card li .label {
+            font-weight: 700;
+            color: var(--text-color);
+            display: inline-block;
+            min-width: 120px;
+        }
+        /* 研究方向 */
+        .research {
+            background: var(--secondary-color);
+        }
+        .research-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .research-item {
+            text-align: center;
+        }
+        .research-item i {
+            font-size: 40px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .research-item h4 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .research-item p {
+            color: var(--light-text);
+            line-height: 1.7;
+        }
+        /* 代表性成果 */
+        .result-list {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .result-item {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--light-text);
+        }
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .result-item .highlight {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        .result-item .tag {
+            display: inline-block;
+            background: #e1ecff;
+            color: var(--primary-color);
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+        /* 联系方式 */
+        .contact {
+            background: var(--primary-color);
+            color: #fff;
+        }
+        .contact .section-title {
+            color: #fff;
+        }
+        .contact .section-title::after {
+            background: #fff;
+        }
+        .contact-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+        .contact-item h4 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .contact-item p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .contact-item a {
+            color: #fff;
+            text-decoration: underline;
+        }
+        .contact-item a:hover {
+            opacity: 1;
+        }
+        /* 页脚 */
+        footer {
+            background: #222;
+            color: #ccc;
+            text-align: center;
+            padding: 30px 0;
+            font-size: 14px;
+        }
+        /* 响应式 - 适配照片布局 */
+        @media (max-width: 992px) {
+            .resume-content {
+                grid-template-columns: 1fr; /* 小屏下照片和简历垂直排列 */
+                text-align: center;
+            }
+            .teacher-photo img {
+                display: inline-block;
+            }
+            .resume-card ul {
+                text-align: left;
+                display: inline-block;
+            }
+        }
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                height: auto;
+                padding: 20px 0;
+            }
+            .nav-menu {
+                margin-top: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .nav-menu li {
+                margin: 10px 15px;
+            }
+            .banner h1 {
+                font-size: 28px;
+            }
+            .section {
+                padding: 50px 0;
+            }
+            .section-title {
+                font-size: 24px;
+            }
+            .research-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <!-- 引入字体图标 -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <header>
+        <div class="container nav">
+            <div class="logo">纪<span>算</span></div>
+            <ul class="nav-menu">
+                <li><a href="#intro">课题组简介</a></li>
+                <li><a href="#resume">老师简历</a></li>
+                <li><a href="#research">研究方向</a></li>
+                <li><a href="#result">代表性成果</a></li>
+                <li><a href="#contact">联系方式</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- 横幅 -->
+    <div class="banner">
+        <div class="container">
+            <h1>纪玉金老师课题组 - 苏州大学功能纳米与软物质研究院</h1>
+            <p>聚焦二维材料在能源存储与转化领域的理论模拟与设计，探索微观原子结构与材料性能的构效关系</p>
+        </div>
+    </div>
+
+    <!-- 课题组简介 -->
+    <section class="section intro" id="intro">
+        <div class="container">
+            <h2 class="section-title">课题组简介</h2>
+            <div class="intro-content card">
+                纪玉金老师课题组隶属于苏州大学功能纳米与软物质研究院李有勇教授课题组，核心研究方向为二维材料在能源存储与转化领域的理论模拟与设计。课题组基于多尺度模拟方法，深入探究二维材料表面微观原子结构及形貌动态演变过程，揭示材料表面化学反应机制以及原子-电子层面的构效关系，并结合二维材料数据库开展高通量筛选、材料设计与性能优化研究，为新型能源材料的开发提供理论支撑与设计思路。
+            </div>
+        </div>
+    </section>
+
+    <!-- 老师简历 - 新增照片区域 -->
+    <section class="section resume" id="resume">
+        <div class="container">
+            <h2 class="section-title">老师简历</h2>
+            <div class="resume-content">
+                <!-- 新增照片展示区 -->
+                <div class="teacher-photo card">
+                    <img src="teacher_photo.jpg" alt="纪玉金老师">
+                    <p>纪玉金 讲师</p>
+                </div>
+                <div class="resume-card card">
+                    <h3><i class="fas fa-graduation-cap"></i>教育经历</h3>
+                    <ul>
+                        <li><span class="label">2014.09-2019.12</span>苏州大学，博士（中国）</li>
+                        <li><span class="label">2018.09-2019.09</span>得州大学奥斯汀分校，联合培养博士（美国）</li>
+                        <li><span class="label">2010.09-2014.06</span>江苏大学，学士（中国）</li>
+                    </ul>
+                </div>
+                <div class="resume-card card">
+                    <h3><i class="fas fa-briefcase"></i>工作与荣誉</h3>
+                    <ul>
+                        <li><span class="label">工作经历</span>2019.12-至今 苏州大学功能纳米与软物质研究院，讲师</li>
+                        <li><span class="label">所属课题组</span>李有勇教授课题组</li>
+                        <li><span class="label">个人荣誉</span>苏州大学优秀青年</li>
+                        <li><span class="label">研究领域</span>二维材料/能源存储与转化/理论模拟与设计</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 研究方向 -->
+    <section class="section research" id="research">
+        <div class="container">
+            <h2 class="section-title">研究方向</h2>
+            <div class="research-list">
+                <div class="research-item card">
+                    <i class="fas fa-atom"></i>
+                    <h4>微观结构动态演变</h4>
+                    <p>基于多尺度模拟方法，探究二维材料表面微观原子结构及形貌的动态演变过程，解析材料微观结构变化规律。</p>
+                </div>
+                <div class="research-item card">
+                    <i class="fas fa-reaction"></i>
+                    <h4>表面反应机制揭示</h4>
+                    <p>从原子-电子层面，揭示二维材料表面化学反应机制，明确反应过程中的关键步骤与影响因素。</p>
+                </div>
+                <div class="research-item card">
+                    <i class="fas fa-link"></i>
+                    <h4>构效关系研究</h4>
+                    <p>建立二维材料微观结构与宏观性能之间的构效关系，为材料性能优化提供理论依据。</p>
+                </div>
+                <div class="research-item card">
+                    <i class="fas fa-search"></i>
+                    <h4>材料高通量筛选</h4>
+                    <p>结合二维材料数据库，开展新型能源材料的高通量筛选，快速挖掘具有潜在应用价值的材料体系。</p>
+                </div>
+                <div class="research-item card">
+                    <i class="fas fa-pen-nib"></i>
+                    <h4>新材料设计与优化</h4>
+                    <p>基于理论模拟结果，进行二维能源材料的定向设计与性能优化，开发适用于能源存储与转化的新型材料。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 代表性成果 -->
+    <section class="section result" id="result">
+        <div class="container">
+            <h2 class="section-title">代表性成果</h2>
+            <div class="result-list card">
+                <p style="font-size: 18px; margin-bottom: 20px; color: var(--text-color);">
+                    至今参与发表69篇SCI期刊论文，Google scholar总引用1120次，H-index为19。
+                </p>
+                <div class="result-item">
+                    1. <span class="highlight">Yujin Ji</span>, Mingye Yang, Haiping Lin, Tingjun Hou, Lu Wang *, Youyong Li* and Shuit-Tong Lee, “Janus structures of transition metal dichalcogenides as the heterojunction photocatalysts for water splitting”, Journal of Physical Chemistry C, 2018, 122(5), 3123-3129.<span class="tag">SCI高被引论文</span>
+                </div>
+                <div class="result-item">
+                    2. <span class="highlight">Yujin Ji</span>, Mingye Yang, Huilong Dong *, Lu Wang, Tingjun Hou and Youyong Li*, “Monolayer group IVA monochalogenides as potential and efficient catalysts for the oxygen reduction from first-principles calculations”, Journal of Materials Chemistry A, 2017, 5(4), 1734-1741.
+                </div>
+                <div class="result-item">
+                    3. <span class="highlight">Yujin Ji</span>, Huilong Dong, Cheng Liu and Youyong Li*, “Two-dimensional π-conjugated metal-organic nanosheets as single-atom catalysts for the hydrogen evolution reaction”, Nanoscale, 2019, 11, 454-458.
+                </div>
+                <div class="result-item">
+                    4. Junqing Yan⸸, Lingqiao Kong⸸, <span class="highlight">Yujin Ji⸸</span>, Jai White⸸ , Youyong Li*, Jin Zhang, Pengfei An, Shengzhong Liu *, Shuit-Tong Lee and Tianyi Ma*, “Single atom tungsten doped ultrathin α-Ni(OH)2 for enhanced electrocatalytic water oxidation”, Nature Communication, 2018, 10, 2149.<span class="tag">共同一作</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系方式 -->
+    <section class="section contact" id="contact">
+        <div class="container">
+            <h2 class="section-title">联系方式</h2>
+            <div class="contact-content">
+                <div class="contact-item">
+                    <h4><i class="fas fa-envelope"></i>邮箱</h4>
+                    <p><a href="mailto:yjji@suda.edu.cn">yjji@suda.edu.cn</a></p>
+                </div>
+                <div class="contact-item">
+                    <h4><i class="fas fa-building"></i>所属单位</h4>
+                    <p>苏州大学功能纳米与软物质研究院</p>
+                </div>
+                <div class="contact-item">
+                    <h4><i class="fas fa-users"></i>所属课题组</h4>
+                    <p>李有勇教授课题组</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <p>© 2025 纪算 - 纪玉金老师课题组 版权所有 | 苏州大学功能纳米与软物质研究院</p>
+        </div>
+    </footer>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('.nav-menu a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                document.querySelector(targetId).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 导航栏滚动样式（可选）
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            } else {
+                header.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+            }
+        });
+    </script>
+</body>
+</html>
