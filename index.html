@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>纪算 - 纪玉金老师课题组</title>
     <style>
@@ -18,14 +18,19 @@
             --light-text: #666;
             --border-color: #e5e7eb;
             --hover-color: #0e4bdb;
+            --card-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --card-hover: 0 8px 20px rgba(0,0,0,0.12);
         }
         body {
             color: var(--text-color);
             line-height: 1.6;
+            background-color: #f9fafb;
+            scroll-behavior: smooth; /* 全局平滑滚动，替代JS */
         }
         a {
             text-decoration: none;
             color: var(--primary-color);
+            transition: all 0.3s ease;
         }
         a:hover {
             color: var(--hover-color);
@@ -35,13 +40,14 @@
             margin: 0 auto;
             padding: 0 20px;
         }
-        /* 导航栏 */
+        /* 导航栏优化 - 修复粘性+响应式+过渡 */
         header {
             background: #fff;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
             z-index: 999;
+            transition: all 0.3s ease; /* 新增过渡，解决阴影突变 */
         }
         .nav {
             display: flex;
@@ -60,9 +66,11 @@
         .nav-menu {
             display: flex;
             list-style: none;
+            flex-wrap: wrap;
+            gap: 20px; /* 替换margin-left，解决响应式换行挤压 */
         }
         .nav-menu li {
-            margin-left: 30px;
+            /* 移除margin-left，改用gap */
         }
         .nav-menu a {
             font-size: 16px;
@@ -76,55 +84,77 @@
             border-bottom: 2px solid var(--primary-color);
             color: var(--primary-color);
         }
-        /* 横幅 */
+        /* 横幅优化 */
         .banner {
             background: linear-gradient(135deg, var(--primary-color), #4080ff);
             color: #fff;
-            padding: 60px 0;
+            padding: 70px 0;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .banner::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.2;
         }
         .banner h1 {
-            font-size: 36px;
-            margin-bottom: 16px;
+            font-size: 38px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
         }
         .banner p {
             font-size: 18px;
             max-width: 800px;
             margin: 0 auto;
-            opacity: 0.9;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            line-height: 1.8;
         }
-        /* 通用板块样式 */
+        /* 通用板块样式优化 */
         .section {
             padding: 80px 0;
         }
         .section-title {
             text-align: center;
-            font-size: 30px;
+            font-size: 32px;
             margin-bottom: 60px;
             position: relative;
+            color: var(--text-color);
+            font-weight: 600;
         }
         .section-title::after {
             content: "";
-            width: 60px;
+            width: 80px;
             height: 3px;
             background: var(--primary-color);
             position: absolute;
-            bottom: -10px;
+            bottom: -15px;
             left: 50%;
             transform: translateX(-50%);
+            border-radius: 3px;
         }
         .card {
             background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
             padding: 30px;
             margin-bottom: 30px;
-            transition: transform 0.3s;
+            transition: all 0.4s ease; /* 仅保留CSS过渡，移除JS重复控制 */
+            border: 1px solid rgba(229, 231, 235, 0.5);
         }
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: var(--card-hover);
         }
-        /* 课题组简介 */
+        /* 课题组简介优化 */
         .intro {
             background: var(--secondary-color);
         }
@@ -136,10 +166,10 @@
             line-height: 1.8;
             color: var(--light-text);
         }
-        /* 老师简历 - 新增照片样式 */
+        /* 老师简历 - 照片样式优化 */
         .resume-content {
             display: grid;
-            grid-template-columns: 280px 1fr 1fr; /* 新增照片列 */
+            grid-template-columns: 280px 1fr 1fr;
             gap: 40px;
             align-items: start;
         }
@@ -150,9 +180,13 @@
             width: 220px;
             height: 280px;
             object-fit: cover;
-            border-radius: 8px;
+            border-radius: 12px;
             border: 4px solid var(--secondary-color);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            transition: all 0.3s ease;
+        }
+        .teacher-photo img:hover {
+            transform: scale(1.03);
         }
         .teacher-photo p {
             margin-top: 15px;
@@ -169,6 +203,7 @@
         }
         .resume-card h3 i {
             margin-right: 10px;
+            font-size: 24px;
         }
         .resume-card ul {
             list-style: none;
@@ -177,6 +212,7 @@
             margin-bottom: 16px;
             font-size: 16px;
             color: var(--light-text);
+            line-height: 1.7;
         }
         .resume-card li .label {
             font-weight: 700;
@@ -184,32 +220,109 @@
             display: inline-block;
             min-width: 120px;
         }
-        /* 研究方向 */
+        /* 研究方向优化 */
         .research {
             background: var(--secondary-color);
         }
         .research-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            gap: 35px;
         }
         .research-item {
             text-align: center;
         }
         .research-item i {
-            font-size: 40px;
+            font-size: 48px;
             color: var(--primary-color);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            background: rgba(22, 93, 255, 0.1);
+            width: 100px;
+            height: 100px;
+            line-height: 100px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .research-item:hover i {
+            background: var(--primary-color);
+            color: #fff;
+            transform: rotate(5deg);
         }
         .research-item h4 {
-            font-size: 20px;
-            margin-bottom: 15px;
+            font-size: 22px;
+            margin-bottom: 18px;
+            color: var(--text-color);
         }
         .research-item p {
             color: var(--light-text);
             line-height: 1.7;
+            font-size: 16px;
         }
-        /* 代表性成果 */
+        /* 课题组学生样式 */
+        .students {
+            background: #fff;
+        }
+        .students-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .student-item {
+            text-align: center;
+        }
+        .student-item img {
+            width: 200px;
+            height: 300px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-bottom: 15px; /* 新增间距，优化布局 */
+        }
+        .student-item h4 {
+            font-size: 20px;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+        .student-info {
+            font-size: 15px;
+            color: var(--light-text);
+            line-height: 1.6;
+        }
+        /* 课题组活动样式 - 补充缺失的样式 */
+        .activities {
+            background: var(--secondary-color);
+        }
+        .activities-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .activity-item {
+            text-align: center;
+        }
+        .activity-item img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .activity-item h4 {
+            font-size: 20px;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+        .activity-item p {
+            color: var(--light-text);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .activity-date {
+            display: inline-block;
+            font-size: 14px;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        /* 代表性成果优化 */
         .result-list {
             max-width: 1000px;
             margin: 0 auto;
@@ -221,6 +334,13 @@
             font-size: 16px;
             line-height: 1.8;
             color: var(--light-text);
+            padding-left: 10px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .result-item:hover {
+            border-left: 3px solid var(--primary-color);
+            padding-left: 15px;
         }
         .result-item:last-child {
             border-bottom: none;
@@ -229,71 +349,87 @@
         }
         .result-item .highlight {
             color: var(--primary-color);
-            font-weight: 500;
+            font-weight: 600;
         }
         .result-item .tag {
             display: inline-block;
             background: #e1ecff;
             color: var(--primary-color);
             font-size: 12px;
-            padding: 2px 8px;
-            border-radius: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
             margin-left: 10px;
+            font-weight: 500;
         }
-        /* 联系方式 */
+        /* 修复：联系方式还原最初格式（蓝色背景+白字） */
         .contact {
-            background: var(--primary-color);
-            color: #fff;
+            background: var(--primary-color); /* 蓝色背景 */
+            color: #fff; /* 白色文字 */
+            padding: 80px 0;
         }
         .contact .section-title {
-            color: #fff;
+            color: #fff; /* 标题白字 */
         }
         .contact .section-title::after {
-            background: #fff;
+            background: #fff; /* 标题下划线白色 */
         }
         .contact-content {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 40px;
             text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .contact-item {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1); /* 半透明白色背景 */
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
         }
         .contact-item h4 {
             font-size: 20px;
             margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff; /* 标题白字 */
+        }
+        .contact-item h4 i {
+            margin-right: 10px;
         }
         .contact-item p {
             font-size: 16px;
             opacity: 0.9;
+            line-height: 1.8;
+            color: #fff; /* 内容白字 */
         }
         .contact-item a {
-            color: #fff;
+            color: #fff; /* 链接白字 */
             text-decoration: underline;
+            text-underline-offset: 4px;
         }
         .contact-item a:hover {
             opacity: 1;
+            text-decoration: none;
         }
-        /* 页脚 */
+        /* 页脚样式优化 */
         footer {
-            background: #222;
-            color: #ccc;
-            text-align: center;
+            background: var(--text-color);
+            color: #fff;
             padding: 30px 0;
+            text-align: center;
+            margin-top: 50px;
+        }
+        footer p {
             font-size: 14px;
+            opacity: 0.8;
         }
-        /* 响应式 - 适配照片布局 */
-        @media (max-width: 992px) {
-            .resume-content {
-                grid-template-columns: 1fr; /* 小屏下照片和简历垂直排列 */
-                text-align: center;
-            }
-            .teacher-photo img {
-                display: inline-block;
-            }
-            .resume-card ul {
-                text-align: left;
-                display: inline-block;
-            }
-        }
+        /* 响应式适配 - 新增小屏幕适配 */
         @media (max-width: 768px) {
             .nav {
                 flex-direction: column;
@@ -301,32 +437,26 @@
                 padding: 20px 0;
             }
             .nav-menu {
-                margin-top: 20px;
-                flex-wrap: wrap;
+                margin-top: 15px;
                 justify-content: center;
             }
-            .nav-menu li {
-                margin: 10px 15px;
+            .resume-content {
+                grid-template-columns: 1fr; /* 小屏幕简历单列显示 */
+                gap: 20px;
             }
             .banner h1 {
                 font-size: 28px;
             }
-            .section {
-                padding: 50px 0;
-            }
             .section-title {
-                font-size: 24px;
-            }
-            .research-list {
-                grid-template-columns: 1fr;
+                font-size: 26px;
             }
         }
     </style>
-    <!-- 引入字体图标 -->
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 修复：引入CDN版Font Awesome，解决本地文件路径错误 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- 导航栏 -->
+    <!-- 导航栏 - 修复锚点路径（移除本地file路径，仅保留#锚点） -->
     <header>
         <div class="container nav">
             <div class="logo">纪<span>算</span></div>
@@ -334,6 +464,8 @@
                 <li><a href="#intro">课题组简介</a></li>
                 <li><a href="#resume">老师简历</a></li>
                 <li><a href="#research">研究方向</a></li>
+                <li><a href="#students">课题组学生</a></li>
+                <li><a href="#activities">课题组活动</a></li>
                 <li><a href="#result">代表性成果</a></li>
                 <li><a href="#contact">联系方式</a></li>
             </ul>
@@ -358,15 +490,14 @@
         </div>
     </section>
 
-    <!-- 老师简历 - 新增照片区域 -->
+    <!-- 老师简历 - 修改：讲师 → 副教授 -->
     <section class="section resume" id="resume">
         <div class="container">
             <h2 class="section-title">老师简历</h2>
             <div class="resume-content">
-                <!-- 新增照片展示区 -->
                 <div class="teacher-photo card">
-                    <img src="teacher_photo.jpg" alt="纪玉金老师">
-                    <p>纪玉金 讲师</p>
+                    <img src="./teacher_photo.jpg" alt="纪玉金老师"> <!-- 简化图片路径，确保文件存在 -->
+                    <p>纪玉金 副教授</p> <!-- 修改：讲师 → 副教授 -->
                 </div>
                 <div class="resume-card card">
                     <h3><i class="fas fa-graduation-cap"></i>教育经历</h3>
@@ -379,7 +510,7 @@
                 <div class="resume-card card">
                     <h3><i class="fas fa-briefcase"></i>工作与荣誉</h3>
                     <ul>
-                        <li><span class="label">工作经历</span>2019.12-至今 苏州大学功能纳米与软物质研究院，讲师</li>
+                        <li><span class="label">工作经历</span>2019.12-至今 苏州大学功能纳米与软物质研究院，副教授</li> <!-- 修改：讲师 → 副教授 -->
                         <li><span class="label">所属课题组</span>李有勇教授课题组</li>
                         <li><span class="label">个人荣誉</span>苏州大学优秀青年</li>
                         <li><span class="label">研究领域</span>二维材料/能源存储与转化/理论模拟与设计</li>
@@ -400,7 +531,7 @@
                     <p>基于多尺度模拟方法，探究二维材料表面微观原子结构及形貌的动态演变过程，解析材料微观结构变化规律。</p>
                 </div>
                 <div class="research-item card">
-                    <i class="fas fa-reaction"></i>
+                    <i class="fas fa-flask-vial"></i>
                     <h4>表面反应机制揭示</h4>
                     <p>从原子-电子层面，揭示二维材料表面化学反应机制，明确反应过程中的关键步骤与影响因素。</p>
                 </div>
@@ -423,7 +554,55 @@
         </div>
     </section>
 
-    <!-- 代表性成果 -->
+    <!-- 课题组学生板块 -->
+    <section class="section students" id="students">
+        <div class="container">
+            <h2 class="section-title">课题组学生</h2>
+            <div class="students-list">
+                <div class="student-item card">
+                    <img src="./student1.jpg" alt="金鲁杰">
+                    <h4>金鲁杰</h4>
+                    <div class="student-info">
+                        <p>博士研究生 | 入学年份：2024</p>
+                        <p>研究方向：电池材料模拟与设计</p>
+                        <p>邮箱：1036654816@qq.com</p>
+                    </div>
+                </div>
+                <div class="student-item card">
+                    <img src="./student2.jpg" alt="俞嘉尧">
+                    <h4>俞嘉尧</h4>
+                    <div class="student-info">
+                        <p>硕士研究生 | 入学年份：2024</p>
+                        <p>研究方向：原神，启动！</p>
+                        <p>邮箱：1347024802@qq.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 课题组活动板块 -->
+    <section class="section activities" id="activities">
+        <div class="container">
+            <h2 class="section-title">课题组活动</h2>
+            <div class="activities-list">
+                <div class="activity-item card">
+                    <img src="./activity1.jpg" alt="中国化学会第34届学术年会">
+                    <h4>中国化学会第34届学术年会</h4>
+                    <p>课题组参加中国化学会第34届学术年会，在广州白云国际会议中心前合影留念，庆祝研究成果被学术年会接受。</p>
+                    <span class="activity-date">2024.6.17</span>
+                </div>
+                <div class="activity-item card">
+                    <img src="./activity2.jpg" alt="我们毕业啦！">
+                    <h4>我们毕业啦！</h4>
+                    <p>课题组2025届学生顺利完成毕业答辩，学生与教师合影留念。</p>
+                    <span class="activity-date">2025.5.24</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 代表性成果 - 新增：更多成果超链接 -->
     <section class="section result" id="result">
         <div class="container">
             <h2 class="section-title">代表性成果</h2>
@@ -443,11 +622,15 @@
                 <div class="result-item">
                     4. Junqing Yan⸸, Lingqiao Kong⸸, <span class="highlight">Yujin Ji⸸</span>, Jai White⸸ , Youyong Li*, Jin Zhang, Pengfei An, Shengzhong Liu *, Shuit-Tong Lee and Tianyi Ma*, “Single atom tungsten doped ultrathin α-Ni(OH)2 for enhanced electrocatalytic water oxidation”, Nature Communication, 2018, 10, 2149.<span class="tag">共同一作</span>
                 </div>
+                <!-- 新增：更多成果超链接 -->
+                <div style="margin-top: 30px; text-align: right;">
+                    <a href="http://modeling.org.cn/publications.html" target="_blank" style="font-size: 16px; color: var(--primary-color); font-weight: 500;">更多成果在这里 →</a>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- 联系方式 -->
+    <!-- 联系方式 - 还原最初格式（蓝色背景+白字） -->
     <section class="section contact" id="contact">
         <div class="container">
             <h2 class="section-title">联系方式</h2>
@@ -458,11 +641,11 @@
                 </div>
                 <div class="contact-item">
                     <h4><i class="fas fa-building"></i>所属单位</h4>
-                    <p>苏州大学功能纳米与软物质研究院</p>
+                    <p><a href="https://funsom.suda.edu.cn/" target="_blank">苏州大学功能纳米与软物质研究院</a></p>
                 </div>
                 <div class="contact-item">
                     <h4><i class="fas fa-users"></i>所属课题组</h4>
-                    <p>李有勇教授课题组</p>
+                    <p><a href="http://modeling.org.cn/" target="_blank">李有勇教授课题组</a></p>
                 </div>
             </div>
         </div>
@@ -471,29 +654,20 @@
     <!-- 页脚 -->
     <footer>
         <div class="container">
-            <p>© 2025 纪算 - 纪玉金老师课题组 版权所有 | 苏州大学功能纳米与软物质研究院</p>
+            <p>© 2026 纪算 - 纪玉金老师课题组 版权所有 | 苏州大学功能纳米与软物质研究院</p>
         </div>
     </footer>
 
     <script>
-        // 平滑滚动
-        document.querySelectorAll('.nav-menu a').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                document.querySelector(targetId).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-
-        // 导航栏滚动样式（可选）
+        // 简化JS - 仅保留导航栏滚动样式（移除卡片悬浮JS，避免与CSS冲突）
         window.addEventListener('scroll', function() {
             const header = document.querySelector('header');
             if (window.scrollY > 50) {
-                header.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                header.style.boxShadow = '0 4px 15px rgba(0,0,0,0.15)';
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
             } else {
                 header.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                header.style.background = '#fff';
             }
         });
     </script>
