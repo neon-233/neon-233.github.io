@@ -1,0 +1,6 @@
+# TEMPLATE OVERLAY ONLY: PBE with D3(BJ) dispersion
+# Add to ONE otherwise complete, validated PBE INCAR.
+# Do not stack onto another dispersion-corrected functional uncritically.
+GGA = PE
+IVDW = 12
+# Apply the same method to all comparable structures / references.

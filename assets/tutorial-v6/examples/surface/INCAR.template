@@ -1,0 +1,24 @@
+# TEMPLATE: neutral, nonmagnetic slab; normal parallel to c
+# Supply POSCAR, converged KPOINTS and licensed POTCAR.
+# Replace ENCUT; add validated magnetic/U/vdW settings when needed.
+SYSTEM = neutral-slab-relax
+GGA = PE
+ENCUT = REPLACE_WITH_CONVERGED_ENCUT
+PREC = Accurate
+EDIFF = 1E-6
+NELM = 120
+ALGO = Normal
+LREAL = .FALSE.
+ISMEAR = 0
+SIGMA = 0.05
+IBRION = 2
+NSW = 150
+ISIF = 2
+EDIFFG = -0.02
+POTIM = 0.3
+ISYM = 0
+LDIPOL = .TRUE.
+IDIPOL = 3
+DIPOL = REPLACE_WITH_SLAB_CENTER_IN_FRACTIONAL_COORDINATES
+LWAVE = .FALSE.
+LCHARG = .FALSE.

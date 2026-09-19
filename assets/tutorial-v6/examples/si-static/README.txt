@@ -1,0 +1,1 @@
+After verifying si-relax convergence, copy its CONTCAR to POSCAR and use the SAME POTCAR. Check/update ENCUT and the 12x12x12 learning mesh using convergence tests. This directory deliberately contains no invented relaxed POSCAR. Keep the resulting converged CHGCAR together with its matching POSCAR for PBE bands.

@@ -1,0 +1,160 @@
+{
+  "title": "量子化学与 DFT 基础",
+  "subtitle": "从一个电子的波函数，到晶体中可计算、可检验的能量与性质。先理解模型，再决定参数。",
+  "filename": "quantum-v6.html",
+  "kicker": "01 / FOUNDATIONS",
+  "estimatedMinutes": 120,
+  "sections": [
+    {
+      "id": "wavefunction",
+      "title": "01 · 电子为什么要用波函数描述？",
+      "kicker": "WAVEFUNCTION & UNITS",
+      "html": "<p>计算化学的出发点，是给定原子种类、电子数和几何排列，求出能量如何随结构改变。它不需要先为每一种化学键规定一根弹簧，而是尝试从电子的量子行为得到成键、排斥、磁性等结果。先回答三个问题：我们在求什么函数，求出的数有什么单位，以及哪些东西能与实验比较。</p>\n<h3>波函数不是电子绕核运动的轨道</h3>\n<p>对一个非相对论电子，空间状态可写成 ψ(r,t)。r 表示位置，t 表示时间；ψ 一般是复数，直接画出来的正负或颜色表示振幅与相位，不能理解为正电荷和负电荷。在小体积 d³r 内找到电子的概率为 |ψ(r,t)|²d³r，所以归一化条件是 ∫|ψ|²d³r = 1。三维归一化波函数的量纲是长度<sup>−3/2</sup>，概率密度的量纲是长度<sup>−3</sup>；概率本身无量纲。</p>\n<p>多个电子时，真正的波函数是 Ψ(x₁,x₂,…,x<sub>N</sub>)，x 包含空间坐标和自旋变量，N 是电子数。它描述所有电子的联合状态，不能把每个电子想成携带姓名、沿固定路线运动的小球。实际计算中常见的“轨道”φᵢ，是构造近似多电子状态或辅助体系的单电子函数。轨道图有解释价值，却不是拍到的一条电子轨迹。</p>\n<div class=\"formula\">Ĥψ = Eψ；&nbsp; Ĥ = −(ℏ²/2m<sub>e</sub>)∇² + V(r)</div>\n<p>这是定态薛定谔方程：Ĥ 是能量算符，E 是本征能量，ℏ = h/(2π) 是约化普朗克常数，m<sub>e</sub> 是电子质量，∇² 是对位置的二阶微分算符，V 是势能。若使用国际单位，位置用 m，V 与 E 用 J；不能把 Å 直接塞入只按 SI 常数编写的表达式。定态也不表示电子静止：时间部分为 exp(−iEt/ℏ)，其中 i² = −1；它使整体相位演化，而定态概率密度不随时间变化。</p>\n<h3>用一维盒子理解“允许的能量”</h3>\n<p>让电子局限在 0 &lt; x &lt; L 的理想区域：内部 V = 0，两端外部势能无限高。边界条件要求 ψ(0) = ψ(L) = 0，因此只能放下整数个半波。第 n 个定态为：</p>\n<div class=\"formula\">ψ<sub>n</sub>(x) = √(2/L) sin(nπx/L)，&nbsp; E<sub>n</sub> = n²π²ℏ²/(2m<sub>e</sub>L²)，&nbsp; n = 1,2,3,…</div>\n<p>x 和 L 必须使用同一长度单位，n 是无量纲正整数。一维 ψ 的量纲是长度<sup>−1/2</sup>。n = 0 会得到处处为零、无法归一化的函数，所以最低能量也不为零。盒子变窄，允许的空间变化更快，动能上升；这能帮助理解量子限域，但真实量子点还有有限势垒、有效质量、库仑作用与材料结构，不能直接套此公式预测其吸收光谱。</p>\n<div id=\"quantum-lab\"></div>\n<div class=\"table-wrap\"><table><thead><tr><th>量</th><th>常用单位与换算</th><th>读输出时要注意</th></tr></thead><tbody><tr><td>长度</td><td>1 Å = 10<sup>−10</sup> m；1 bohr ≈ 0.529177 Å</td><td>VASP 结构与力通常围绕 Å 表示</td></tr><tr><td>能量</td><td>1 Hartree ≈ 27.211386 eV；1 eV/粒子 ≈ 96.485 kJ/mol</td><td>eV/晶胞、eV/原子和 eV/反应不是同一归一化</td></tr><tr><td>力</td><td>eV/Å</td><td>它是能量对位置的负导数，不能与 eV 阈值混用</td></tr><tr><td>热能</td><td>k<sub>B</sub> ≈ 8.61733×10<sup>−5</sup> eV/K</td><td>300 K 的 k<sub>B</sub>T ≈ 0.0259 eV，是能量尺度而非所有势垒的上限</td></tr></tbody></table></div>\n<details><summary>练习：盒宽由 1 nm 缩为 0.5 nm，基态能量和波函数节点怎样变？</summary><p>E₁ 与 L<sup>−2</sup> 成正比，因此从约 0.376 eV 变为约 1.504 eV。基态在盒内没有节点，两端仍是节点。尺寸缩小改变能量和振幅尺度，不把基态变成第二激发态。可进一步用 ∫₀<sup>L</sup>(2/L)sin²(πx/L)dx = 1 验证归一化。</p></details>\n<p>延伸学习：<a href=\"https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2017/resources/mit5_61f17_lec5/\" target=\"_blank\" rel=\"noopener\">MIT 5.61：自由粒子与一维盒中粒子</a>。</p>"
+    },
+    {
+      "id": "born-oppenheimer",
+      "title": "02 · 从电子能量到势能面与几何优化",
+      "kicker": "BORN–OPPENHEIMER & PES",
+      "html": "<p>对水分子求一次电子能量，并不会自动得到它的平衡键长。你给出的 O—H 距离和键角，是这一次电子问题的外部条件；改变这些坐标，就得到另一个电子问题。把很多次结果连接起来，才出现“能量随结构变化”的势能面。</p>\n<h3>为什么能暂时固定原子核？</h3>\n<p>原子核通常比电子重得多，电子与核运动有不同的时间尺度。Born–Oppenheimer 近似把两者分开处理：在一组固定核坐标 R 下先解电子问题，再让核在相应电子态产生的势能面上运动。这里“固定”是求解一个电子步骤时的条件，并不否定分子的振动。常见基态 DFT 结构优化就是在此框架内进行。</p>\n<div class=\"formula\">E<sub>BO</sub>(R) = E<sub>elec</sub>(R) + E<sub>NN</sub>(R)，&nbsp; F<sub>I</sub> = −∂E<sub>BO</sub>/∂R<sub>I</sub></div>\n<p>R 代表全部核坐标，R<sub>I</sub> 是第 I 个核的位置向量；E<sub>elec</sub> 是固定核条件下电子能量，E<sub>NN</sub> 是核间排斥能，E<sub>BO</sub> 是总势能，单位可取 eV；力 F<sub>I</sub> 的单位随坐标单位确定，若 R 用 Å，则力为 eV/Å。实际软件的“总能”通常已经包含核间作用，不能再手工加一次。本文单独拆开这些项是为了理解物理。</p>\n<h3>一次几何优化包含内外两层循环</h3>\n<ol><li>外层给定原子坐标和晶胞，内层自洽求电子状态。</li><li>从已收敛电子态计算能量、原子力，以及任务需要的应力。</li><li>优化器根据这些量提出下一组坐标或晶胞。</li><li>重复，直到选定自由度的力、应力或能量变化满足标准。</li></ol>\n<p>内层没收敛时，外层拿到的力可能带明显噪声。此时盲目增加几何步数，好比沿着不断变化的地图找谷底。相反，即使每一步电子解都很精确，优化器也通常只找到初始结构附近的局部极小；从一个吸附位点开始，不会保证自行穿过高势垒找到另一个位点。</p>\n<div class=\"note\"><strong>三个“稳定”要分开。</strong> 力接近零只说明接近驻点；局部最小还需检查曲率。某个模型的局部最小，也不自动意味着相对于其他组成、其他晶相或实验环境具有热力学稳定性。有限温度下，比较对象往往是自由能而非仅零温电子能。</div>\n<h3>曲率、振动与过渡态</h3>\n<p>在平衡位置附近，能量可近似展开为二次函数。对一个有效振动坐标 q，可写 E(q) ≈ E₀ + ½κq²：κ 为力常数，若 q 用 Å，κ 用 eV/Å²。振动角频率满足 ω = √(κ/μ)，μ 为该模式的有效质量；使用此式时必须把能量、长度、质量换为一套一致单位。真正的分子振动来自质量加权 Hessian 矩阵的本征问题，Hessian 是能量对坐标的二阶导数矩阵。</p>\n<p>若沿某方向曲率为负，则 ω² 为负，软件会把该方向标作“虚频”。分子基态极小点除平移、转动等零模外不应有真实不稳定模；一阶过渡态预期有一个反应方向的不稳定模。微小虚频也可能来自几何、力精度、超胞或声学和规则误差，要看振型和收敛趋势，不能看到一个负数就宣布材料不稳定。</p>\n<p>Born–Oppenheimer 单势能面图像在电子态接近、交叉、强非绝热跃迁时需要扩展；光化学反应不能只用基态优化来代替激发态动力学。轻核的隧穿与零点振动也不是经典几何优化自动包含的内容。例如谐振子零点能为 ½ℏω，因此把电子能最低点叫作“包含一切热效应的实验能量”会造成误解。</p>\n<details><summary>练习：优化结束、最大力很小，但沿某个方向仍有明显虚频，该怎样判断？</summary><p>先确认电子和几何阈值足够严、结构没有意外约束，再查看振型。若位移对应清楚的结构畸变，可沿正负两个方向扰动后分别优化，看能否下降到新结构；若是接近零的整体平移或层状材料长波模式，则优先检查超胞、采样和数值误差。仅“程序正常退出”不足以判断驻点性质。</p></details>\n<p>延伸学习：<a href=\"https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2007/resources/lecture28to29/\" target=\"_blank\" rel=\"noopener\">MIT：Born–Oppenheimer 近似与变分法</a>。实际结构优化输入见<a href=\"vasp-start-v6.html\">VASP 入门与结构任务</a>，振动和路径问题见<a href=\"vasp-advanced-v6.html\">进阶任务</a>。</p>"
+    },
+    {
+      "id": "variation-hf",
+      "title": "03 · 变分、基组与电子关联：近似从哪里来？",
+      "kicker": "VARIATION, BASIS & CORRELATION",
+      "html": "<p>氢原子的理想模型可以解析求解，多电子体系却因电子间相互作用而迅速复杂。实际算法往往分两次缩小问题：先规定允许怎样的多电子状态，再用有限个数学函数表示这些状态。前者是物理或波函数近似，后者是基组截断；二者不能混为一谈。</p>\n<h3>变分原理给出可操作的优化目标</h3>\n<div class=\"formula\">E[Ψ] = ⟨Ψ|Ĥ|Ψ⟩ / ⟨Ψ|Ψ⟩ ≥ E₀</div>\n<p>Ĥ 是所选量子模型的厄米哈密顿算符，Ψ 是满足边界和粒子交换要求的非零试探波函数，E₀ 是同一哈密顿量的精确基态能量。括号代表对全部电子空间及自旋变量求内积，分母处理归一化。将 Ψ 展开成精确能量本征态时，平均能量是各本征值按非负概率加权的结果，因此不可能低于最低本征值。这也解释了为什么“增加表达能力、最小化能量”能逐步改进许多波函数方法。</p>\n<p>但请留意“同一哈密顿量”与“真正最小化”这两个条件。换赝势、换泛函、换元素或电子数，就不再是上述简单上界比较。近似 DFT 泛函给出的总能也没有普遍的“必定高于真实能量”保证。甚至同一方法的计算若停在不同局部电子解上，也不能用基组更大来保证每一次得到的数字都单调变小。</p>\n<h3>基组把函数问题变成系数问题</h3>\n<div class=\"formula\">φᵢ(r) = ∑<sub>μ</sub>C<sub>μi</sub>χ<sub>μ</sub>(r)，&nbsp; HC = SCε</div>\n<p>χ<sub>μ</sub> 是基函数，C<sub>μi</sub> 是展开系数，φᵢ 是第 i 个轨道。H<sub>μν</sub> = ⟨χ<sub>μ</sub>|Ĥ<sub>eff</sub>|χ<sub>ν</sub>⟩ 为有效单电子哈密顿矩阵，S<sub>μν</sub> = ⟨χ<sub>μ</sub>|χ<sub>ν</sub>⟩ 为重叠矩阵，ε 是轨道能量对角矩阵。若基函数归一化，S 无量纲，H 与 ε 使用能量单位；非正交基会出现 S，正交基则 S 为单位矩阵。</p>\n<p>局域原子基组把函数放在原子附近，适合以分子轨道语言理解成键。双 ζ、三 ζ 表示更灵活的径向表达，极化函数让电子云能改变形状，弥散函数帮助描述空间上松散的电子分布。平面波则把周期函数展开成遍布晶胞的波，靠截断能系统增加分辨率。两者都只是表达函数的工具，不能把“Gaussian 型函数”与一种特定电子理论画等号，也不能认为周期计算一定只能用平面波。</p>\n<h3>Hartree–Fock 处理交换，但未处理全部关联</h3>\n<p>电子是费米子，交换两个电子坐标时多电子波函数必须反号。Hartree–Fock（HF）用一个由自旋轨道组成的 Slater 行列式满足反对称性，再变分优化轨道。电子在其他电子产生的平均场中运动；行列式产生交换项，使相同自旋电子的联合分布受到约束。交换不是两个小球交换位置的机械作用，也不能把 HF 说成“完全没有考虑电子间排斥”。</p>\n<p>在相同非相对论哈密顿量与完备基组、基态语境下，通常把 E<sub>corr</sub> = E<sub>exact</sub> − E<sub>HF</sub> 称为关联能，它非正。有限基组中也可定义相对于该基组 HF 的关联贡献，但必须说明范围。动态关联描述电子为了避开彼此而产生的细致联动；近简并或静态关联则要求多个电子组态共同描述，例如把 H₂ 拉得很远时，单个受限闭壳层行列式很难同时保持正确的两个中性原子极限。</p>\n<p>增加基函数可以减少基组误差，却不会自动把单行列式 HF 变成精确多电子理论。MP2、组态相互作用、耦合簇、多参考方法等从不同方向加入关联，适用体系、费用与失效情形不同。理解这一层次，才能知道为什么有时“算得更久”只是更精确地求解了一个仍不合适的模型。</p>\n<details><summary>练习：同一水分子的 HF 能量随基组增大明显降低，是否说明电子关联已经补全？</summary><p>不能。你主要改善了轨道的表示能力，在收敛到 HF 极限的过程中仍受单行列式约束。要评估关联，需要在明确基组与哈密顿量下比较适当的关联方法，或用已知高精度基准；还要避免把不同结构的变化混进方法比较。</p></details>\n<p>延伸学习：MIT <a href=\"https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2017/resources/mit5_61f17_lec24/\" target=\"_blank\" rel=\"noopener\">变分原理与矩阵形式</a>、<a href=\"https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2017/resources/mit5_61f17_lec28/\" target=\"_blank\" rel=\"noopener\">基组</a>、<a href=\"https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2017/resources/mit5_61f17_lec29/\" target=\"_blank\" rel=\"noopener\">电子关联</a>。</p>"
+    },
+    {
+      "id": "dft",
+      "title": "04 · DFT：用电子密度组织多电子问题",
+      "kicker": "DENSITY FUNCTIONAL THEORY",
+      "html": "<p>一个 N 电子空间波函数依赖 3N 个空间变量，而电子密度 n(r) 只依赖三维位置。密度在某处表示单位体积内的平均电子数；对孤立体系在全空间积分，或对周期体系在一个晶胞积分，得到对应的电子数。常用单位是电子数/Å³，电子电荷密度还要乘负的基本电荷。密度并不包含每个电子的身份标签。</p>\n<h3>“泛函”就是以函数为输入、以数为输出</h3>\n<p>普通函数 f(x) 把一个数变成另一个数；能量泛函 E[n] 把整个空间的密度分布变成一个能量值。基态 DFT 的思想是：在适当条件下，基态密度决定外势与体系的基态性质；精确基态能量可通过对允许的密度做变分得到。这个存在性结论并没有把实用的精确泛函直接交给我们，也不能把任意画出的密度都当作物理上允许的密度。</p>\n<div class=\"formula\">E[n] = T<sub>s</sub>[n] + ∫v<sub>ext</sub>(r)n(r)d³r + E<sub>H</sub>[n] + E<sub>xc</sub>[n] + E<sub>NN</sub></div>\n<p>各项均是能量：T<sub>s</sub> 为产生该密度的辅助非相互作用电子体系动能；v<sub>ext</sub> 是核等外部来源给一个电子的势能；E<sub>H</sub> 是密度的经典库仑能；E<sub>xc</sub> 为交换关联能，包含真实与辅助动能之差及超出经典库仑的电子作用；E<sub>NN</sub> 为核间排斥。交换关联项不是可有可无的“后加小修正”，它承担了关键的多电子物理。</p>\n<h3>Kohn–Sham 把密度问题改写成辅助轨道问题</h3>\n<div class=\"formula\">[−½∇² + v<sub>ext</sub> + v<sub>H</sub>[n] + v<sub>xc</sub>[n]]φᵢ = εᵢφᵢ，&nbsp; n(r) = ∑ᵢ fᵢ|φᵢ(r)|²</div>\n<p>这一式使用原子单位：ℏ、m<sub>e</sub> 和基本电荷等相关常数组合取 1，长度单位为 bohr，能量单位为 Hartree。v<sub>H</sub> 与 v<sub>xc</sub> 分别是 Hartree 势与交换关联势；φᵢ 是归一化辅助轨道，εᵢ 是本征值，fᵢ 是占据数。若按空间轨道且不分自旋书写，fᵢ 可在 0 到 2 间；若 i 已包含自旋，最大为 1。周期体系还需把 k 点与其权重纳入求和。</p>\n<p>密度决定有效势，有效势又决定轨道，轨道再产生密度，所以方程必须自洽求解。实际杂化泛函等常使用包含非局域算符的广义 Kohn–Sham 形式，不能把上面局域势公式当作所有实现的唯一形式。计算输出的总能也不是简单把所有占据轨道 εᵢ 相加：那会重复计入部分相互作用，并漏掉相应修正及核间能量。</p>\n<h3>选择泛函是在选择可检验的近似</h3>\n<div class=\"table-wrap\"><table><thead><tr><th>近似类型</th><th>所用信息或主要思路</th><th>应提出的问题</th></tr></thead><tbody><tr><td>LDA</td><td>以局部密度组织交换关联</td><td>所研究键合和结构是否适合此近似？</td></tr><tr><td>GGA，如 PBE</td><td>加入密度梯度</td><td>结构、能量差、磁性和带隙是否有已知偏差？</td></tr><tr><td>meta-GGA</td><td>引入动能密度等额外局域信息</td><td>网格、PAW 数据与所用版本是否兼容并收敛？</td></tr><tr><td>杂化泛函</td><td>混入一定形式与范围的 HF 交换</td><td>交换比例、屏蔽范围、成本与目标性质是否合适？</td></tr><tr><td>DFT+U</td><td>对选定局域子空间加修正</td><td>U 的定义、数值、轨道子空间与引用是否明确？</td></tr><tr><td>色散修正或非局域 vdW 泛函</td><td>补充长程相关作用的描述</td><td>方法是否重复计入某项，是否适合吸附与层间作用？</td></tr></tbody></table></div>\n<p>这个表不是精度排行榜。更昂贵的方法也可能在某类反应、金属或强关联体系中表现不佳；不同近似的误差有时会抵消。应对自己的目标量做基准或交叉检验，不能为了贴合某个实验数而随意调 U，再把调参结果当作独立预测。</p>\n<div class=\"warning\"><strong>带隙与激发能边界。</strong> Kohn–Sham 本征值属于辅助体系，任意两个能级的差不普遍等于实验激发能。常用半局域泛函往往低估许多半导体的带隙，但“DFT 永远低估一切带隙”不是定理。基本能隙涉及增减电子的能量，光学激发还受电子—空穴作用、选择定则和温度等影响；应说明你比较的是哪一种量。</div>\n<details><summary>练习：PBE 算得带隙 1.0 eV，实验吸收边为 1.8 eV；能否只把所有导带整体上移 0.8 eV？</summary><p>对特定展示目的可以明确采用经验剪刀修正，但它不是重新求解电子结构，也不能证明有效质量、缺陷能级、光学强度和界面能带排列都正确。先核实实验材料相、温度、缺陷和测量量；再按问题选择合适的杂化泛函、准粒子或激子方法与基准，不把拟合当作验证。</p></details>\n<p>理论起点：<a href=\"https://doi.org/10.1103/PhysRev.140.A1133\" target=\"_blank\" rel=\"noopener\">Kohn 与 Sham（1965）</a>；泛函类型见 <a href=\"https://vasp.at/wiki/Exchange-correlation_functional\" target=\"_blank\" rel=\"noopener\">VASP 交换关联泛函说明</a>；能隙的概念边界见 <a href=\"https://doi.org/10.1103/PhysRevLett.51.1884\" target=\"_blank\" rel=\"noopener\">Perdew 与 Levy（1983）</a>。</p>"
+    },
+    {
+      "id": "scf-spin",
+      "title": "05 · 自洽循环、占据与自旋：为什么算了很多步？",
+      "kicker": "SCF, OCCUPATIONS & SPIN",
+      "html": "<p>求 Kohn–Sham 方程看起来像求矩阵本征值，但矩阵本身取决于尚未求出的电子密度。这是一个反馈问题：先猜密度，构造有效势，求轨道与能量，再根据轨道和占据得到新密度；当输入与输出足够一致时，才称为自洽。</p>\n<h3>自洽并不是把同一道方程无意义地重复</h3>\n<ol><li><strong>初始化：</strong>例如叠加原子密度，或从兼容的上一计算读取电荷与波函数。</li><li><strong>求解当前有效问题：</strong>逐步优化轨道，得到所需数量的本征态。</li><li><strong>分配占据：</strong>满足电子总数，并采用与任务相适应的占据或展宽方式。</li><li><strong>构造新密度：</strong>检查能量和残差，再混合新旧信息，继续迭代。</li></ol>\n<figure class=\"course-figure\">\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 714\" role=\"img\" aria-labelledby=\"q6-scf-diagram-title\" aria-describedby=\"q6-scf-diagram-desc\" font-family=\"Microsoft YaHei, PingFang SC, system-ui, sans-serif\" style=\"display:block;width:100%;max-width:460px;height:auto;margin:24px auto 16px\">\n<title id=\"q6-scf-diagram-title\">自洽循环：密度、有效势与轨道相互决定</title>\n<desc id=\"q6-scf-diagram-desc\">从初猜输入密度出发，构造有效势并求解或优化 Kohn–Sham 轨道；按电子总数分配占据，得到输出密度。检查收敛条件和残差：若未满足，则混合与预处理新旧密度，反馈到下一轮有效势；满足后结束电子循环，分析能量和力。图为教学简化，实际算法包含更多步骤。</desc>\n<defs><marker id=\"q6-scf-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#315d91\"/></marker></defs>\n<rect x=\"4\" y=\"4\" width=\"412\" height=\"706\" rx=\"12\" fill=\"#f5f8fc\" stroke=\"#dde5ef\"/>\n<g fill=\"none\" stroke=\"#315d91\" stroke-width=\"2.5\" marker-end=\"url(#q6-scf-arrow)\">\n<path d=\"M159 100V132\"/><path d=\"M159 238V270\"/><path d=\"M159 378V397\"/><path d=\"M159 545V591\"/>\n<path d=\"M294 475H355V368\"/><path d=\"M355 260V192H306\"/>\n</g>\n<rect x=\"24\" y=\"32\" width=\"270\" height=\"68\" rx=\"9\" fill=\"#fff\" stroke=\"#a8bbd5\"/>\n<rect x=\"24\" y=\"144\" width=\"270\" height=\"94\" rx=\"9\" fill=\"#edf3ff\" stroke=\"#8daae0\"/>\n<rect x=\"24\" y=\"282\" width=\"270\" height=\"96\" rx=\"9\" fill=\"#fff\" stroke=\"#a8bbd5\"/>\n<path d=\"M159 405L294 475L159 545L24 475Z\" fill=\"#fff\" stroke=\"#8daae0\" stroke-width=\"1.5\"/>\n<rect x=\"309\" y=\"260\" width=\"93\" height=\"96\" rx=\"9\" fill=\"#eef7f6\" stroke=\"#83b1b4\"/>\n<rect x=\"24\" y=\"603\" width=\"270\" height=\"79\" rx=\"9\" fill=\"#eef7f6\" stroke=\"#83b1b4\"/>\n<g fill=\"#152e4c\" text-anchor=\"middle\">\n<text x=\"159\" y=\"59\" font-size=\"20\" font-weight=\"600\">给定初猜密度</text><text x=\"159\" y=\"84\" font-size=\"18\">本轮输入 n_in</text>\n<text x=\"159\" y=\"178\" font-size=\"20\" font-weight=\"600\">构造有效势</text><text x=\"159\" y=\"209\" font-size=\"18\">求解 / 优化 KS 轨道</text>\n<text x=\"159\" y=\"317\" font-size=\"20\" font-weight=\"600\">按电子数分配占据</text><text x=\"159\" y=\"349\" font-size=\"18\">得到输出密度 n_out</text>\n<text x=\"159\" y=\"470\" font-size=\"19\" font-weight=\"600\">收敛条件满足？</text><text x=\"159\" y=\"495\" font-size=\"18\">检查能量与残差</text>\n<text x=\"355\" y=\"286\" font-size=\"19\" font-weight=\"600\">混合</text><text x=\"355\" y=\"313\" font-size=\"18\">新旧密度</text><text x=\"355\" y=\"339\" font-size=\"18\">并预处理</text>\n<text x=\"159\" y=\"634\" font-size=\"20\" font-weight=\"600\">结束电子循环</text><text x=\"159\" y=\"663\" font-size=\"18\">分析能量、力等目标量</text>\n</g>\n<text x=\"324\" y=\"454\" fill=\"#315d91\" font-size=\"18\" font-weight=\"600\">否</text><text x=\"178\" y=\"579\" fill=\"#1d7c85\" font-size=\"18\" font-weight=\"600\">是</text>\n</svg>\n<figcaption><strong>教学示意：自洽是一条反馈回路。</strong> 未收敛时调整的是电子状态；实际 VASP 的轨道更新、混合与预处理比图中更复杂。图中的“收敛”只指电子循环，不能替代几何优化、参数收敛或基态判断。</figcaption>\n</figure>\n<div class=\"formula\">n<sub>in</sub><sup>(j+1)</sup> = (1 − α)n<sub>in</sub><sup>(j)</sup> + αn<sub>out</sub><sup>(j)</sup></div>\n<p>这是帮助理解的简单线性混合式，j 是迭代次数，α 是无量纲混合比例，通常取 0 &lt; α ≤ 1；n<sub>in</sub> 与 n<sub>out</sub> 分别是该轮输入和输出密度。VASP 的实际混合与预处理比此式复杂，但目的相同：避免新旧电荷分布来回过度纠正。长晶胞、金属表面和难处理的磁态容易出现“电荷振荡”，并非所有问题都能靠把最大电子步数加到很大解决。</p>\n<p>可以用玩具映射 x<sub>out</sub> = 1 − x<sub>in</sub> 理解振荡：x 为无量纲标量，直接替换会在两个值间跳动，α = ½ 则一步到达固定点 ½。真实密度有许多空间模式，各自需要不同的数值处理；这个例子说明混合为何有用，并不是预测真实材料收敛速度的公式。</p>\n<h3>占据展宽与电子温度不是总能随意“抹平”</h3>\n<p>金属的费米能附近既有占据态又有空态，微小能级变化会改变占据，令 k 空间积分和自洽困难。展宽让占据在费米能附近平滑变化。费米–狄拉克形式为：</p>\n<div class=\"formula\">f(ε) = 1 / {exp[(ε − μ)/(k<sub>B</sub>T<sub>e</sub>)] + 1}</div>\n<p>这里按单个自旋态计数，f 在 0 与 1 间；ε 是该态能量，μ 是电子化学势，T<sub>e</sub> 是电子温度，k<sub>B</sub>T<sub>e</sub> 与 ε 使用相同能量单位。只有采用这种统计形式时，展宽参数才能直接作相应温度解释；高斯与 Methfessel–Paxton 展宽主要是数值积分工具。电子温度也不自动等于分子动力学里的离子温度。</p>\n<p>在 VASP 中，ISMEAR 选择方式、SIGMA 给出 eV 宽度。较大的 SIGMA 有时更容易收敛，却可能改变目标能量、磁态与力；太小又可能要求很密的 k 网格。未知体系可从小宽度高斯展宽开始，并测试目标量。带隙体系不应机械照搬金属常用的正值 ISMEAR；四面体积分需合适的网格，也不是仅有 Γ 点时的通用选项。含展宽的自由能、去熵能与外推能有不同含义，比较时应坚持相同且合适的定义。</p>\n<h3>自旋是求解空间的一部分</h3>\n<p>共线自旋 DFT 分开处理 n↑ 与 n↓：总密度 n = n↑ + n↓，自旋密度差 m = n↑ − n↓。m 在这里按电子数/体积计，积分后乘以相应磁矩单位可讨论总自旋磁矩。没有净磁矩不等于处处没有磁性：反铁磁体系的不同位点可有相反局域磁矩，最后相互抵消。</p>\n<p>ISPIN = 2 允许共线自旋极化；MAGMOM 给出初始局域磁矩并影响所保留的对称性，它并非把最终磁矩永久锁定。应按结构和化学可能性尝试多个铁磁、反铁磁或不同初始幅度，比较收敛后的能量与局域状态。若研究非共线磁性或自旋–轨道耦合，还需更完整的设置，不能只加一行 MAGMOM 就完成。</p>\n<div class=\"note\"><strong>电子收敛不是基态证明。</strong> EDIFF 是电子循环的停止阈值，单位 eV，作用于整个计算单元的相邻步变化；它不直接等于每原子误差，也不是和实验的误差。碰到最大步数后退出更不能算达标。应看停止原因、能量与电荷残差走势，以及最终态是否符合研究模型。</div>\n<details><summary>练习：总磁矩为 0，可以关闭自旋极化省计算吗？</summary><p>不能只凭这个数字决定。先检查局域磁矩和自旋密度：两个等大反向磁矩的反铁磁体净磁矩也是 0。把它改成不允许自旋极化的计算会换掉物理模型，可能改变能隙、键长与总能。也要保证超胞容得下你想研究的磁序。</p></details>\n<p>设置定义见 <a href=\"https://vasp.at/wiki/Self-consistency_cycle\" target=\"_blank\" rel=\"noopener\">自洽循环</a>、<a href=\"https://vasp.at/wiki/Smearing_technique\" target=\"_blank\" rel=\"noopener\">展宽方法</a>、<a href=\"https://vasp.at/wiki/MAGMOM\" target=\"_blank\" rel=\"noopener\">MAGMOM</a> 与 <a href=\"https://vasp.at/wiki/EDIFF\" target=\"_blank\" rel=\"noopener\">EDIFF</a>。遇到不收敛问题时，先按<a href=\"vasp-reference-v6.html\">参数与诊断手册</a>排查结构和方法，再调整算法。</p>"
+    },
+    {
+      "id": "periodic-kpoints",
+      "title": "06 · 晶体、倒空间与 k 点：有限计算怎样表示无限材料？",
+      "kicker": "BLOCH WAVES & BRILLOUIN ZONE",
+      "html": "<p>周期计算不是拿一小块晶体悬在真空里，而是规定它沿晶格方向无限重复。晶胞中的原子、缺陷和吸附物也会被重复。因此“只放一个缺陷”通常表示每个超胞都有一个缺陷；增大超胞是在降低重复缺陷的浓度与相互影响，而不是改变同一个有限团簇的盒子边界。</p>\n<h3>先区分晶格与原子基元</h3>\n<div class=\"formula\">R = n₁a₁ + n₂a₂ + n₃a₃，&nbsp; r = f₁a₁ + f₂a₂ + f₃a₃</div>\n<p>a₁、a₂、a₃ 是三个晶格矢量，单位如 Å；nᵢ 是整数，R 是任一平移矢量。fᵢ 是某个原子的无量纲分数坐标，r 是其笛卡尔位置。原胞是最小平移重复单元，常规晶胞可能更便于显示对称性，超胞则由多个原胞组合而成。采用斜晶胞时，分数坐标的一维变化不等于沿笛卡尔 x、y 或 z 单独移动；查看 POSCAR 必须同时看晶格矢量。</p>\n<h3>倒空间记录波的空间变化，而非另一块实体晶体</h3>\n<div class=\"formula\">aᵢ · bⱼ = 2πδᵢⱼ，&nbsp; G = h₁b₁ + h₂b₂ + h₃b₃</div>\n<p>bⱼ 是倒格矢，单位 Å<sup>−1</sup>；δᵢⱼ 在 i = j 时为 1，否则为 0；hᵢ 是整数，G 为倒格矢组合。这里采用含 2π 的物理学约定，不应与某些晶体学工具不含 2π 的约定混用。对正交长度为 a 的方向，倒空间尺度为 2π/a，因此实空间重复长度变大，对应倒空间重复尺度变小。</p>\n<p>周期势中的单电子解可取 Bloch 形式。它不是说波函数在相邻晶胞完全相同，而是说相邻晶胞可以差一个相位：</p>\n<div class=\"formula\">ψ<sub>nk</sub>(r) = exp(ik·r)u<sub>nk</sub>(r)，&nbsp; u<sub>nk</sub>(r + R) = u<sub>nk</sub>(r)</div>\n<p>n 为能带编号，k 为 Bloch 波矢（Å<sup>−1</sup>），r、R 用 Å，点积 k·r 无量纲；u 是具有晶格周期性的函数。k 的独立取值可限制到第一布里渊区。Γ 点就是 k = 0。晶体动量标签 ℏk 对理解平移对称性有用，但它不能直接当成电子在晶体内每一时刻的普通机械动量。</p>\n<h3>总能需要整个区域的积分，不是只取一条能带路径</h3>\n<div class=\"formula\">⟨A⟩<sub>BZ</sub> = (1/Ω<sub>BZ</sub>)∫<sub>BZ</sub>A(k)d³k ≈ ∑<sub>k</sub>w<sub>k</sub>A(k)，&nbsp; ∑<sub>k</sub>w<sub>k</sub> = 1</div>\n<p>A(k) 表示待积分的某个 k 相关量，Ω<sub>BZ</sub> 是布里渊区体积（Å<sup>−3</sup>），w<sub>k</sub> 是无量纲权重。规则 k 网格近似这项积分，晶体对称性可把等价点合并到不可约区，并相应增加权重。能带图沿 Γ—X 等高对称线采样，只展示少数方向，不能替代用于总能与密度的体积积分网格。</p>\n<figure class=\"course-figure\">\n<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 760\" role=\"img\" aria-labelledby=\"q6-kpoints-diagram-title\" aria-describedby=\"q6-kpoints-diagram-desc\" font-family=\"Microsoft YaHei, PingFang SC, system-ui, sans-serif\" style=\"display:block;width:100%;max-width:480px;height:auto;margin:24px auto 16px\">\n<title id=\"q6-kpoints-diagram-title\">规则 k 网格与选定高对称路径回答不同问题</title>\n<desc id=\"q6-kpoints-diagram-desc\">上下两个二维方形仅作教学示意。上图以均匀点阵覆盖一个区域，代表对整个布里渊区进行加权积分。下图仅在中心 Γ 与示意端点 A、B 之间的线段采样，用于显示能级沿方向的变化；线上的采样不能替代区域积分。这不是硅的真实布里渊区，也不是本教程硅原胞的能带路径。</desc>\n<defs><marker id=\"q6-kpoints-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"5\" markerHeight=\"5\" orient=\"auto-start-reverse\"><path d=\"M0 0L10 5L0 10Z\" fill=\"#60728a\"/></marker></defs>\n<rect x=\"4\" y=\"4\" width=\"412\" height=\"342\" rx=\"12\" fill=\"#f5f8fc\" stroke=\"#dde5ef\"/>\n<rect x=\"4\" y=\"365\" width=\"412\" height=\"391\" rx=\"12\" fill=\"#f5f8fc\" stroke=\"#dde5ef\"/>\n<g fill=\"#152e4c\" font-size=\"19\" font-weight=\"600\"><text x=\"27\" y=\"44\">A　规则网格：覆盖积分区域</text><text x=\"27\" y=\"401\">B　路径采样：看沿线的能级变化</text></g>\n<g fill=\"none\" stroke=\"#60728a\" stroke-width=\"1.6\" marker-end=\"url(#q6-kpoints-arrow)\"><path d=\"M65 300H334\"/><path d=\"M65 300V74\"/><path d=\"M65 659H334\"/><path d=\"M65 659V424\"/></g>\n<g fill=\"#344d69\" font-size=\"17\"><text x=\"341\" y=\"306\">kₓ</text><text x=\"43\" y=\"77\">kᵧ</text><text x=\"341\" y=\"665\">kₓ</text><text x=\"43\" y=\"432\">kᵧ</text></g>\n<rect x=\"96\" y=\"80\" width=\"210\" height=\"210\" fill=\"#fff\" stroke=\"#a8bbd5\" stroke-width=\"1.8\"/>\n<g stroke=\"#dde5ef\" stroke-width=\"1\"><path d=\"M138 80V290\"/><path d=\"M180 80V290\"/><path d=\"M222 80V290\"/><path d=\"M264 80V290\"/><path d=\"M96 122H306\"/><path d=\"M96 164H306\"/><path d=\"M96 206H306\"/><path d=\"M96 248H306\"/></g>\n<g fill=\"#285ee7\"><circle cx=\"117\" cy=\"101\" r=\"3.8\"/><circle cx=\"117\" cy=\"143\" r=\"3.8\"/><circle cx=\"117\" cy=\"185\" r=\"3.8\"/><circle cx=\"117\" cy=\"227\" r=\"3.8\"/><circle cx=\"117\" cy=\"269\" r=\"3.8\"/><circle cx=\"159\" cy=\"101\" r=\"3.8\"/><circle cx=\"159\" cy=\"143\" r=\"3.8\"/><circle cx=\"159\" cy=\"185\" r=\"3.8\"/><circle cx=\"159\" cy=\"227\" r=\"3.8\"/><circle cx=\"159\" cy=\"269\" r=\"3.8\"/><circle cx=\"201\" cy=\"101\" r=\"3.8\"/><circle cx=\"201\" cy=\"143\" r=\"3.8\"/><circle cx=\"201\" cy=\"185\" r=\"3.8\"/><circle cx=\"201\" cy=\"227\" r=\"3.8\"/><circle cx=\"201\" cy=\"269\" r=\"3.8\"/><circle cx=\"243\" cy=\"101\" r=\"3.8\"/><circle cx=\"243\" cy=\"143\" r=\"3.8\"/><circle cx=\"243\" cy=\"185\" r=\"3.8\"/><circle cx=\"243\" cy=\"227\" r=\"3.8\"/><circle cx=\"243\" cy=\"269\" r=\"3.8\"/><circle cx=\"285\" cy=\"101\" r=\"3.8\"/><circle cx=\"285\" cy=\"143\" r=\"3.8\"/><circle cx=\"285\" cy=\"185\" r=\"3.8\"/><circle cx=\"285\" cy=\"227\" r=\"3.8\"/><circle cx=\"285\" cy=\"269\" r=\"3.8\"/></g><circle cx=\"201\" cy=\"185\" r=\"6\" fill=\"#152e4c\"/>\n<text x=\"213\" y=\"179\" fill=\"#152e4c\" font-size=\"18\">Γ</text>\n<text x=\"44\" y=\"329\" fill=\"#344d69\" font-size=\"18\">按权重汇总整个区域的信息</text>\n<rect x=\"96\" y=\"430\" width=\"210\" height=\"210\" fill=\"#fff\" stroke=\"#a8bbd5\" stroke-width=\"1.8\"/>\n<path d=\"M201 535H306V430L201 535\" fill=\"none\" stroke=\"#1d7c85\" stroke-width=\"2.5\"/>\n<g fill=\"#1d7c85\"><circle cx=\"201\" cy=\"535\" r=\"3.8\"/><circle cx=\"222\" cy=\"514\" r=\"3.8\"/><circle cx=\"222\" cy=\"535\" r=\"3.8\"/><circle cx=\"243\" cy=\"493\" r=\"3.8\"/><circle cx=\"243\" cy=\"535\" r=\"3.8\"/><circle cx=\"264\" cy=\"472\" r=\"3.8\"/><circle cx=\"264\" cy=\"535\" r=\"3.8\"/><circle cx=\"285\" cy=\"451\" r=\"3.8\"/><circle cx=\"285\" cy=\"535\" r=\"3.8\"/><circle cx=\"306\" cy=\"430\" r=\"3.8\"/><circle cx=\"306\" cy=\"451\" r=\"3.8\"/><circle cx=\"306\" cy=\"472\" r=\"3.8\"/><circle cx=\"306\" cy=\"493\" r=\"3.8\"/><circle cx=\"306\" cy=\"514\" r=\"3.8\"/><circle cx=\"306\" cy=\"535\" r=\"3.8\"/></g>\n<g fill=\"#152e4c\" font-size=\"18\"><text x=\"181\" y=\"562\">Γ</text><text x=\"319\" y=\"543\">A</text><text x=\"317\" y=\"441\">B</text></g>\n<text x=\"43\" y=\"701\" fill=\"#344d69\" font-size=\"18\">观察 εₙ(k) 随方向怎样变化</text>\n<text x=\"43\" y=\"730\" fill=\"#344d69\" font-size=\"18\">路径上的点不能替代区域积分</text>\n</svg>\n<figcaption><strong>教学示意：区域积分与路径展示用途不同。</strong> 这里借用二维方形说明区别，点数、方形边界与 A/B 标签均不代表硅的真实布里渊区，也不是本教程硅原胞的能带路径。实际晶体的维度、倒格矢、网格权重和高对称点应按结构确定。</figcaption>\n</figure>\n<p>k 网格要求取决于倒空间变化速度。小原胞通常需要更多点；金属费米面附近变化快，常比相似尺寸的绝缘体更难收敛。对正交晶胞，沿实空间较长的方向一般可取较少点。非正交晶格还要兼顾倒格矢、网格中心与晶体对称性，不能把“长度倒数配比”当作所有晶系的严格规则。</p>\n<div class=\"note\"><strong>表面和分子也要检查周期误差。</strong> 含足够真空的薄片常在法向只取一个 k 点，但面内仍需收敛网格；孤立分子常放在大盒中取 Γ 点，但还需验证盒长、偶极和电荷处理。真空 15 Å 或网格 3×3×1 都只能是待检验起点，不能成为对所有体系的保证。</div>\n<p>理解超胞折叠也很重要：把相同理想晶体沿每个方向扩成两倍，布里渊区缩小，原来的一部分 k 信息会折叠到更多能带里。在兼容采样与相同数值条件下应能得到等价物理结果，但“任何大超胞都只需 Γ 点”并不成立，尤其是金属、较短方向及细小能量差问题。</p>\n<details><summary>练习：立方原胞用 8×8×8 网格，构造 2×2×2 超胞后可从什么网格开始测试？</summary><p>4×4×4 是保持相近倒空间点间距的合理起点，因为各实空间方向变成两倍。还应确认网格中心和折叠兼容、结构是否仍是原晶体、以及目标性质的收敛。若加入缺陷或改变磁序，就需重新验证，不能仅凭点数缩放宣布达到同一精度。</p></details>\n<p>参考实现：<a href=\"https://vasp.at/wiki/KPOINTS\" target=\"_blank\" rel=\"noopener\">VASP KPOINTS 与网格对称性</a>、<a href=\"https://vasp.at/wiki/K-point_integration\" target=\"_blank\" rel=\"noopener\">布里渊区积分</a>。能带与态密度工作流见<a href=\"vasp-electronic-v6.html\">电子结构任务</a>。</p>"
+    },
+    {
+      "id": "plane-wave-paw",
+      "title": "07 · 平面波、PAW 与截断能：ENCUT 到底截掉了什么？",
+      "kicker": "PLANE WAVES & PAW",
+      "html": "<p>经过 Bloch 定理，周期部分 u 可以用傅里叶级数表示。与用音符合成复杂声音类似，我们用不同空间频率的平面波合成轨道。高频分量能表达更细的空间变化，但保留更多分量会使计算更昂贵。</p>\n<div class=\"formula\">ψ̃<sub>nk</sub>(r) = Ω<sup>−1/2</sup>∑<sub>G</sub>C<sub>nkG</sub> exp[i(k + G)·r]</div>\n<p>Ω 是晶胞体积，G 为倒格矢，n、k 仍表示能带与 Bloch 波矢，C 是展开系数；波函数上的波浪号提醒我们，这里可指 PAW 计算所优化的平滑辅助轨道。若 Ω 用 Å³，归一化前因子的单位为 Å<sup>−3/2</sup>。无限个 G 在计算机上不可行，因此按相应平面波的动能截断：</p>\n<div class=\"formula\">(ℏ²/2m<sub>e</sub>)|k + G|² &lt; E<sub>cut</sub></div>\n<p>VASP 的 ENCUT 就是 E<sub>cut</sub>，单位 eV。若波矢用 Å<sup>−1</sup>，ℏ²/(2m<sub>e</sub>) ≈ 3.80998 eV·Å²。提高 ENCUT 会扩大允许的波矢范围，提高空间分辨能力；它不是删除能量高于该值的实际电子，也不是允许计算多大带隙的上限。空带数量由另一类设置控制，和基函数数量不是一回事。</p>\n<h3>为什么不直接把核附近的剧烈变化全算进去？</h3>\n<p>靠近原子核时，价电子轨道受核与芯态正交条件影响，空间变化很快，直接用平面波表示需要大量高频分量。PAW（投影缀加波）用平滑辅助函数承担大范围表示，再在原子附近借助局域信息重建所需的全电子特征。它包含投影、局域部分波和补偿等处理，不能理解成只把核附近随意涂平后忽略误差。</p>\n<p>VASP 常用 PAW 数据集还采用冻结芯近似：部分内层电子保持在生成数据时的芯态描述中，显式求解价电子。不同数据集可能把半芯电子纳入价层，或者采用不同的硬度与参考配置。因此“同一个元素”的两个 POTCAR 不一定具有相同电子数、能量基准和精度需求。应记录具体数据集标识、版本及价电子配置，比较能量差时保持相关物种的数据一致。</p>\n<div class=\"warning\"><strong>PAW 的全电子重建能力不意味着无近似。</strong> 冻结芯、有限局域展开、截断与泛函仍有各自误差；极端压力、很短键长或特别敏感的性质可能要求不同数据集与额外验证。不能因为文件叫 POTCAR 就认为它可随意跨不同方法与数据版本混用。</div>\n<h3>截断能、网格与晶胞为什么一起影响成本？</h3>\n<p>把可用波矢近似看成球内格点，在三维固定截断下，平面波数量大致随 ΩE<sub>cut</sub><sup>3/2</sup> 增长。这是基组大小的尺度估计，不是总运行时间的严格公式；真正费用还受电子数、空带数、k 点、算法与并行方式影响。给孤立分子加真空虽然不增加原子，却增加晶胞体积和需要表示的空间，所以会明显增加内存与计算量。</p>\n<p>实空间 FFT 网格负责在实空间和倒空间之间转换；PREC 等设置影响相关数值网格，不能认为只提高 ENCUT 就覆盖所有网格误差。对于应力和晶胞优化，有限基组随晶胞变化还会产生 Pulay 应力；总能看起来已经平稳，并不保证压力或体积同样达到所需精度。优化后再用统一且充分收敛的参数检查最终结构，有助于发现这类问题。</p>\n<h3>怎样做一次有意义的 ENCUT 测试？</h3>\n<p>固定结构、k 网格、电子方法和其他条件，选取跨越 POTCAR 推荐尺度的一组递增 ENCUT，记录目标能量差、力或应力。采用混合元素时，要留意其中要求最高的物种。最终阈值由性质需求决定，不是永远 400 eV 或 520 eV。若要比较不同体系的形成能或吸附能，应统一采用已对整组比较对象验证的显式截断设置，避免各自使用不同的隐含默认值。</p>\n<details><summary>练习：把真空层从 15 Å 加到 25 Å，原子数不变，为什么仍可能更慢？</summary><p>体积增加，给定截断内可用的平面波与 FFT 网格规模通常增加；轨道需在更大空间表示。与此同时，真空增大还可能改变长波电荷模式与自洽难度。应以目标量对真空的收敛来决定所需大小，而不是无限加大。真空方向 k 点往往可保持一个，但这不消除体积带来的成本。</p></details>\n<p>进一步阅读：<a href=\"https://vasp.at/wiki/Projector-augmented-wave_formalism\" target=\"_blank\" rel=\"noopener\">PAW 原理</a>、<a href=\"https://vasp.at/wiki/ENCUT\" target=\"_blank\" rel=\"noopener\">ENCUT 定义</a>、<a href=\"https://vasp.at/wiki/Pulay_stress\" target=\"_blank\" rel=\"noopener\">Pulay 应力</a>。</p>"
+    },
+    {
+      "id": "reliability",
+      "title": "08 · 从“算完了”到“结论可信”：误差、收敛与 AI",
+      "kicker": "RELIABILITY & SCIENTIFIC JUDGMENT",
+      "html": "<p>第一份计算报告不应只有一张能带图和一个最低能量。真正需要回答的是：比较什么、用什么物理模型、数值误差有多大，以及目前证据能够支持多强的结论。把这些问题写清楚，比把所有参数调到最大更接近可靠研究。</p>\n<h3>至少分清四类误差</h3>\n<div class=\"table-wrap\"><table><thead><tr><th>层次</th><th>典型问题</th><th>验证方法</th></tr></thead><tbody><tr><td>物理模型</td><td>错误晶相、磁序、表面终止、缺陷浓度；漏掉溶剂或温度</td><td>比对实验条件，构造合理备选模型</td></tr><tr><td>电子近似</td><td>泛函、冻结芯、强关联或激发态描述不足</td><td>基准、不同方法交叉检查、已知极限</td></tr><tr><td>数值离散</td><td>ENCUT、k 点、真空、超胞、FFT 网格不足</td><td>逐项增加精度，看目标量是否稳定</td></tr><tr><td>求解与采样</td><td>SCF 未收敛、局部极小、MD 太短、初始态单一</td><td>检查停止原因，多个起点，时间与尺寸测试</td></tr></tbody></table></div>\n<p>EDIFF 从 10<sup>−5</sup> 改成 10<sup>−8</sup> eV，主要收紧电子求解的停止标准，不会修复选错晶相或不适合的泛函。EDIFFG 为负值时按原子力范数判定几何停止，量纲相应为 eV/Å；能量变化小、力小和目标性质收敛是三个不同检查。实际任务还要确认对固定原子、晶胞与约束自由度的处理符合设定。</p>\n<h3>收敛的是目标性质，不是某个看起来很大的参数</h3>\n<p>先明确容许变化，例如希望区分相差约 0.1 eV 的吸附构型，可将数值精度目标定得显著小于该差值，再开展测试。下面是一组<strong>人为构造的教学数据，不是真实 VASP 计算结果</strong>，用于演示记录方法：</p>\n<div class=\"table-wrap\"><table><thead><tr><th>固定其余条件的测试</th><th>吸附能 / eV</th><th>相对上一档变化 / eV</th></tr></thead><tbody><tr><td>ENCUT = 400 eV</td><td>−0.620</td><td>—</td></tr><tr><td>ENCUT = 450 eV</td><td>−0.648</td><td>−0.028</td></tr><tr><td>ENCUT = 500 eV</td><td>−0.653</td><td>−0.005</td></tr><tr><td>ENCUT = 550 eV</td><td>−0.654</td><td>−0.001</td></tr></tbody></table></div>\n<p>这只显示该玩具数据对截断趋于稳定，不能证明 k 点、覆盖度或泛函误差也小。下一步应固定足够的截断，测试 k 网格，再复核组合参数。若两个构型只差 0.003 eV，而收敛测试仍漂移 0.01 eV，就没有足够依据给出稳健的优劣排名。避免把输出很多小数位误当成结果有同样多位有效数字。</p>\n<div class=\"formula\">E<sub>ads</sub> = E<sub>slab+A</sub> − E<sub>slab</sub> − E<sub>A</sub></div>\n<p>这里 E<sub>slab+A</sub> 是吸附体系电子总能，E<sub>slab</sub> 是相应清洁表面能，E<sub>A</sub> 是采用明确参考态的吸附物能，单位 eV；按这个符号约定，负值表示相对于所选参考电子能更有利。必须写清每项结构、原子数、磁态和计算设置是否可比。电子吸附能不自动等于实验吸附自由能；零点能、熵、覆盖度、溶剂与电极条件可能都影响比较。</p>\n<h3>人工智能是在改变工作流，不是取消物理验证</h3>\n<p>一个常见方向是机器学习势：用高质量电子结构计算得到的能量、力、应力训练模型，让模型快速估计新结构的势能面及导数，从而扩展分子动力学可达到的时间和尺寸。主动学习会优先为不确定或新颖的结构补充第一性原理数据。这样，量子计算不再每一步都重新执行，但仍承担训练标签与校验依据。</p>\n<p>需要同时问两层误差：模型是否逼近了训练所用 DFT，以及该 DFT 是否适合真实研究问题。对某个温度下的完美晶体训练良好，并不保证模型能描述熔化、断键、缺陷迁移或新元素。训练集与测试集若含大量相邻时间帧，可能因结构过于相似而得到乐观误差；按独立轨迹、不同结构和目标过程做验证更有意义。</p>\n<p>AI 也可以筛选候选材料、建议反应路径或生成初始结构。生成结果首先是候选；通过 DFT 验证是计算证据；进一步的实验才回答它是否在指定条件下真实存在或发挥作用。写报告时使用“预测候选”“经某方法优化”“在某条件模拟”“实验观察”等明确措辞，比把各层结论都写成“发现高性能材料”更可复核。</p>\n<h3>带着这份检查表进入第一个 VASP 任务</h3>\n<ol><li>写一句要回答的科学问题，并确定具体可比较的目标量。</li><li>列出结构来源、组成、电子数、周期边界、磁态与环境假设。</li><li>记录软件版本、PAW 数据、泛函、所有关键输入与后处理定义。</li><li>保留收敛数据、异常日志、失败尝试和最终输出，而非仅保留漂亮图。</li><li>用合理的参照、备选构型或另一方法检查最关键的结论。</li></ol>\n<details><summary>综合练习：机器学习势把每原子测试能量误差降到 2 meV，能否直接发布“扩散势垒精确到 2 meV”？</summary><p>不能。每原子平均误差不是局部迁移势垒的误差，训练与测试分布可能没有覆盖过渡态；两端和路径上的误差可能相关，也可能放大。需要验证实际迁移路径的相对能量与力，并检查原始电子理论、超胞和路径求解的误差。还要报告测试集构成与训练分离方式，而不是只摘取一个最小误差指标。</p></details>\n<p>参考：<a href=\"https://vasp.at/wiki/EDIFFG\" target=\"_blank\" rel=\"noopener\">几何停止条件</a>、<a href=\"https://vasp.at/wiki/Machine_learning_force_field%3A_Theory\" target=\"_blank\" rel=\"noopener\">VASP 机器学习势理论</a>、<a href=\"https://vasp.at/wiki/Best_practices_for_machine-learned_force_fields\" target=\"_blank\" rel=\"noopener\">机器学习势验证建议</a>。下一步进入<a href=\"vasp-start-v6.html\">VASP 入门与结构任务</a>；也可回到<a href=\"tutorial-v6.html\">课程路线</a>选择专题。</p>"
+    }
+  ],
+  "sources": [
+    {
+      "title": "MIT 5.61 Lecture 5: Free Particle and Particle in a 1D Box",
+      "url": "https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2017/resources/mit5_61f17_lec5/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "MIT 5.61: Born-Oppenheimer approximation and variational principle",
+      "url": "https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2007/resources/lecture28to29/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "MIT 5.61 Lecture 24: Matrix Mechanics and Variational Principle",
+      "url": "https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2017/resources/mit5_61f17_lec24/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "MIT 5.61 Lecture 28: Basis Sets",
+      "url": "https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2017/resources/mit5_61f17_lec28/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "MIT 5.61 Lecture 29: Electron Correlation",
+      "url": "https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2017/resources/mit5_61f17_lec29/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Kohn & Sham (1965): Self-Consistent Equations Including Exchange and Correlation Effects",
+      "url": "https://doi.org/10.1103/PhysRev.140.A1133",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Exchange-correlation functionals",
+      "url": "https://vasp.at/wiki/Exchange-correlation_functional",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Perdew & Levy (1983): Physical Content of the Exact Kohn-Sham Orbital Energies",
+      "url": "https://doi.org/10.1103/PhysRevLett.51.1884",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Self-consistency cycle",
+      "url": "https://vasp.at/wiki/Self-consistency_cycle",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Smearing technique",
+      "url": "https://vasp.at/wiki/Smearing_technique",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: MAGMOM",
+      "url": "https://vasp.at/wiki/MAGMOM",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: EDIFF",
+      "url": "https://vasp.at/wiki/EDIFF",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: KPOINTS",
+      "url": "https://vasp.at/wiki/KPOINTS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Integrating over all orbitals",
+      "url": "https://vasp.at/wiki/K-point_integration",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Projector-augmented-wave formalism",
+      "url": "https://vasp.at/wiki/Projector-augmented-wave_formalism",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ENCUT",
+      "url": "https://vasp.at/wiki/ENCUT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Pulay stress",
+      "url": "https://vasp.at/wiki/Pulay_stress",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: EDIFFG",
+      "url": "https://vasp.at/wiki/EDIFFG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Machine learning force field theory",
+      "url": "https://vasp.at/wiki/Machine_learning_force_field%3A_Theory",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Best practices for machine-learned force fields",
+      "url": "https://vasp.at/wiki/Best_practices_for_machine-learned_force_fields",
+      "accessed": "2026-09-19"
+    }
+  ],
+  "downloads": []
+}

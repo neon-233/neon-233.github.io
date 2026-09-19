@@ -1,0 +1,19 @@
+# TEMPLATE: internally relaxed elastic tensor of a 3D BULK solid
+# Input must already be tightly relaxed at the target pressure.
+# Not suitable for directly reporting a vacuum-containing slab in GPa.
+SYSTEM = bulk-elastic-finite-difference
+GGA = PE
+ENCUT = REPLACE_WITH_STRESS_CONVERGED_ENCUT
+PREC = Accurate
+EDIFF = 1E-8
+ALGO = Normal
+LREAL = .FALSE.
+ISMEAR = 0
+SIGMA = 0.05
+IBRION = 6
+ISIF = 3
+NFREE = 2
+POTIM = 0.015
+NSW = 1
+LWAVE = .FALSE.
+LCHARG = .FALSE.

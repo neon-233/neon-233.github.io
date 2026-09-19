@@ -1,0 +1,547 @@
+{
+  "schemaVersion": 1,
+  "checkedAtUtc": "2026-09-19T07:31:41Z",
+  "passed": true,
+  "scope": "Read-only static verification of generated V6 pages, HTML/SVG ID references, shared JavaScript and downloadable examples; only this report is written.",
+  "pages": [
+    {
+      "path": "tutorial-v6.html",
+      "sha256": "36a18bfbbfc24fea9bc0ef574c10112964b7c77257d6d55adc589960584a44cf"
+    },
+    {
+      "path": "quantum-v6.html",
+      "sha256": "c02e0ffc8d9c90b8ce9fa00c51e059387241f5ddd83558723479c30d2b55deb5"
+    },
+    {
+      "path": "vasp-start-v6.html",
+      "sha256": "d5ff6bc3baef0411dfc6367c46447e725cdd849446e93f1e1cdd4999f07881a2"
+    },
+    {
+      "path": "vasp-electronic-v6.html",
+      "sha256": "0e8f7d02f565af2aec3a3f9d46c4e5e0e44c24b229f5812b4fc2e7de70d7582f"
+    },
+    {
+      "path": "vasp-advanced-v6.html",
+      "sha256": "68b9625483ae5aa80a7366b910cbffdaaaac1e212572fc84bf09c55b3aaec3e1"
+    },
+    {
+      "path": "vasp-reference-v6.html",
+      "sha256": "ccf930d69ad36e9facba111a35628987d4bccfb5ac17ef94ad41f51757540c01"
+    },
+    {
+      "path": "practice-v6.html",
+      "sha256": "df4f713ccb913ecadaf547434122b617292745b8454a882e1ff5c88700102b91"
+    },
+    {
+      "path": "index-v6.html",
+      "sha256": "885511dfa729cc6b3486558bdbb0bb02f0a68d7575e48a3a72985b6d02d2e7c6"
+    },
+    {
+      "path": "research-v6.html",
+      "sha256": "62c517949278ae521318f648a51198796bb072c2266387eeef71f0e1fe24e084"
+    }
+  ],
+  "counts": {
+    "pages": 9,
+    "ids": 213,
+    "inline_svg_elements": 9,
+    "html_svg_idref_attributes": 45,
+    "local_references": 621,
+    "fragment_references": 437,
+    "json_scripts": 7,
+    "inline_javascript_scripts": 12,
+    "nonlocal_references": 428,
+    "external_blank_anchors": 423,
+    "shared_javascript_files": 1,
+    "source_json_files": 7,
+    "source_downloads": 46,
+    "zip_entries": 47,
+    "python_scripts": 2
+  },
+  "checks": {
+    "localFilesExist": true,
+    "fragmentTargetsExist": true,
+    "htmlSvgIdReferencesExist": true,
+    "uniqueIdsPerPage": true,
+    "externalBlankLinksHaveNoopener": true,
+    "downloadContentsMatchSources": true,
+    "zipCrcPassed": true,
+    "zipMembersUnique": true,
+    "zipPathsSafe": true,
+    "bandsSectionMatchesSource": true,
+    "filesStableDuringCheck": true
+  },
+  "downloadComparison": [
+    {
+      "path": "surface/INCAR.template",
+      "sourceSha256": "fbc8cc665dff9de123fade1b14327bcf545276fe5b80469da78f96e82229aa27",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "defect/INCAR.template",
+      "sourceSha256": "c3fc8e527a8aac735fd3efc5fdcfcb600036287f2d5bda16c419133b79d96b1d",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "phonon-internal/INCAR.template",
+      "sourceSha256": "49be7fd0dedc7cd80682e24064fa87beb71a4e0230a51d573ca726d596b5d643",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "phonopy/INCAR-force.template",
+      "sourceSha256": "d206980954ceab81ced123e01a092b6a7709fb9127f1603f6c6409c8ebd1259a",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "phonopy/workflow.txt.template",
+      "sourceSha256": "073d96c1c17d696fe6067db5419b449fa9deda33118cfd939cbff49f317efb33",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "elastic/INCAR.template",
+      "sourceSha256": "432fd8e5f5da1821d2fb6095c87bfbd4637b120c2c46be40f0636b6431cd9d2e",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "neb-native/INCAR.template",
+      "sourceSha256": "fc96e4758e42aca98ed653b293b619edf2e8c04f997176f1fa1ce39c33ae75d7",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "neb-vtst/optimizer-overlay.INCAR.template",
+      "sourceSha256": "17819e4497f47675050f482edc1d9958b931401df89c66fa39115bbbef7c5f5c",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "aimd-nvt/INCAR.template",
+      "sourceSha256": "072f604d7acd0618e4d721e4708ad31ae370f3f843bd9fd837b840f0b0fd2ef2",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "vdw/pbe-d3bj-overlay.INCAR.template",
+      "sourceSha256": "c40b31eec1ef68828ffe49773df856e662ea4137f685f136e2a5f641d740bee2",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "hse06/INCAR.template",
+      "sourceSha256": "78b4d3374650783438a788d51f94a6d32fba673d3bd3bc199d25859787d22aff",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "optics/INCAR.template",
+      "sourceSha256": "96943374485ddbb00113a759bbea5578daefe2601b0fec24e1dbd81e0bdeae88",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "dielectric/INCAR.template",
+      "sourceSha256": "77da947969367fa62a1d76edf67f117777f75d44cfff364d6e5584a5d02cbc72",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "advanced-README.md",
+      "sourceSha256": "b64c556fe8deeecfedede95fcbd7d3529d66e85975ca8f73c43cb440532e31f2",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-dos/INCAR",
+      "sourceSha256": "b1bd765c889d0d7f1f887c55fca8468f35836c8b2d48f75f43bd61cd3d1c67a4",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-dos/KPOINTS",
+      "sourceSha256": "16931b8631f01957cb3d43f22eba50eae1215417d981aae1d1b690258d2638ee",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-bands/INCAR",
+      "sourceSha256": "035bca7a4f43beaeec079c8566030519c63084b49ca9c07751252e9a2915c3d7",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-bands/KPOINTS",
+      "sourceSha256": "a61da9a5b8f2cd862821b9d88aec4195c448e60389088adfc5d0280a8bad4988",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-dos/README.txt",
+      "sourceSha256": "b39cc9cf31cda6e06cbf729fc7bfac80d49b6be839587763723f3a894bf5da5d",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-bands/README.txt",
+      "sourceSha256": "c19a4ada800ea7231db380f26d60d6adef003e92b0ec468efdb70808cf8ceef8",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "fe-fm/POSCAR",
+      "sourceSha256": "f2204ef7fb6fa2944fd32ff4e733b0e80307bd69f397681c43761c1aa0b952ad",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "fe-fm/KPOINTS",
+      "sourceSha256": "fcef3526cb431eb6eb57477ea1edd6a2bebf85936a578cc415d8b97352221fe4",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "fe-fm/INCAR",
+      "sourceSha256": "3923eda8abde982844faa6f8e8bfaf568eeb85dec067435188b27eef1ea8fa62",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "fe-afm/INCAR",
+      "sourceSha256": "74ddc803c715da513e8ff1c1c7089d436d65b4a94eb658c85a85a940b679973f",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "fe-afm/README.txt",
+      "sourceSha256": "641de9f3a397f23a0e33cefa052ec31835dfde71171b6033fcfdd81f9433a7b8",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "dft-u/INCAR.template",
+      "sourceSha256": "76e738d201e170bcecea5e31f4ffd2701ed04ef03daf485f067a4752c95c2e47",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "dft-u/README.txt",
+      "sourceSha256": "5a5c4c03ac0a6cfee6c2bf84029d395f25b90f45a97879ff8ab4369c3db7f2aa",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-soc/INCAR",
+      "sourceSha256": "75ec88655c07f8abcad4acca1012ee810dbcc1947484e4fc2f9cf86ef53a4938",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-soc/README.txt",
+      "sourceSha256": "84c8e34056aa24daa1e9e6f6b654a47c36fcf6fd95c525aa6cda2306254642e0",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-charge/INCAR",
+      "sourceSha256": "c54d4bce4eba1115ddda315b1898b879dace4ef8a7dc9e50963840c5b5b3b068",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-charge/README.txt",
+      "sourceSha256": "b16829b7f259dc619045e03f44b263498a98af8a6948956dd15e85e1dfd2e0bd",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "tools/inspect_vasp_run.py",
+      "sourceSha256": "735d06a618691931c7f0e9b15a7a36af835a682024d814b1e205b187fb0ae4b7",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "report/practice-checklist.md",
+      "sourceSha256": "870303bf3099248b75b36f8db13459e0f33e84fe200988cb3bcb81ecf02be622",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "report/calculation-report.md",
+      "sourceSha256": "88a90ee2b210948e66311d7be6eb731019f5a0e85417156f585f414a7dca1afe",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-scf/POSCAR",
+      "sourceSha256": "7f00218d49270c18c2adbf2692efa80364343b15d7def114303ff4d481235d65",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-scf/KPOINTS",
+      "sourceSha256": "ba5810b3a28a8549f53c676a5316821021afd68c8e1b93b2c67b4c494da0bb03",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-scf/INCAR",
+      "sourceSha256": "9fa959581102c9a69e9ddb767abe5833a4779213a7a12b14f2af98f266a01309",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-scf/README.txt",
+      "sourceSha256": "bcf395bf6b8264c670e0d51bf4428bcddda3f52c7f43f86f7c9a428c770409fa",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-relax/INCAR",
+      "sourceSha256": "41ece48e0d1d11e9b1c85b7dba41212da37fe6b9bdb5b66465a7cfe5fb0dbabe",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-relax/README.txt",
+      "sourceSha256": "bed527507f6470fc3a6a240647b9d2f4ac6dbaf40ff9ac7b2ffea866dd88fb1d",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-static/INCAR",
+      "sourceSha256": "229d9ffa34b40745369a5d2413e82fe9de182747f6dba7a72bcc7c74f4e05446",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-static/KPOINTS",
+      "sourceSha256": "3f5ffcdd07b9b7f1c70cf7fd81e1d4d9ec6745067cfa9e2dd8bb5280a9f8d445",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "si-static/README.txt",
+      "sourceSha256": "699e51b46cb4c00a21a121a2bba7f1ecec24552ed46bf7438b682d4abb676ccb",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "prepare_convergence.py",
+      "sourceSha256": "bb93351ea740605f68e155782376303f1b4857db197d6a7457cbb62326f7f8a9",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "submit.slurm.template",
+      "sourceSha256": "7360f059e80b87402b6459905b86f8515ded244636d172154cccffa410b166db",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    },
+    {
+      "path": "calculation-record.md.template",
+      "sourceSha256": "6869a3ce158bb55d2c6569e95bd8e5f1fd35b455d31cfa35b835efcbbf3514e4",
+      "diskMatchesSource": true,
+      "zipMatchesSource": true
+    }
+  ],
+  "zip": {
+    "path": "assets/tutorial-v6/vasp-learning-examples-v6.zip",
+    "sha256": "026714af37b6d9e92a6b6f405bf51b13263bd76e8ce25a9ce3775cb4e3dbf34b",
+    "zipEntries": 47,
+    "members": [
+      "jisuan-vasp-v6/README.md",
+      "jisuan-vasp-v6/si-scf/POSCAR",
+      "jisuan-vasp-v6/si-scf/KPOINTS",
+      "jisuan-vasp-v6/si-scf/INCAR",
+      "jisuan-vasp-v6/si-scf/README.txt",
+      "jisuan-vasp-v6/si-relax/INCAR",
+      "jisuan-vasp-v6/si-relax/README.txt",
+      "jisuan-vasp-v6/si-static/INCAR",
+      "jisuan-vasp-v6/si-static/KPOINTS",
+      "jisuan-vasp-v6/si-static/README.txt",
+      "jisuan-vasp-v6/prepare_convergence.py",
+      "jisuan-vasp-v6/submit.slurm.template",
+      "jisuan-vasp-v6/calculation-record.md.template",
+      "jisuan-vasp-v6/si-dos/INCAR",
+      "jisuan-vasp-v6/si-dos/KPOINTS",
+      "jisuan-vasp-v6/si-bands/INCAR",
+      "jisuan-vasp-v6/si-bands/KPOINTS",
+      "jisuan-vasp-v6/si-dos/README.txt",
+      "jisuan-vasp-v6/si-bands/README.txt",
+      "jisuan-vasp-v6/fe-fm/POSCAR",
+      "jisuan-vasp-v6/fe-fm/KPOINTS",
+      "jisuan-vasp-v6/fe-fm/INCAR",
+      "jisuan-vasp-v6/fe-afm/INCAR",
+      "jisuan-vasp-v6/fe-afm/README.txt",
+      "jisuan-vasp-v6/dft-u/INCAR.template",
+      "jisuan-vasp-v6/dft-u/README.txt",
+      "jisuan-vasp-v6/si-soc/INCAR",
+      "jisuan-vasp-v6/si-soc/README.txt",
+      "jisuan-vasp-v6/si-charge/INCAR",
+      "jisuan-vasp-v6/si-charge/README.txt",
+      "jisuan-vasp-v6/surface/INCAR.template",
+      "jisuan-vasp-v6/defect/INCAR.template",
+      "jisuan-vasp-v6/phonon-internal/INCAR.template",
+      "jisuan-vasp-v6/phonopy/INCAR-force.template",
+      "jisuan-vasp-v6/phonopy/workflow.txt.template",
+      "jisuan-vasp-v6/elastic/INCAR.template",
+      "jisuan-vasp-v6/neb-native/INCAR.template",
+      "jisuan-vasp-v6/neb-vtst/optimizer-overlay.INCAR.template",
+      "jisuan-vasp-v6/aimd-nvt/INCAR.template",
+      "jisuan-vasp-v6/vdw/pbe-d3bj-overlay.INCAR.template",
+      "jisuan-vasp-v6/hse06/INCAR.template",
+      "jisuan-vasp-v6/optics/INCAR.template",
+      "jisuan-vasp-v6/dielectric/INCAR.template",
+      "jisuan-vasp-v6/advanced-README.md",
+      "jisuan-vasp-v6/report/calculation-report.md",
+      "jisuan-vasp-v6/report/practice-checklist.md",
+      "jisuan-vasp-v6/tools/inspect_vasp_run.py"
+    ],
+    "extraGeneratedMembers": [
+      "jisuan-vasp-v6/README.md"
+    ]
+  },
+  "syntaxChecks": [
+    {
+      "file": "tutorial-v6.html",
+      "scriptIndex": 0,
+      "language": "JSON",
+      "passed": true
+    },
+    {
+      "file": "tutorial-v6.html",
+      "scriptIndex": 1,
+      "language": "JavaScript",
+      "passed": true
+    },
+    {
+      "file": "quantum-v6.html",
+      "scriptIndex": 0,
+      "language": "JSON",
+      "passed": true
+    },
+    {
+      "file": "quantum-v6.html",
+      "scriptIndex": 1,
+      "language": "JavaScript",
+      "passed": true
+    },
+    {
+      "file": "vasp-start-v6.html",
+      "scriptIndex": 0,
+      "language": "JSON",
+      "passed": true
+    },
+    {
+      "file": "vasp-start-v6.html",
+      "scriptIndex": 1,
+      "language": "JavaScript",
+      "passed": true
+    },
+    {
+      "file": "vasp-electronic-v6.html",
+      "scriptIndex": 0,
+      "language": "JSON",
+      "passed": true
+    },
+    {
+      "file": "vasp-electronic-v6.html",
+      "scriptIndex": 1,
+      "language": "JavaScript",
+      "passed": true
+    },
+    {
+      "file": "vasp-advanced-v6.html",
+      "scriptIndex": 0,
+      "language": "JSON",
+      "passed": true
+    },
+    {
+      "file": "vasp-advanced-v6.html",
+      "scriptIndex": 1,
+      "language": "JavaScript",
+      "passed": true
+    },
+    {
+      "file": "vasp-reference-v6.html",
+      "scriptIndex": 0,
+      "language": "JSON",
+      "passed": true
+    },
+    {
+      "file": "vasp-reference-v6.html",
+      "scriptIndex": 1,
+      "language": "JavaScript",
+      "passed": true
+    },
+    {
+      "file": "practice-v6.html",
+      "scriptIndex": 0,
+      "language": "JSON",
+      "passed": true
+    },
+    {
+      "file": "practice-v6.html",
+      "scriptIndex": 1,
+      "language": "JavaScript",
+      "passed": true
+    },
+    {
+      "file": "index-v6.html",
+      "scriptIndex": 0,
+      "language": "JavaScript",
+      "passed": true
+    },
+    {
+      "file": "index-v6.html",
+      "scriptIndex": 1,
+      "language": "JavaScript",
+      "passed": true
+    },
+    {
+      "file": "index-v6.html",
+      "scriptIndex": 2,
+      "language": "JavaScript",
+      "passed": true
+    },
+    {
+      "file": "research-v6.html",
+      "scriptIndex": 0,
+      "language": "JavaScript",
+      "passed": true
+    },
+    {
+      "file": "research-v6.html",
+      "scriptIndex": 1,
+      "language": "JavaScript",
+      "passed": true
+    },
+    {
+      "file": "assets/tutorial-v6/course.js",
+      "language": "JavaScript",
+      "passed": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/tools/inspect_vasp_run.py",
+      "language": "Python",
+      "passed": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/prepare_convergence.py",
+      "language": "Python",
+      "passed": true
+    }
+  ],
+  "sharedJavascriptSha256": "658ba1136ac76a84daecb2726382d67d20fe07fb78c212d1c89b2750d4e7d82e",
+  "vaspActuallyRun": false,
+  "phonopyActuallyRun": false,
+  "py4vaspResultsProcessed": false,
+  "externalUrlsNetworkChecked": false,
+  "browserVisualReviewIncluded": false,
+  "issues": []
+}

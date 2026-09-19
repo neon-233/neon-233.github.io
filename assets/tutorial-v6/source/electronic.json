@@ -1,0 +1,302 @@
+{
+  "title": "电子结构：从 DOS 到磁性与电荷",
+  "subtitle": "沿同一条硅计算路径，学习性质输入、参数变化、后处理与结果的解释边界。",
+  "filename": "vasp-electronic-v6.html",
+  "kicker": "模块 03 · 看懂电子行为",
+  "estimatedMinutes": 110,
+  "sections": [
+    {
+      "id": "map-smearing",
+      "title": "先选问题，再选择电子结构计算方式",
+      "kicker": "01 · DOS、能带与电子占据",
+      "html": "<p>电子结构分析把“这个结构的总能量是多少”向前推进一步：哪些能量附近有电子态？它们来自哪些原子或轨道？电子态如何随晶体动量变化？答案可以帮助理解成键、磁性与反应性，但一张 DOS 图并不会自动给出催化活性或电导率。</p><div class=\"table-wrap\"><table><thead><tr><th>问题</th><th>计算与数据</th><th>前提</th></tr></thead><tbody><tr><td>某能量附近有多少态？</td><td>均匀致密 k 网格上的 DOS</td><td>需要对整个布里渊区积分</td></tr><tr><td>哪些原子/轨道贡献较多？</td><td>投影 DOS 或投影能带</td><td>理解投影近似，不能把权重等同于严格原子电荷</td></tr><tr><td>电子能量如何随 k 变化？</td><td>沿指定路径的能带</td><td>先有充分收敛的电子密度，再选择正确坐标系的路径</td></tr><tr><td>磁性或关联是否改变结果？</td><td>多初态自旋计算、DFT+U 等</td><td>需要相应物理依据与数值检验</td></tr></tbody></table></div><p>本章接续上一章的硅原胞。先完成<a href=\"vasp-start-v6.html#static-output\">最终静态自洽计算</a>，再将其 <strong>POSCAR、POTCAR 与对应的 CHGCAR 成套复制</strong>到新的性质目录。你也可以在固定的初始 5.43 Å 结构上练习流程，但必须将结果标为“该固定几何的计算”，不能称其为优化后的性质。</p><p>占据方式与电子展宽会影响积分、能量及 DOS 的观感。下表是选择思路，并非所有材料的万能配方。特别是不能因为某个金属模板用了 ISMEAR=1，就把它直接套到绝缘体。</p><div class=\"table-wrap\"><table><thead><tr><th>场景</th><th>合理起点</th><th>必须检查</th></tr></thead><tbody><tr><td>未知体系 / 常见半导体初算</td><td><code>ISMEAR=0; SIGMA=0.05</code>（eV）</td><td>减小 SIGMA、加密网格后结果是否稳定</td></tr><tr><td>三维体相致密网格的最终 DOS</td><td><code>ISMEAR=-5</code></td><td>网格必须能构造四面体；Γ 单点与线模式路径不可照搬</td></tr><tr><td>金属结构优化</td><td>常用 <code>ISMEAR=1</code>，适当 SIGMA</td><td>熵项每原子量级足够小，并检验力与网格收敛</td></tr><tr><td>有明确电子温度的占据研究</td><td><code>ISMEAR=-1</code></td><td>SIGMA 与 kBT 的对应；不等于离子温度自动相同</td></tr></tbody></table></div><p>展宽可以让数值迭代平稳，但过大的展宽也会把态密度拖进带隙。提高 NEDOS 只是让能量轴采样更细，不会弥补 k 点不足。对金属，增大展宽通常能减少某些数值困难，却不能成为掩盖真实费米面细节的理由。最终应对你要报告的物理量，而不是只对“曲线好看”负责。</p><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/ISMEAR\" target=\"_blank\" rel=\"noopener noreferrer\">ISMEAR 取值</a> · <a href=\"https://vasp.at/wiki/Smearing_technique\" target=\"_blank\" rel=\"noopener noreferrer\">展宽方法与适用范围</a> · <a href=\"https://vasp.at/wiki/NEDOS\" target=\"_blank\" rel=\"noopener noreferrer\">NEDOS</a></p>"
+    },
+    {
+      "id": "dos",
+      "title": "任务一：硅的总态密度和投影态密度",
+      "kicker": "02 · 致密网格上的积分",
+      "html": "<p><strong>准备：</strong>新建 <code>si-dos</code>，复制已收敛静态计算的 POSCAR、POTCAR、CHGCAR。保持相同结构、PBE 近似和截断能。这里使用 <code>ICHARG=1</code>，即读取已有密度作初猜，但在更密网格上继续自洽；它与固定电荷密度的 ICHARG=11 不同。</p><p>下面网格 16³、ENCUT=520 eV 和 NBANDS=16 是这套两原子硅学习输入的起点，不代表已做过收敛。若上一章已选定更高截断能，必须同步替换。POTCAR 不变，尤其不能将另外一种 Si 势对应的 CHGCAR 混进来。</p><pre data-filename=\"si-dos/INCAR\"><code>SYSTEM = Si PBE dense-mesh DOS\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nISPIN = 1\nISTART = 0\nICHARG = 1\nALGO = Normal\nEDIFF = 1E-7\nNELM = 120\nISMEAR = -5\nNBANDS = 16\nLORBIT = 11\nNEDOS = 2001\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .TRUE.\n</code></pre><pre data-filename=\"si-dos/KPOINTS\"><code>Si dense uniform mesh for DOS\n0\nGamma\n16 16 16\n0 0 0\n</code></pre><div class=\"table-wrap\"><table><thead><tr><th>新增/变化的参数</th><th>作用</th><th>阅读结果时注意</th></tr></thead><tbody><tr><td><code>ICHARG=1</code></td><td>读密度后继续自洽</td><td>OUTCAR 中检查电子循环确实达到阈值</td></tr><tr><td><code>ISMEAR=-5</code></td><td>带 Blöchl 修正的四面体方法</td><td>适用于本例三维致密均匀网格；此处 SIGMA 不控制通常的高斯展宽</td></tr><tr><td><code>LORBIT=11</code></td><td>输出按原子与角动量分辨的投影</td><td>PAW 投影有定义依赖，间隙区域使局部投影之和未必严格等于总 DOS</td></tr><tr><td><code>NEDOS=2001</code></td><td>DOS 能量轴采样数量</td><td>和 k 网格是两种不同离散化，分别测试</td></tr><tr><td><code>NBANDS=16</code></td><td>计算占据态之外的一部分空带</td><td>增大后检查关注的导带区间；并行布局可能改变实际 NBANDS</td></tr><tr><td>未指定 <code>EMIN/EMAX</code></td><td>先让程序选择输出能量范围</td><td>后续如手工限定，要注意它们不是自动以 EF 为零的相对值</td></tr></tbody></table></div><p><strong>输出：</strong>查看 DOSCAR，以及启用相应输出时的 vasprun.xml 或 vaspout.h5。画图时通常把横轴改成 E−EF，也可以把半导体价带顶设为零；无论用哪种基准都要在图注说明。对有带隙的体系，程序给出的费米能在带隙内存在约定依赖，不要把其小幅移动直接解释成电荷转移。</p><pre data-filename=\"Jupyter · py4vasp 后处理示例\"><code>import py4vasp\ncalc = py4vasp.Calculation.from_path(&quot;si-dos&quot;)\ncalc.dos.plot()\n# 需要 LORBIT 输出和支持 HDF5 的计算结果\ncalc.dos.plot(&quot;Si(s), Si(p)&quot;)\n</code></pre><p>这段代码要求在已安装兼容 py4vasp 的 Jupyter 环境中使用，并且确实存在该工具支持的计算输出。请在 <code>si-dos</code> 的父目录启动 notebook；若 notebook 已在结果目录 <code>si-dos</code> 内，则把 <code>from_path(&quot;si-dos&quot;)</code> 改为 <code>from_path(&quot;.&quot;)</code>，避免查找不存在的 <code>si-dos/si-dos</code>。它读取你的运行结果，不会自动执行 VASP。若没有 HDF5 输出，可采用能读取 vasprun.xml 或 DOSCAR 的工具，但应记录工具版本、投影列含义和能量零点，不同自旋模式的列顺序不能盲猜。</p><p><strong>如何确认结果可用：</strong>SCF 收敛；DOS 随 k 网格继续加密趋于稳定；空带覆盖所研究能量范围；积分态数与所用势的电子计数相容；总 DOS 与投影权重变化能够解释；自旋分辨图中的上下两条曲线有明确约定。画在负半轴的自旋向下 DOS 常常只是绘图习惯，并不代表“负的态密度”。</p><p><strong>常见误读：</strong>两个峰重叠只能为轨道杂化提供线索，不足以单独证明一条化学键；费米能附近 DOS 高也不自动意味着电导率高，还涉及速度、散射和载流子寿命。用额外证据检验解释，比为每一处峰编一个故事更可靠。</p><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/ICHARG\" target=\"_blank\" rel=\"noopener noreferrer\">ICHARG</a> · <a href=\"https://vasp.at/wiki/LORBIT\" target=\"_blank\" rel=\"noopener noreferrer\">LORBIT 投影定义</a> · <a href=\"https://vasp.at/wiki/NBANDS\" target=\"_blank\" rel=\"noopener noreferrer\">空带数 NBANDS</a> · <a href=\"https://vasp.at/py4vasp/latest/calculation/dos/\" target=\"_blank\" rel=\"noopener noreferrer\">py4vasp DOS</a></p>"
+    },
+    {
+      "id": "bands",
+      "title": "任务二：PBE 能带，先自洽再沿路径采样",
+      "kicker": "03 · 从密度到色散",
+      "html": "<p>均匀 k 网格承担求电子密度与布里渊区积分的工作，能带路径则展示特定方向上的本征值变化。沿几条高对称线取很多点，不能代替覆盖整个布里渊区的自洽网格。因此不能从空文件夹开始，只放一个 Line-mode KPOINTS 就期待得到可信能带。</p><ol><li>取同一结构已经收敛的均匀网格 SCF 或 DOS 结果。</li><li>创建 <code>si-bands</code>，复制其 POSCAR、POTCAR、CHGCAR。</li><li>保持 PBE、ENCUT、磁性与几何一致，改为下列固定密度 INCAR 与路径 KPOINTS。</li><li>使用 <code>vasp_std</code>；完成后读取本征值、投影和匹配路径的坐标，检查所关心能带的收敛。</li></ol><pre data-filename=\"si-bands/INCAR\"><code>SYSTEM = Si PBE bands from converged density\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nISPIN = 1\nISTART = 0\nICHARG = 11\nALGO = Normal\nEDIFF = 1E-7\nNELM = 120\nISMEAR = 0\nSIGMA = 0.05\nNBANDS = 16\nLORBIT = 11\nIBRION = -1\nNSW = 0\nLCHARG = .FALSE.\nLWAVE = .FALSE.\n</code></pre><p><code>ICHARG=11</code> 把输入 CHGCAR 的密度固定下来，电子求解仍需要收敛，但不再重新寻找路径点对应的新自洽密度。<code>ISTART=0</code> 避免误读来自另一套 k 网格的旧波函数。<code>LCHARG=.FALSE.</code> 和 <code>LWAVE=.FALSE.</code> 减少不必要输出；输入 CHGCAR 的原始副本应保留。</p><p>以下是本教程硅原胞的路径：L–Γ–X–U 与 K–Γ 两段，U 和 K 之间是断开的。原胞矢量必须按上一章顺序排列，即 a₁=(0,a/2,a/2)，a₂=(a/2,0,a/2)，a₃=(a/2,a/2,0)。路径坐标以这组三个倒格矢为基底；原点整体平移不改变路径，但换晶胞基底会改变其分数坐标。</p><pre data-filename=\"si-bands/KPOINTS\"><code>Diamond Si primitive: L-G-X-U | K-G\n40\nLine-mode\nReciprocal\n0.500000 0.500000 0.500000 L\n0.000000 0.000000 0.000000 G\n\n0.000000 0.000000 0.000000 G\n0.500000 0.000000 0.500000 X\n\n0.500000 0.000000 0.500000 X\n0.625000 0.250000 0.625000 U\n\n0.375000 0.375000 0.750000 K\n0.000000 0.000000 0.000000 G\n</code></pre><p>40 是每一段包含端点的采样数。增大它会让曲线更密，但不改善先前 CHGCAR 的积分精度。这里给出一组教学展示方向，不能保证所有材料的能带极值都在高对称线上。需要可靠基态带隙时，还应在足够致密的三维采样中定位价带顶与导带底。</p><pre data-filename=\"Jupyter · 查看能带\"><code>import py4vasp\nscf = py4vasp.Calculation.from_path(&quot;si-static&quot;)\nef = scf.dos.read()[&quot;fermi_energy&quot;]\ncalc = py4vasp.Calculation.from_path(&quot;si-bands&quot;)\ncalc.band.plot(fermi_energy=ef)\n</code></pre><p>在 <code>si-static</code> 和 <code>si-bands</code> 的共同父目录中运行这段 Jupyter 代码，事先安装支持上述 <code>fermi_energy</code> 参数的兼容 py4vasp。两个目录都必须保存本次实际计算生成、可被该版本读取的 <code>vaspout.h5</code>；这需要 VASP 的 HDF5 支持。这里假定能带所用 CHGCAR 来自 <code>si-static</code>；如果来自前节 <code>si-dos</code>，就把代码的参考目录同步改为 <code>si-dos</code>。结构、泛函与势必须匹配。代码从均匀网格自洽结果提取 EF，再显式交给能带绘图工具，因此图中已减去这一个参考 EF，不能再次手工扣除。没有可用 HDF5 输出时，应从对应自洽 OUTCAR 记录 EF，并使用支持原始本征值和显式能量对齐的其他绘图工具，不能直接执行这段示例。</p><p><strong>纵轴与带隙：</strong>不要把非自洽路径计算中重新估计的 EF 无条件当成可靠能量参照，因为这些路径点并不是正常体积分网格。应采用同一结构自洽计算的参考或明确的价带顶对齐策略，并核实后处理工具是否已经自动减去 EF。重复减一次会让能级整体错位。报告带隙时注明泛函、是否 SOC、结构、采样方式和直接/间接性质。</p><p>PBE 等半局域泛函往往不能给出准确的实验基本带隙；普通 Kohn–Sham 能带也不是完整的光学激发谱。观察到计算与实验不同，先辨明所比较的是基本带隙、光学带隙还是某个温度下的谱峰，再选择更合适的方法。</p><div class=\"warning\"><strong>HSE 不能照抄这条捷径。</strong>杂化泛函含依赖轨道的非局域交换，只给一份 CHGCAR 与高对称线路径不足以定义所需计算。应按官方流程保留均匀网格，并结合 KPOINTS_OPT 或带零权重点的方法；见<a href=\"vasp-advanced-v6.html\">高级任务</a>。这里的 ICHARG=11 教程限定为常规 PBE 路线，不能直接推广到所有泛函。</div><p><strong>检查点：</strong>路径标签与实际晶胞吻合；相接段的本征值在同一端点连续；U–K 不被错误连成计算过的一段；空带足够且关心的高能带已收敛；结构经过对称性变化后重新生成路径。缺陷超胞会出现能带折叠，不能简单拿折叠后的密集曲线与原胞逐条对应。</p><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/Band-structure_calculation_using_DFT\" target=\"_blank\" rel=\"noopener noreferrer\">DFT 能带工作流</a> · <a href=\"https://vasp.at/tutorials/latest/bulk/part2/\" target=\"_blank\" rel=\"noopener noreferrer\">官方金刚石硅原胞与路径</a> · <a href=\"https://vasp.at/py4vasp/latest/calculation/band/\" target=\"_blank\" rel=\"noopener noreferrer\">py4vasp 能带</a> · <a href=\"https://vasp.at/wiki/Band-structure_calculation_using_hybrid_functionals\" target=\"_blank\" rel=\"noopener noreferrer\">杂化泛函能带</a></p>"
+    },
+    {
+      "id": "magnetism",
+      "title": "任务三：磁性计算要比较多个初态",
+      "kicker": "04 · ISPIN 与 MAGMOM",
+      "html": "<p>非磁性计算把两个自旋通道限制为等价；共线自旋计算允许它们有不同电子密度。含 Fe、Co、Ni、某些缺陷或开壳层分子的模型，不能仅因默认设置算完就认定是非磁性。自洽方程可能存在多个局部解，初始化方式会影响最终落到哪一个。</p><p>下面用含两个原子的 bcc Fe 常规晶胞做“初始自旋如何影响解”的练习。2.87 Å 是指定的教学几何，不是本教程优化结果；这个练习只比较同一固定几何中的候选磁态，并不声称穷尽所有磁序。它使用单个授权 PAW-PBE Fe 势，520 eV 与 12³ 网格仍须重新验证，不能直接沿用 Si 的收敛结论。</p><pre data-filename=\"fe-fm/POSCAR\"><code>bcc Fe conventional cell; teaching geometry\n2.8700000000\n1.0000000000 0.0000000000 0.0000000000\n0.0000000000 1.0000000000 0.0000000000\n0.0000000000 0.0000000000 1.0000000000\nFe\n2\nDirect\n0.0000000000 0.0000000000 0.0000000000\n0.5000000000 0.5000000000 0.5000000000\n</code></pre><pre data-filename=\"fe-fm/KPOINTS\"><code>bcc Fe conventional cell uniform mesh\n0\nGamma\n12 12 12\n0 0 0\n</code></pre><pre data-filename=\"fe-fm/INCAR\"><code>SYSTEM = bcc Fe FM initial-state test\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nLASPH = .TRUE.\nISPIN = 2\nMAGMOM = 2.5 2.5\nISYM = 0\nISTART = 0\nICHARG = 2\nALGO = Normal\nEDIFF = 1E-7\nNELM = 160\nISMEAR = 1\nSIGMA = 0.15\nLORBIT = 11\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .TRUE.\n</code></pre><p>为反向初态另建 <code>fe-afm</code> 目录，使用完全相同的 POSCAR、POTCAR、KPOINTS，把 INCAR 中的磁矩行改为下列设置，仍从 <code>ISTART=0; ICHARG=2</code> 开始。此时不要复制含先前磁化密度的 CHGCAR 或旧 WAVECAR，否则“改了初始磁矩”可能并没有按你的设想重新初始化。</p><pre data-filename=\"fe-afm/INCAR · 唯一物理初态变化\"><code>MAGMOM = 2.5 -2.5\n</code></pre><div class=\"table-wrap\"><table><thead><tr><th>参数 / 结果</th><th>怎样理解</th></tr></thead><tbody><tr><td><code>ISPIN=2</code></td><td>开启共线自旋极化；不等于强制铁磁</td></tr><tr><td><code>MAGMOM=2.5 2.5</code></td><td>按 POSCAR 原子顺序给初始磁矩，单位 μB；数值不是最终磁矩</td></tr><tr><td><code>MAGMOM=2.5 -2.5</code></td><td>让两个 Fe 起初反向；最终是否保持反向要看实际输出</td></tr><tr><td><code>ISYM=0</code></td><td>本比较关闭空间对称性约束；更高精度的磁性研究还需理解其仍保留的 k↔−k 关系</td></tr><tr><td><code>LORBIT=11</code></td><td>输出局部投影磁矩；和整个晶胞总磁矩不是完全相同的定义</td></tr><tr><td><code>ISMEAR=1; SIGMA=0.15</code></td><td>金属占据的教学起点；检查熵项、网格与能量差敏感性</td></tr></tbody></table></div><p><strong>怎样比较：</strong>确认每个候选态 SCF 都已收敛，记录最终总磁矩、各原子的局部磁矩和统一定义的能量，再看哪一个在相同模型与数值精度下能量更低。如果两个不同初态最后变成同一解，也要记录这个事实。若比较真正的平衡磁态，通常还需要允许相应磁态分别优化结构，再以统一精度做最终静态比较。</p><p>总磁矩接近零不能单独证明非磁性：两个相反的局部磁矩可以抵消。要区分非磁、铁磁、反铁磁与亚铁磁，必须同时看原子分辨磁矩和空间排列。初始原胞还必须能容纳所设想的磁周期；一个过小晶胞不能通过某个 INCAR 参数“长出”它不允许的反铁磁模式。</p><p>重启磁性任务时，即使 MAGMOM 不再负责重新设定磁化初猜，它仍参与对称性判定。随意删除可能改变允许的对称性。切换初态研究时，新目录、从头初始化与完整记录比只改一行磁矩更可靠。磁各向异性、非共线与 SOC 要进入下一阶段，并把数值精度提升到目标能量差所要求的水平。</p><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/ISPIN\" target=\"_blank\" rel=\"noopener noreferrer\">ISPIN</a> · <a href=\"https://vasp.at/wiki/MAGMOM\" target=\"_blank\" rel=\"noopener noreferrer\">MAGMOM 与重启</a> · <a href=\"https://vasp.at/wiki/ISYM\" target=\"_blank\" rel=\"noopener noreferrer\">ISYM 的区别</a> · <a href=\"https://vasp.at/wiki/LASPH\" target=\"_blank\" rel=\"noopener noreferrer\">LASPH</a></p>"
+    },
+    {
+      "id": "dft-u",
+      "title": "任务四：DFT+U 不是随手加一个数",
+      "kicker": "05 · 局域电子与模型参数",
+      "html": "<p>某些过渡金属或稀土化合物的局域 d/f 电子，在普通半局域泛函下描述不足。DFT+U 在选定的局域轨道子空间加入修正，但其效果依赖子空间、势文件、泛函、氧化态和所用 U/J 定义。把别人材料上的 U 原样搬到新体系，不能自动获得更准确结果。</p><p>以下是<strong>待配置参数模板</strong>：假定你已提供一个能够容纳所研究磁序的 Ni₂O₂ 晶胞，POSCAR 元素顺序是 Ni O，数量 2 2，前两个原子为 Ni。它没有提供结构，也没有填入 U；因此不能直接运行。先依据原始论文或一致的线性响应等方案确定 U，并保存其来源，再将占位符换成数字。</p><pre data-filename=\"dft-u/INCAR.template\"><code># TEMPLATE ONLY: supply a validated Ni2O2 magnetic cell and choose U_eff.\n# POSCAR species must be Ni O with counts 2 2 for the MAGMOM below.\nSYSTEM = Ni2O2 PBE+U magnetic template\nGGA = PE\nENCUT = YOUR_CONVERGED_ENCUT\nPREC = Accurate\nLREAL = .FALSE.\nLASPH = .TRUE.\nISPIN = 2\nMAGMOM = 2.0 -2.0 0.0 0.0\nISYM = 0\nISTART = 0\nICHARG = 2\nALGO = Normal\nEDIFF = 1E-7\nNELM = 160\nISMEAR = 0\nSIGMA = 0.05\nLDAU = .TRUE.\nLDAUTYPE = 2\nLDAUL = 2 -1\nLDAUU = YOUR_U_EFF 0.0\nLDAUJ = 0.0 0.0\nLMAXMIX = 4\nLORBIT = 11\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .TRUE.\n</code></pre><div class=\"table-wrap\"><table><thead><tr><th>参数</th><th>这里的解释</th><th>最常见的错误</th></tr></thead><tbody><tr><td><code>LDAU=.TRUE.</code></td><td>开启 DFT+U 修正</td><td>仅写 LDAUU 而忘记开启</td></tr><tr><td><code>LDAUTYPE=2</code></td><td>Dudarev 形式，以 U−J 为有效组合</td><td>把不同文献的 U、Ueff 与 J 混为一谈</td></tr><tr><td><code>LDAUL=2 -1</code></td><td>按 Ni、O 顺序：Ni 的 d 通道加 U，O 不加</td><td>按每个原子重复填写，或顺序与 POTCAR 不同</td></tr><tr><td><code>LDAUU=YOUR_U_EFF 0</code></td><td>在本模板 J=0 的写法下填所选择的 Ueff，eV</td><td>把任意默认数字当作经过验证的参数</td></tr><tr><td><code>LDAUJ=0 0</code></td><td>与上述 Ueff 表达方式配套</td><td>同时再减一次 J，造成定义不一致</td></tr><tr><td><code>LMAXMIX=4</code></td><td>保存足够的 d 元素 PAW 占据角动量信息</td><td>只在最后的能带计算加，前置 CHGCAR 已丢失信息</td></tr><tr><td><code>LASPH=.TRUE.</code></td><td>纳入 PAW 球内相关非球形梯度贡献</td><td>强关联或过渡金属体系中忽视这个一致性设置</td></tr></tbody></table></div><p>数组长度必须等于元素种类数：这个 Ni O 例子是两个数，而 MAGMOM 是四个原子的四个初始值。如果采用 O Ni 顺序，LDAUL、LDAUU、LDAUJ 和 POTCAR 都要一起按新顺序排列。势文件中同一元素不同变体具有不同价电子处理，不能在同一组对照中随意切换。</p><p><strong>接到 DOS/能带时：</strong>先用完整的 DFT+U 模型得到自洽 CHGCAR，前置自洽和后续固定密度步骤均设置正确 LMAXMIX。d 元素常用 4，f 元素需 6。随后保留同一组 LDAU 相关参数、磁态和结构，再决定使用 ICHARG=1 自洽 DOS 或适用的 ICHARG=11 路径计算。遗漏前置设置后，不能靠在后处理中补写一行恢复已经没保存的占据矩阵信息。</p><p><strong>如何论证选择：</strong>报告所用 U/J 形式、数值、轨道、来源和适用化学环境，并考察核心结论对合理参数区间是否敏感。若 U 改变导致磁态、成键或稳定性排序变化，这就是需要讨论的结果。不能因为某个 U 算出的绝对总能量最低，就说它是“最佳 U”；不同 U 对应不同能量泛函，不能这样比较。</p><p>DFT+U 经常伴随多个磁态与轨道占据的局部极小值。必须测试不同合理初态，检查最终局部磁矩、占据、能隙和结构；数值上收敛只表示某个解被求到，并不保证它是最相关的物理解。对于金属、共价体系及多个价态共存问题，更需要谨慎论证，而非把 U 当作统一带隙修正器。</p><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/LDAUTYPE\" target=\"_blank\" rel=\"noopener noreferrer\">DFT+U 形式</a> · <a href=\"https://vasp.at/wiki/LDAUL\" target=\"_blank\" rel=\"noopener noreferrer\">LDAUL</a> · <a href=\"https://vasp.at/wiki/LDAUU\" target=\"_blank\" rel=\"noopener noreferrer\">LDAUU</a> · <a href=\"https://vasp.at/wiki/LDAUJ\" target=\"_blank\" rel=\"noopener noreferrer\">LDAUJ</a> · <a href=\"https://vasp.at/wiki/LMAXMIX\" target=\"_blank\" rel=\"noopener noreferrer\">LMAXMIX</a> · <a href=\"https://vasp.at/wiki/LASPH\" target=\"_blank\" rel=\"noopener noreferrer\">LASPH</a></p>"
+    },
+    {
+      "id": "soc",
+      "title": "任务五：加入自旋轨道耦合",
+      "kicker": "06 · 三分量自旋与正确程序",
+      "html": "<p>自旋轨道耦合把电子自旋与其轨道运动联系起来。对重元素、能带劈裂、某些拓扑与磁各向异性问题，它可能改变关键结论。但“打开 LSORBIT”只开启模型项，远没有完成物理解释或精度验证。</p><p>本例继续使用<strong>两个 Si 原子的非磁性原胞</strong>。创建 <code>si-soc</code>，复制先前非磁性 PBE 静态计算的 POSCAR、POTCAR、CHGCAR，以及足够收敛的均匀 KPOINTS，改用 <code>vasp_ncl</code>。这里 ICHARG=1 在既有密度上重新自洽 SOC，不是只在旧密度上读几个能量。</p><p>若复制入门章节的 Slurm 脚本，必须同时把 <code>command -v vasp_std</code> 与 <code>srun vasp_std</code> 两行中的程序名改为 <code>vasp_ncl</code>；只改 INCAR 不会改变实际启动的程序。将已核验脚本保存在 <code>si-soc</code>，进入该目录后再提交。</p><pre data-filename=\"si-soc/INCAR\"><code>SYSTEM = Si PBE SOC self-consistent example\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nLASPH = .TRUE.\nGGA_COMPAT = .FALSE.\nISTART = 0\nICHARG = 1\nALGO = Normal\nEDIFF = 1E-7\nNELM = 160\nISMEAR = 0\nSIGMA = 0.05\nLSORBIT = .TRUE.\nLNONCOLLINEAR = .TRUE.\nSAXIS = 0 0 1\nMAGMOM = 0 0 0  0 0 0\nISYM = -1\nNBANDS = 32\nLORBIT = 11\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .TRUE.\n</code></pre><div class=\"table-wrap\"><table><thead><tr><th>参数</th><th>含义和边界</th></tr></thead><tbody><tr><td><code>LSORBIT=.TRUE.</code></td><td>开启 SOC，并要求非共线可执行程序 vasp_ncl</td></tr><tr><td><code>LNONCOLLINEAR=.TRUE.</code></td><td>处理自旋密度矩阵；单独开启非共线并不等于必然有 SOC</td></tr><tr><td><code>SAXIS=0 0 1</code></td><td>设置全局自旋量子化轴，本例与默认笛卡尔方向一致</td></tr><tr><td><code>MAGMOM=0 0 0  0 0 0</code></td><td>每个 Si 三分量，共六个数；这不是两原子的共线六个磁矩</td></tr><tr><td><code>GGA_COMPAT=.FALSE.</code></td><td>与 LASPH=.TRUE. 配合改善 GGA 非共线数值精度；定量对照也应采用相同设置</td></tr><tr><td><code>ISYM=-1</code></td><td>本例完全关闭对称性处理，方便检验 SOC 对称性影响</td></tr><tr><td><code>NBANDS=32</code></td><td>非共线自旋子空间中的教学空带数；仍检查实际覆盖与收敛</td></tr><tr><td>不写 <code>ISPIN=2</code></td><td>非共线计算不按常规共线 ISPIN 逻辑处理；不要叠加冲突模板</td></tr></tbody></table></div><div class=\"note\">官方文档指出，在 VASP 6.5.0 中，ISPIN=2 与 MAGMOM、LNONCOLLINEAR=.TRUE. 的组合会报错。因此复制共线模板时必须检查整份 INCAR，不只是追加 LSORBIT。</div><p>这里两个原子的初始磁矩都为零，用于非磁性 Si 的 SOC 学习。迁移到磁性材料时，每个原子要给三个分量，方向在 SAXIS 所定义的自旋坐标系中解释。一般情况下，不能把任意 SAXIS 下输出的三个分量直接当作实验室笛卡尔坐标；若重启已有磁化密度，仅改 MAGMOM 也不会任意旋转选定原子的已存磁矩。</p><p><strong>SOC 能带怎样继续：</strong>先核验此均匀网格 SOC 自洽结果，再使用对应的 CHGCAR 与同一 SOC 物理设置做适用的 PBE 固定密度能带；保留 vasp_ncl、三分量 MAGMOM、SAXIS、对称性与投影约定。不要读入无 SOC 的 CHGCAR 后，就把所有结果写成“自洽 SOC 基态”。</p><p><strong>成功检查：</strong>核对程序为 ncl，OUTCAR 中 SOC/非共线设置实际生效；电子循环收敛；所讨论劈裂在更密网格和更多空带下稳定；与无 SOC 结果使用一致结构和能量对齐。做精细能量差对照时，还需让无 SOC 静态任务也使用相同 LASPH 与 GGA_COMPAT 设置并重新自洽，避免把数值处理变化误认成纯 SOC 效应。磁各向异性能量差往往远小于普通键能，需更严格的网格、电子阈值和对称性测试，不能用本页教学精度直接下定量结论。</p><p>打开 SOC 后看到两条曲线分开，并不能单独证明拓扑非平庸；相关判断还可能需要对称性、拓扑不变量、表面态和所用近似的稳定性。先准确描述“在该模型下出现了怎样的能带变化”，再讨论其物理含义。</p><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/LSORBIT\" target=\"_blank\" rel=\"noopener noreferrer\">LSORBIT</a> · <a href=\"https://vasp.at/wiki/LNONCOLLINEAR\" target=\"_blank\" rel=\"noopener noreferrer\">LNONCOLLINEAR 与版本注意</a> · <a href=\"https://vasp.at/wiki/SAXIS\" target=\"_blank\" rel=\"noopener noreferrer\">SAXIS 坐标系</a> · <a href=\"https://vasp.at/wiki/NBANDS\" target=\"_blank\" rel=\"noopener noreferrer\">NBANDS 与自旋子</a></p><p class=\"source-line\">数值精度补充：<a href=\"https://vasp.at/wiki/GGA_COMPAT\" target=\"_blank\" rel=\"noopener noreferrer\">GGA_COMPAT 官方定义</a>。</p>"
+    },
+    {
+      "id": "charge",
+      "title": "任务六：Bader 电荷与差分电荷密度",
+      "kicker": "07 · 用实空间图检验成键解释",
+      "html": "<p>总态密度和能带在能量与动量空间描述电子，电荷密度则把问题放回实空间。先明确要回答的是“电子在哪里重排”，还是“按某种空间划分每个原子分到多少电子”。两者有关，却不是同一个量，也不能把某一种分区电荷直接等同于整数氧化态。</p><p>在确认过的 Si 静态结构上，创建 <code>si-charge</code>，沿用相同 POSCAR、POTCAR 和收敛 KPOINTS，使用以下完整 INCAR。此步骤从头做静态自洽并输出重构密度，不使用结构优化或分子动力学结束时未经核验的密度。</p><pre data-filename=\"si-charge/INCAR\"><code>SYSTEM = Si static charge analysis example\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nISPIN = 1\nISTART = 0\nICHARG = 2\nALGO = Normal\nEDIFF = 1E-7\nNELM = 120\nISMEAR = 0\nSIGMA = 0.05\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .FALSE.\nLAECHG = .TRUE.\n</code></pre><p><code>LAECHG=.TRUE.</code> 生成 AECCAR0、AECCAR1、AECCAR2，分别涉及核密度、原子叠加价密度与自洽价密度。用于常见 Bader 参考划分的是 AECCAR0 与 AECCAR2 的和，不是把三个文件全加起来。必须先确认自洽完成、这些文件属于同一次最终静态任务，并对细 FFT 网格做收敛检验。</p><p>安装并记录 Henkelman 小组 Bader 工具及其配套脚本版本后，可在该结果目录运行作者提供的常用流程：</p><pre data-filename=\"Linux · Bader 后处理\"><code>chgsum.pl AECCAR0 AECCAR2\nbader CHGCAR -ref CHGCAR_sum\n</code></pre><p>这个流程用重构参考密度确定空间分区，再对 CHGCAR 所给的价电子密度积分。结果通常在 ACF.dat 中。若将其中分到某原子的价电子数记为 N<sub>Bader</sub>，净原子电荷的一种约定是：</p><div class=\"formula\">q<sub>atom</sub> = ZVAL − N<sub>Bader</sub></div><p>在这个符号约定下，正值表示相对于势文件价电子计数失电子。必须从实际 POTCAR 取 ZVAL，不能随手代入原子序数；若采用另一种“得到电子为正”的定义，要明确写出反号。核查所有原子的电子数之和、真空区电荷与总电子数是否自洽，并逐步提高 NGXF/NGYF/NGZF 后看每个原子分区数是否稳定。</p><p>理想的同元素对称晶体可用作一致性检查，但界面、空位、磁性和含真空的体系更复杂。Bader 给出的非整数电荷依赖分区与数值网格；它能支持电子重排分析，不能被简单解释为“这个原子严格是 +1.37 价”。</p><h3>差分电荷密度：三个计算必须可相减</h3><p>对于吸附物 A 与表面 B 的组合，常用定义为 Δρ=ρ<sub>A+B</sub>−ρ<sub>A</sub>−ρ<sub>B</sub>。A 和 B 的参考计算保留它们在组合结构中的位置，移除另一部分原子但不分别再次弛豫；否则图中混入了几何变化造成的密度差。总体系与片段体系必须使用相同晶胞、网格原点、细 FFT 尺寸、兼容势与泛函、相同截断能，电子数与电荷状态要满足你定义的参考过程。</p><div class=\"table-wrap\"><table><thead><tr><th>项目</th><th>相减前必须一致或明确</th></tr></thead><tbody><tr><td>几何</td><td>相同晶胞与片段冻结坐标；片段不是各自重新优化的结构</td></tr><tr><td>数值网格</td><td>NGXF、NGYF、NGZF 完全一致；不能按文本行直接相减</td></tr><tr><td>物理模型</td><td>势文件家族、泛函、U/SOC 与电子数分配方案明确</td></tr><tr><td>数据含义</td><td>总电子密度、磁化密度和 PAW 增广信息不能混作同一种数组</td></tr><tr><td>图与单位</td><td>说明电子数密度的单位、等值面数值以及正负颜色含义</td></tr></tbody></table></div><p>建议由理解 VASP 文件格式的后处理程序读取实空间网格，并用全空间积分检查电荷守恒，而不是对两个 CHGCAR 文件逐行相减。对于中性片段且总电子数相加一致的定义，Δρ 的全胞积分应在数值误差内接近零；带电参考则需按其定义重新判断。绘图时同时查看若干等值面阈值，避免只挑最能支持预设结论的一张图。</p><p><strong>完成练习：</strong>为一张 DOS、能带或差分电荷图写出包含输入来源、坐标/能量基准、数值收敛与解释边界的图注。然后列出至少一个能推翻当前解释的额外检查。进入<a href=\"vasp-advanced-v6.html\">吸附、声子、分子动力学等高级任务</a>时，保持同样的证据标准。</p><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/LAECHG\" target=\"_blank\" rel=\"noopener noreferrer\">LAECHG 输出</a> · <a href=\"https://www.henkelmanlab.org/code/bader/\" target=\"_blank\" rel=\"noopener noreferrer\">Bader 工具作者说明</a> · <a href=\"https://vasp.at/wiki/CHGCAR\" target=\"_blank\" rel=\"noopener noreferrer\">CHGCAR 数据含义</a> · <a href=\"https://vasp.at/wiki/NGXF\" target=\"_blank\" rel=\"noopener noreferrer\">细 FFT 网格 NGXF</a> · <a href=\"https://vasp.at/wiki/NELECT\" target=\"_blank\" rel=\"noopener noreferrer\">电子数 NELECT</a></p>"
+    }
+  ],
+  "sources": [
+    {
+      "title": "ISMEAR",
+      "url": "https://vasp.at/wiki/ISMEAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Smearing technique",
+      "url": "https://vasp.at/wiki/Smearing_technique",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "ICHARG",
+      "url": "https://vasp.at/wiki/ICHARG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LORBIT",
+      "url": "https://vasp.at/wiki/LORBIT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "NEDOS",
+      "url": "https://vasp.at/wiki/NEDOS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "NBANDS",
+      "url": "https://vasp.at/wiki/NBANDS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "py4vasp DOS",
+      "url": "https://vasp.at/py4vasp/latest/calculation/dos/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "DFT 能带流程",
+      "url": "https://vasp.at/wiki/Band-structure_calculation_using_DFT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方金刚石硅教程",
+      "url": "https://vasp.at/tutorials/latest/bulk/part2/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "py4vasp 能带",
+      "url": "https://vasp.at/py4vasp/latest/calculation/band/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "杂化泛函能带",
+      "url": "https://vasp.at/wiki/Band-structure_calculation_using_hybrid_functionals",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "ISPIN",
+      "url": "https://vasp.at/wiki/ISPIN",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "MAGMOM",
+      "url": "https://vasp.at/wiki/MAGMOM",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "ISYM",
+      "url": "https://vasp.at/wiki/ISYM",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LASPH",
+      "url": "https://vasp.at/wiki/LASPH",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LDAUTYPE",
+      "url": "https://vasp.at/wiki/LDAUTYPE",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LDAUL",
+      "url": "https://vasp.at/wiki/LDAUL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LDAUU",
+      "url": "https://vasp.at/wiki/LDAUU",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LDAUJ",
+      "url": "https://vasp.at/wiki/LDAUJ",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LMAXMIX",
+      "url": "https://vasp.at/wiki/LMAXMIX",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LSORBIT",
+      "url": "https://vasp.at/wiki/LSORBIT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LNONCOLLINEAR",
+      "url": "https://vasp.at/wiki/LNONCOLLINEAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "SAXIS",
+      "url": "https://vasp.at/wiki/SAXIS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LAECHG",
+      "url": "https://vasp.at/wiki/LAECHG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Bader 工具作者说明",
+      "url": "https://www.henkelmanlab.org/code/bader/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "CHGCAR",
+      "url": "https://vasp.at/wiki/CHGCAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "NGXF",
+      "url": "https://vasp.at/wiki/NGXF",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "NELECT",
+      "url": "https://vasp.at/wiki/NELECT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "GGA_COMPAT",
+      "url": "https://vasp.at/wiki/GGA_COMPAT",
+      "accessed": "2026-09-19"
+    }
+  ],
+  "downloads": [
+    {
+      "path": "si-dos/INCAR",
+      "title": "硅 DOS · INCAR",
+      "content": "SYSTEM = Si PBE dense-mesh DOS\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nISPIN = 1\nISTART = 0\nICHARG = 1\nALGO = Normal\nEDIFF = 1E-7\nNELM = 120\nISMEAR = -5\nNBANDS = 16\nLORBIT = 11\nNEDOS = 2001\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .TRUE.\n",
+      "description": "需要同一硅原胞已收敛的 POSCAR、POTCAR 和 CHGCAR；数值为待检验教学起点。"
+    },
+    {
+      "path": "si-dos/KPOINTS",
+      "title": "硅 DOS · KPOINTS",
+      "content": "Si dense uniform mesh for DOS\n0\nGamma\n16 16 16\n0 0 0\n",
+      "description": "需要同一硅原胞已收敛的 POSCAR、POTCAR 和 CHGCAR；数值为待检验教学起点。"
+    },
+    {
+      "path": "si-bands/INCAR",
+      "title": "硅 PBE 能带 · INCAR",
+      "content": "SYSTEM = Si PBE bands from converged density\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nISPIN = 1\nISTART = 0\nICHARG = 11\nALGO = Normal\nEDIFF = 1E-7\nNELM = 120\nISMEAR = 0\nSIGMA = 0.05\nNBANDS = 16\nLORBIT = 11\nIBRION = -1\nNSW = 0\nLCHARG = .FALSE.\nLWAVE = .FALSE.\n",
+      "description": "需要同一硅原胞已收敛的 POSCAR、POTCAR 和 CHGCAR；数值为待检验教学起点。"
+    },
+    {
+      "path": "si-bands/KPOINTS",
+      "title": "硅 PBE 能带 · 路径",
+      "content": "Diamond Si primitive: L-G-X-U | K-G\n40\nLine-mode\nReciprocal\n0.500000 0.500000 0.500000 L\n0.000000 0.000000 0.000000 G\n\n0.000000 0.000000 0.000000 G\n0.500000 0.000000 0.500000 X\n\n0.500000 0.000000 0.500000 X\n0.625000 0.250000 0.625000 U\n\n0.375000 0.375000 0.750000 K\n0.000000 0.000000 0.000000 G\n",
+      "description": "需要同一硅原胞已收敛的 POSCAR、POTCAR 和 CHGCAR；数值为待检验教学起点。"
+    },
+    {
+      "path": "si-dos/README.txt",
+      "title": "硅 DOS · 前置说明",
+      "content": "Copy POSCAR, POTCAR and converged CHGCAR from si-static (same geometry and PBE model). ICHARG=1 updates the density self-consistently on the denser mesh. Verify ENCUT, k mesh, NBANDS and DOS resolution. POTCAR and calculated outputs are not included.\n\nFor the py4vasp snippet, start the Jupyter notebook in the parent directory of si-dos. If the notebook is already inside si-dos, use Calculation.from_path(\".\") instead of Calculation.from_path(\"si-dos\").\n",
+      "description": "避免将 ICHARG=1 误认为固定电荷密度。"
+    },
+    {
+      "path": "si-bands/README.txt",
+      "title": "硅能带 · 前置说明",
+      "content": "Copy the matching POSCAR, POTCAR and converged CHGCAR from a uniform-mesh PBE SCF/DOS run. ICHARG=11 keeps the density fixed. KPOINTS is specifically for primitive vectors a1=(0,a/2,a/2), a2=(a/2,0,a/2), a3=(a/2,a/2,0). Path: L-G-X-U | K-G, disconnected U to K. Not a general path for conventional or distorted cells. Not an HSE workflow. Use a documented energy reference from SCF or the valence-band maximum.\n\nPlot from the common parent directory of si-static and si-bands in a Jupyter environment with a compatible py4vasp version. Both calculations must have readable vaspout.h5 generated by an HDF5-enabled VASP build. This example assumes the bands CHGCAR came from si-static. If it came from si-dos, change the SCF reference path to si-dos as well. Keep structure, functional and POTCAR consistent.\n\nimport py4vasp\nscf = py4vasp.Calculation.from_path(\"si-static\")\nef = scf.dos.read()[\"fermi_energy\"]\ncalc = py4vasp.Calculation.from_path(\"si-bands\")\ncalc.band.plot(fermi_energy=ef)\n\nThe plot has already subtracted the explicitly supplied SCF Fermi energy. Do not subtract it a second time or use the line-path Fermi energy as a substitute. Without supported HDF5 outputs, record EF from the matching SCF OUTCAR and use another plotting tool with explicit energy alignment. No result data are bundled here.\n",
+      "description": "路径仅对应本教程原胞，不能直接移植到其他晶胞。"
+    },
+    {
+      "path": "fe-fm/POSCAR",
+      "title": "铁磁初态练习 · POSCAR",
+      "content": "bcc Fe conventional cell; teaching geometry\n2.8700000000\n1.0000000000 0.0000000000 0.0000000000\n0.0000000000 1.0000000000 0.0000000000\n0.0000000000 0.0000000000 1.0000000000\nFe\n2\nDirect\n0.0000000000 0.0000000000 0.0000000000\n0.5000000000 0.5000000000 0.5000000000\n",
+      "description": "自备授权 Fe PAW-PBE 势，重新做 Fe 的收敛测试。2.87 Å 为固定教学几何。"
+    },
+    {
+      "path": "fe-fm/KPOINTS",
+      "title": "铁磁初态练习 · KPOINTS",
+      "content": "bcc Fe conventional cell uniform mesh\n0\nGamma\n12 12 12\n0 0 0\n",
+      "description": "自备授权 Fe PAW-PBE 势，重新做 Fe 的收敛测试。2.87 Å 为固定教学几何。"
+    },
+    {
+      "path": "fe-fm/INCAR",
+      "title": "铁磁初态练习 · INCAR",
+      "content": "SYSTEM = bcc Fe FM initial-state test\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nLASPH = .TRUE.\nISPIN = 2\nMAGMOM = 2.5 2.5\nISYM = 0\nISTART = 0\nICHARG = 2\nALGO = Normal\nEDIFF = 1E-7\nNELM = 160\nISMEAR = 1\nSIGMA = 0.15\nLORBIT = 11\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .TRUE.\n",
+      "description": "自备授权 Fe PAW-PBE 势，重新做 Fe 的收敛测试。2.87 Å 为固定教学几何。"
+    },
+    {
+      "path": "fe-afm/INCAR",
+      "title": "反向磁矩初态 · INCAR",
+      "content": "SYSTEM = bcc Fe opposite-spin initial-state test\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nLASPH = .TRUE.\nISPIN = 2\nMAGMOM = 2.5 -2.5\nISYM = 0\nISTART = 0\nICHARG = 2\nALGO = Normal\nEDIFF = 1E-7\nNELM = 160\nISMEAR = 1\nSIGMA = 0.15\nLORBIT = 11\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .TRUE.\n",
+      "description": "复制 fe-fm 的相同结构、网格和势；从头初始化，不读已有磁化密度。"
+    },
+    {
+      "path": "fe-afm/README.txt",
+      "title": "磁性对照 · 前置说明",
+      "content": "Use exactly the same POSCAR, POTCAR and KPOINTS as fe-fm. Do not copy WAVECAR or a magnetized CHGCAR. This tests two opposite initial moments in a two-Fe bcc conventional cell; it does not establish the magnetic ground state or cover every AFM periodicity. Record converged local moments, total moment, energy definition, smearing convergence and final state.\n",
+      "description": "对照结果需要实际求解，反向初态未必保持到最终。"
+    },
+    {
+      "path": "dft-u/INCAR.template",
+      "title": "DFT+U · 待配置模板",
+      "content": "# TEMPLATE ONLY: supply a validated Ni2O2 magnetic cell and choose U_eff.\n# POSCAR species must be Ni O with counts 2 2 for the MAGMOM below.\nSYSTEM = Ni2O2 PBE+U magnetic template\nGGA = PE\nENCUT = YOUR_CONVERGED_ENCUT\nPREC = Accurate\nLREAL = .FALSE.\nLASPH = .TRUE.\nISPIN = 2\nMAGMOM = 2.0 -2.0 0.0 0.0\nISYM = 0\nISTART = 0\nICHARG = 2\nALGO = Normal\nEDIFF = 1E-7\nNELM = 160\nISMEAR = 0\nSIGMA = 0.05\nLDAU = .TRUE.\nLDAUTYPE = 2\nLDAUL = 2 -1\nLDAUU = YOUR_U_EFF 0.0\nLDAUJ = 0.0 0.0\nLMAXMIX = 4\nLORBIT = 11\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .TRUE.\n",
+      "description": "明确未就绪：需要 Ni2O2 磁性结构、相容网格、Ni O 势文件，以及有依据的 Ueff 和截断能。"
+    },
+    {
+      "path": "dft-u/README.txt",
+      "title": "DFT+U · 配置边界",
+      "content": "This is a parameter-map template, NOT a ready-to-run NiO calculation. Supply a validated magnetic Ni2O2 cell with species Ni O and counts 2 2, matching POTCAR and a converged mesh. Replace YOUR_CONVERGED_ENCUT and YOUR_U_EFF. U_eff must come from a justified source or calculation. LDAUTYPE=2 and J=0 are used, so enter U_eff in LDAUU. Keep LMAXMIX=4 in the precursor SCF and subsequent fixed-density d-electron workflow. Do not compare absolute energies across different U_eff values to choose U.\n",
+      "description": "避免臆定磁性晶胞或“通用 U”。"
+    },
+    {
+      "path": "si-soc/INCAR",
+      "title": "硅 SOC · INCAR",
+      "content": "SYSTEM = Si PBE SOC self-consistent example\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nLASPH = .TRUE.\nGGA_COMPAT = .FALSE.\nISTART = 0\nICHARG = 1\nALGO = Normal\nEDIFF = 1E-7\nNELM = 160\nISMEAR = 0\nSIGMA = 0.05\nLSORBIT = .TRUE.\nLNONCOLLINEAR = .TRUE.\nSAXIS = 0 0 1\nMAGMOM = 0 0 0  0 0 0\nISYM = -1\nNBANDS = 32\nLORBIT = 11\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .TRUE.\n",
+      "description": "必须使用 vasp_ncl；配套复制非磁性硅静态结构、势、CHGCAR 和均匀网格。"
+    },
+    {
+      "path": "si-soc/README.txt",
+      "title": "硅 SOC · 前置说明",
+      "content": "Use vasp_ncl, not vasp_std or vasp_gam. Copy matching POSCAR/POTCAR/CHGCAR from nonmagnetic Si PBE SCF and use a converged uniform KPOINTS mesh. This input performs a new self-consistent SOC calculation with ICHARG=1. MAGMOM contains 3 components per atom (6 numbers for 2 Si); do not add ISPIN=2. Check actual NBANDS and SOC convergence.\n\nIf reusing submit.slurm.template, replace vasp_std with vasp_ncl in BOTH command -v and srun lines. Save the configured script in si-soc, cd into si-soc, then submit there. Changing only INCAR does not change the executable.\n",
+      "description": "三分量磁矩和程序类型必须同时正确。"
+    },
+    {
+      "path": "si-charge/INCAR",
+      "title": "硅电荷分析 · INCAR",
+      "content": "SYSTEM = Si static charge analysis example\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nISPIN = 1\nISTART = 0\nICHARG = 2\nALGO = Normal\nEDIFF = 1E-7\nNELM = 120\nISMEAR = 0\nSIGMA = 0.05\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .FALSE.\nLAECHG = .TRUE.\n",
+      "description": "配套相同已核验结构、势和收敛网格；LAECHG 输出后还需检验细 FFT 网格。"
+    },
+    {
+      "path": "si-charge/README.txt",
+      "title": "电荷分析 · 前置说明",
+      "content": "Use the verified Si POSCAR, same licensed POTCAR and converged uniform KPOINTS. Run a final static SCF with LAECHG=.TRUE. Check convergence of the fine FFT grid. With separately installed author-provided Bader tools: chgsum.pl AECCAR0 AECCAR2; then bader CHGCAR -ref CHGCAR_sum. Interpret population using actual POTCAR ZVAL and report sign convention. No charge values are provided or claimed by this tutorial.\n",
+      "description": "不把 Bader 分区电荷直接当作整数氧化态。"
+    }
+  ]
+}

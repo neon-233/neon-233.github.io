@@ -1,0 +1,238 @@
+{
+  "title": "VASP 入门：从四个文件到可信结果",
+  "subtitle": "用两个原子的硅原胞，完成输入理解、收敛实验、结构优化与输出检查。",
+  "filename": "vasp-start-v6.html",
+  "kicker": "模块 02 · VASP 实操起点",
+  "estimatedMinutes": 95,
+  "sections": [
+    {
+      "id": "environment",
+      "title": "先知道自己在运行什么",
+      "kicker": "01 · 环境与任务边界",
+      "html": "<p>本章把“一个硅晶胞”从纸上的结构变成可追溯的计算任务。目标不是记住一大串参数，而是知道每一份输入在决定什么、每一个输出能回答什么，以及何时应该停下来检查。建议先读完<a href=\"quantum-v6.html\">量子化学基础</a>中的周期性、平面波和自洽场，再按本章顺序操作。</p><div class=\"note\"><strong>适用范围：</strong>采用常见 VASP 6 系列、PAW-PBE、无 SOC 的周期性晶体作为主线。给出的数值是教学起点，必须对你实际使用的势文件和目标物理量做收敛检验。本网站没有运行 VASP，未提供计算所得能量、晶格常数或带隙。</div><p>VASP 是需要许可的软件，网页和输入模板不会提供程序或 POTCAR。先确认你属于获得许可的用户组，再向课题组或计算中心取得已安装模块、势文件位置、队列名称与作业提交方法。学校的 Linux 集群通常已经编译好 VASP；不建议刚入门就同时处理编译、MPI 和材料模型三个问题。</p><div class=\"table-wrap\"><table><thead><tr><th>程序</th><th>常见用途</th><th>本教程如何选</th></tr></thead><tbody><tr><td><code>vasp_std</code></td><td>一般 k 点采样和共线自旋计算</td><td>本章的 8×8×8 网格用它</td></tr><tr><td><code>vasp_gam</code></td><td>仅 Γ 点的专用实现</td><td>“Γ 中心网格”并不等于“只有 Γ 点”；本章不能改用它</td></tr><tr><td><code>vasp_ncl</code></td><td>非共线自旋与自旋轨道耦合</td><td>进入 SOC 一节时更换可执行程序</td></tr></tbody></table></div><p>在登录节点上可以编辑文件、查看已有输出和做轻量预检查；正式计算应提交到计算节点。CPU 核数不是越多越好：两个原子的练习只适合小规模资源测试。不同编译版本、MPI、CPU/GPU 后端的并行设置并不通用，先采用计算中心已经验证的启动方式。记录准确版本号和编译环境，遇到错误时这些信息比“我用了 VASP”更有用。</p><p><strong>开始前的自查：</strong>能否在文本编辑器中看到普通文本文件？是否知道自己当前所在目录？是否能查看作业状态？势文件是 PBE 的哪个发布版？如果这些问题仍不清楚，先完成本章“集群操作”再提交任务。</p><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/Installing_VASP.6.X.X\" target=\"_blank\" rel=\"noopener noreferrer\">官方安装说明</a> · <a href=\"https://vasp.at/sign_in/registration_form/\" target=\"_blank\" rel=\"noopener noreferrer\">VASP 许可</a></p>"
+    },
+    {
+      "id": "four-inputs",
+      "title": "四个输入文件，连接物理模型与数值方法",
+      "kicker": "02 · 文件地图",
+      "html": "<p>把每项计算放入独立目录，会比在同一个文件夹中反复覆盖文件更容易定位问题。一次常见计算至少需要以下四个文件，名称区分大小写。它们互相约束：结构写了什么元素，势文件就必须按同样顺序提供；选择什么泛函，也必须核查所用势与计算设定是否相容。</p><div class=\"table-wrap\"><table><thead><tr><th>文件</th><th>回答的问题</th><th>提交前检查</th></tr></thead><tbody><tr><td><code>POSCAR</code></td><td>算什么结构？</td><td>晶格、元素顺序、原子数、坐标类型和最近邻距离</td></tr><tr><td><code>POTCAR</code></td><td>如何处理离子实与价电子？</td><td>每种元素的 PAW 数据集、排列顺序、价电子数、ENMAX</td></tr><tr><td><code>KPOINTS</code></td><td>怎样在倒空间积分？</td><td>网格密度、Γ 中心/偏移、与晶格对称性的相容性</td></tr><tr><td><code>INCAR</code></td><td>用什么近似和求解条件？</td><td>泛函、截断能、电子/离子收敛、占据、磁性与输出</td></tr></tbody></table></div><p>POSCAR 的缩放因子乘在三个晶格矢量上；使用 <code>Direct</code> 时，三个数是相对于晶格矢量的分数坐标，不是 Å。若使用 <code>Cartesian</code>，坐标也受缩放因子影响。元素行是便于人阅读的标签，实际离子种类还取决于 POTCAR 和原子数分组，所以只改元素名称而不换势文件，并没有真正换掉元素。</p><p>POTCAR 从授权势库取得，不手工改写其中参数。含 A、B 两种元素的结构按 <code>A B</code> 排列时，POTCAR 也应先 A 后 B；而 <code>MAGMOM</code> 通常按每个原子排列，<code>LDAUU</code> 等则按每种元素排列。这种“按原子”与“按种类”的区别会在磁性章节再次出现。</p><p>INCAR 建议每行一个参数，统一使用英文半角符号。注释用于说明选择理由，不要把中文说明直接接在数值后而没有注释符。不要在同一文件中留下多个互相矛盾的 <code>ENCUT</code> 或 <code>ISPIN</code>；真正被程序读取的值，应在 OUTCAR 中核对。</p><div class=\"table-wrap\"><table><thead><tr><th>输出</th><th>用途</th><th>不能据此单独断言</th></tr></thead><tbody><tr><td><code>OUTCAR</code></td><td>实际参数、能量、力、应力和详细诊断</td><td>有文件不代表运行成功</td></tr><tr><td><code>OSZICAR</code></td><td>简洁的电子与离子迭代记录</td><td>能量变化小不等于结构已充分优化</td></tr><tr><td><code>CONTCAR</code></td><td>运行结束时的结构</td><td>达到最大步数时也会写出，未必是收敛结构</td></tr><tr><td><code>CHGCAR / WAVECAR</code></td><td>电荷密度 / 波函数，可用于兼容的后续计算</td><td>不是可以随意跨结构、泛函、磁态复用的通用缓存</td></tr><tr><td><code>vasprun.xml / vaspout.h5</code></td><td>适合后处理的结构化输出；HDF5 文件依赖编译设置</td><td>解析出数字不代表物理假设正确</td></tr></tbody></table></div><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/POSCAR\" target=\"_blank\" rel=\"noopener noreferrer\">POSCAR</a> · <a href=\"https://vasp.at/wiki/POTCAR\" target=\"_blank\" rel=\"noopener noreferrer\">POTCAR</a> · <a href=\"https://vasp.at/wiki/INCAR\" target=\"_blank\" rel=\"noopener noreferrer\">INCAR</a> · <a href=\"https://vasp.at/wiki/OUTCAR\" target=\"_blank\" rel=\"noopener noreferrer\">OUTCAR</a></p>"
+    },
+    {
+      "id": "silicon-scf",
+      "title": "第一项任务：硅原胞的自洽电子计算",
+      "kicker": "03 · 完整输入",
+      "html": "<p><strong>问题：</strong>把离子位置固定，求这个周期性硅结构在 PBE 近似下的基态电子密度。这里的“静态”表示原子不移动，不是关闭电子迭代。先从一个非磁性、两个原子的体系熟悉操作，之后再处理过渡金属和表面。</p><p>下列 POSCAR 使用金刚石结构的两个原子原胞，晶格参数 5.43 Å 是学习用初始值，不是本教程得到的优化结果。三个原胞矢量并非互相垂直，体积是常规立方晶胞的四分之一。不要把后面的原胞 k 路径直接用到含八个原子的常规晶胞上。</p><pre data-filename=\"si-scf/POSCAR\"><code>Diamond Si primitive cell; a=5.43 A\n5.4300000000\n0.0000000000 0.5000000000 0.5000000000\n0.5000000000 0.0000000000 0.5000000000\n0.5000000000 0.5000000000 0.0000000000\nSi\n2\nDirect\n0.0000000000 0.0000000000 0.0000000000\n0.2500000000 0.2500000000 0.2500000000\n</code></pre><p>建立 <code>si-scf</code> 目录，保存下面的 KPOINTS。第三行的 Gamma 表示网格以 Γ 为中心；第四行 8 8 8 表示三个倒格矢方向的划分数。这是自动生成的均匀网格，第二行 0 表示由网格规则生成，而不是“计算零个 k 点”。对称性会将网格约化为不可约 k 点。</p><pre data-filename=\"si-scf/KPOINTS\"><code>Si uniform Gamma-centered mesh\n0\nGamma\n8 8 8\n0 0 0\n</code></pre><div class=\"warning\"><strong>提交之前必须做的一步：</strong>查看你自己的 POTCAR 中每个 <code>ENMAX</code>。下面 <code>ENCUT=520</code> 仅为教学数值，首先必须不低于其中的最大 ENMAX，并且还需通过收敛实验。若你的势需要更高截断能，将本课所有相关任务的 ENCUT 一致提高。</div><pre data-filename=\"si-scf/INCAR\"><code>SYSTEM = Si PBE SCF learning example\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nISPIN = 1\nISTART = 0\nICHARG = 2\nALGO = Normal\nEDIFF = 1E-6\nNELM = 120\nISMEAR = 0\nSIGMA = 0.05\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .TRUE.\n</code></pre><div class=\"table-wrap\"><table><thead><tr><th>参数</th><th>这次的含义</th><th>怎样迁移到其他体系</th></tr></thead><tbody><tr><td><code>GGA=PE</code></td><td>选择 PBE GGA</td><td>配套检查 PAW-PBE 势；泛函选择属于物理模型</td></tr><tr><td><code>ENCUT=520</code></td><td>平面波动能上限，单位 eV</td><td>按势文件与目标精度收敛，不是“所有材料标准值”</td></tr><tr><td><code>PREC=Accurate</code></td><td>采用较精细的内部网格设定</td><td>不能替代 ENCUT 和 k 网格测试</td></tr><tr><td><code>LREAL=.FALSE.</code></td><td>在倒空间处理投影算符</td><td>适合这个小原胞；大体系可测试 Auto 的精度与速度</td></tr><tr><td><code>ISPIN=1</code></td><td>本例非自旋极化</td><td>含磁性元素或自由基时必须重新判断</td></tr><tr><td><code>ISTART=0; ICHARG=2</code></td><td>从头开始，用原子电荷叠加构造初猜</td><td>便于独立复现实验；后续读 CHGCAR 要明确改变 ICHARG</td></tr><tr><td><code>ALGO=Normal</code></td><td>采用常用的电子求解算法</td><td>计算不收敛时先诊断再换算法</td></tr><tr><td><code>EDIFF=1E-6</code></td><td>电子迭代的能量停止阈值，eV/计算单胞</td><td>不是每原子误差，也不是最终能量的绝对准确度</td></tr><tr><td><code>NELM=120</code></td><td>最多电子迭代步数</td><td>跑满它通常说明未满足停止条件</td></tr><tr><td><code>ISMEAR=0; SIGMA=0.05</code></td><td>高斯展宽，宽度 0.05 eV</td><td>适合本入门半导体例子；还需检查展宽敏感性</td></tr><tr><td><code>IBRION=-1; NSW=0</code></td><td>不更新离子位置</td><td>与结构优化的离子循环区分</td></tr><tr><td><code>LCHARG/LWAVE=.TRUE.</code></td><td>保留电荷密度与波函数</td><td>会增加磁盘占用；保存 SCF 证据后再做后续任务</td></tr></tbody></table></div><p><strong>POTCAR：</strong>只需一个 Si PAW-PBE 数据集，具体版本由你的授权环境决定，下载包不含这个文件。运行结束后，用 OUTCAR 核对离子数为 2、元素与价电子设置正确、最终电子循环达到 EDIFF。不能用“跟别人的总能量小数完全一样”判断成功，因为不同势版本与数值设置会改变总能量基准。</p><p><strong>小练习：</strong>用可视化软件打开 POSCAR，解释为什么第二个 Si 的分数坐标是 (¼,¼,¼)，再根据晶格矢量把它转换成笛卡尔坐标。读出 OUTCAR 的晶胞体积，与你手算的 a³/4 比较。这比先盯着漂亮的能带图更能排除结构错误。</p><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/ENCUT\" target=\"_blank\" rel=\"noopener noreferrer\">ENCUT</a> · <a href=\"https://vasp.at/wiki/KPOINTS\" target=\"_blank\" rel=\"noopener noreferrer\">KPOINTS</a> · <a href=\"https://vasp.at/wiki/EDIFF\" target=\"_blank\" rel=\"noopener noreferrer\">EDIFF</a> · <a href=\"https://vasp.at/wiki/LREAL\" target=\"_blank\" rel=\"noopener noreferrer\">LREAL</a> · <a href=\"https://vasp.at/wiki/PREC\" target=\"_blank\" rel=\"noopener noreferrer\">PREC</a> · <a href=\"https://vasp.at/wiki/ALGO\" target=\"_blank\" rel=\"noopener noreferrer\">ALGO</a></p>"
+    },
+    {
+      "id": "convergence",
+      "title": "收敛实验：先证明结果不再依赖计算旋钮",
+      "kicker": "04 · ENCUT 与 k 网格",
+      "html": "<p>电子循环达到 EDIFF，只说明在当前基组、当前网格和当前近似下完成了求解。它没有告诉你平面波是否够多、布里渊区是否采样充分。真正的收敛测试要比较目标量随着数值设置加密后是否稳定。可以把它理解为给显微镜调分辨率：画面不再明显变化，才能讨论画面中的细节。</p><ol><li><strong>先固定几何和所有物理设定。</strong>本练习始终使用同一个 si-scf/POSCAR、同一个 POTCAR，不在每个截断能下分别优化结构。</li><li><strong>测试 ENCUT。</strong>固定一个暂时较密的均匀网格，只改变截断能。可从 max(ENMAX) 以上选连续增大的 5—6 个值；400、450、500、550、600 eV 只在它们全部不低于你的 max(ENMAX) 时才可作为示例序列。</li><li><strong>测试 k 网格。</strong>使用第一轮已趋于稳定的截断能，比较 4³、6³、8³、10³、12³ 等同一家族 Γ 中心网格；若 12³ 仍不稳定就继续加密。</li><li><strong>做交叉检查。</strong>在最后选定的 k 网格上再提高一次 ENCUT，确认第一轮结论没有被粗网格掩盖。</li></ol><p>每组都从头生成电荷密度并使用独立目录。下面的下载脚本只建立输入，不运行 VASP，也不自动提交几十个作业。它要求使用本页“一行一个参数”的静态 INCAR，会忽略 #/! 后的注释、拒绝重复参数和分号多参数行；NSW&gt;0 或 IBRION 不是 −1 时会停止，防止误把结构优化源作为固定几何测试。k 网格测试也会检查源 ENCUT 不低于势文件最大 ENMAX。目标目录若已存在同样停止，避免覆盖先前结果。脚本只在你自己的计算环境内复制授权 POTCAR，不应把生成目录整体上传到公开仓库。</p><pre data-filename=\"prepare_convergence.py · 用法\"><code># 在示例目录的共同上一级运行；先检查实际 ENMAX\npython3 prepare_convergence.py encut si-scf conv-encut 400 450 500 550 600\n# 先把 si-scf/INCAR 中的 ENCUT 更新为已测试的选定值，再做这一组\npython3 prepare_convergence.py kmesh si-scf conv-kmesh 4 6 8 10 12\n</code></pre><details><summary>展开查看目录生成脚本</summary><pre data-filename=\"prepare_convergence.py\"><code>#!/usr/bin/env python3\n&quot;&quot;&quot;Prepare independent input directories only. Does not submit jobs or run VASP.&quot;&quot;&quot;\nimport argparse\nimport csv\nimport math\nfrom pathlib import Path\nimport re\nimport shutil\n\np = argparse.ArgumentParser()\np.add_argument(&quot;mode&quot;, choices=[&quot;encut&quot;, &quot;kmesh&quot;])\np.add_argument(&quot;source&quot;, type=Path)\np.add_argument(&quot;destination&quot;, type=Path)\np.add_argument(&quot;values&quot;, nargs=&quot;+&quot;, type=float)\na = p.parse_args()\nsource = a.source.resolve()\ndestination = a.destination.resolve()\nfor name in [&quot;INCAR&quot;, &quot;POSCAR&quot;, &quot;KPOINTS&quot;, &quot;POTCAR&quot;]:\n    if not (source / name).is_file():\n        raise SystemExit(f&quot;Missing source input: {name}&quot;)\nif destination.exists():\n    raise SystemExit(&quot;Destination exists; choose a NEW directory to avoid overwriting&quot;)\nincar = (source / &quot;INCAR&quot;).read_text(encoding=&quot;utf-8&quot;)\npotcar = (source / &quot;POTCAR&quot;).read_text(encoding=&quot;utf-8&quot;, errors=&quot;replace&quot;)\nlimits = re.findall(r&quot;ENMAX\\s*=\\s*([0-9.]+)&quot;, potcar)\nif not limits:\n    raise SystemExit(&quot;ENMAX not found; inspect POTCAR before proceeding&quot;)\nmax_enmax = max(map(float, limits))\n# Restrict this educational generator to an unambiguous static source INCAR.\nsettings = {}\nfor number, raw in enumerate(incar.splitlines(), start=1):\n    clean = re.split(r&quot;[!#]&quot;, raw, maxsplit=1)[0].strip()\n    if not clean:\n        continue\n    if &quot;;&quot; in clean or clean.count(&quot;=&quot;) != 1:\n        raise SystemExit(f&quot;Use one unambiguous tag per line (INCAR line {number})&quot;)\n    key, value = (part.strip() for part in clean.split(&quot;=&quot;, 1))\n    key = key.upper()\n    if key in settings:\n        raise SystemExit(f&quot;Duplicate INCAR tag: {key}&quot;)\n    settings[key] = value\ntry:\n    nsw = int(settings.get(&quot;NSW&quot;, &quot;0&quot;))\n    ibrion = int(settings.get(&quot;IBRION&quot;, &quot;-1&quot;))\nexcept ValueError:\n    raise SystemExit(&quot;NSW and IBRION must be plain integers&quot;)\nif nsw &gt; 0 or ibrion != -1:\n    raise SystemExit(&quot;Source must be STATIC: NSW &lt;= 0 and IBRION = -1; do not use a relaxation INCAR&quot;)\nif a.mode == &quot;kmesh&quot;:\n    try:\n        cutoff = float(settings[&quot;ENCUT&quot;].replace(&quot;D&quot;, &quot;E&quot;).replace(&quot;d&quot;, &quot;e&quot;))\n    except (KeyError, ValueError):\n        raise SystemExit(&quot;kmesh source must set an explicit numeric ENCUT&quot;)\n    if not math.isfinite(cutoff) or cutoff &lt; max_enmax:\n        raise SystemExit(f&quot;Source ENCUT must be &gt;= max ENMAX ({max_enmax} eV)&quot;)\nvalues = a.values\nif any(not math.isfinite(x) or x &lt;= 0 for x in values):\n    raise SystemExit(&quot;Values must be positive finite numbers&quot;)\nif len(set(values)) != len(values):\n    raise SystemExit(&quot;Duplicate values&quot;)\nif a.mode == &quot;encut&quot; and min(values) &lt; max_enmax:\n    raise SystemExit(f&quot;All ENCUT values must be &gt;= max ENMAX ({max_enmax} eV)&quot;)\nif a.mode == &quot;kmesh&quot; and any(x != int(x) for x in values):\n    raise SystemExit(&quot;k mesh values must be positive integers&quot;)\n# This generator expects the distributed one-tag-per-line INCAR, not an arbitrary INCAR.\nbase = []\nfor line in incar.splitlines():\n    key = line.split(&quot;=&quot;, 1)[0].strip().upper()\n    if key not in {&quot;ISTART&quot;, &quot;ICHARG&quot;, &quot;LWAVE&quot;, &quot;LCHARG&quot;} and not (a.mode == &quot;encut&quot; and key == &quot;ENCUT&quot;):\n        base.append(line)\nbase += [&quot;ISTART = 0&quot;, &quot;ICHARG = 2&quot;, &quot;LWAVE = .FALSE.&quot;, &quot;LCHARG = .FALSE.&quot;]\ndestination.mkdir(parents=True)\nrows = []\nfor value in values:\n    label = f&quot;{value:g}&quot;\n    run = destination / ((&quot;e&quot; if a.mode == &quot;encut&quot; else &quot;k&quot;) + label)\n    run.mkdir()\n    for name in [&quot;POSCAR&quot;, &quot;POTCAR&quot;]:\n        shutil.copy2(source / name, run / name)\n    text = &quot;\\n&quot;.join(base) + &quot;\\n&quot;\n    if a.mode == &quot;encut&quot;:\n        text += f&quot;ENCUT = {value:g}\\n&quot;\n        shutil.copy2(source / &quot;KPOINTS&quot;, run / &quot;KPOINTS&quot;)\n    else:\n        n = int(value)\n        (run / &quot;KPOINTS&quot;).write_text(f&quot;Gamma mesh convergence\\n0\\nGamma\\n{n} {n} {n}\\n0 0 0\\n&quot;, encoding=&quot;utf-8&quot;)\n    (run / &quot;INCAR&quot;).write_text(text, encoding=&quot;utf-8&quot;)\n    rows.append([run.name, a.mode, label, &quot;prepared_not_run&quot;])\nwith (destination / &quot;manifest.csv&quot;).open(&quot;w&quot;, newline=&quot;&quot;, encoding=&quot;utf-8&quot;) as f:\n    writer = csv.writer(f)\n    writer.writerow([&quot;directory&quot;, &quot;variable&quot;, &quot;value&quot;, &quot;status&quot;])\n    writer.writerows(rows)\nprint(f&quot;Prepared {len(rows)} independent folders; submit manually after review&quot;)\n</code></pre></details><p>用统一的能量定义比较，比如同一种展宽下的 <code>energy(sigma→0)</code>，并同时记录自由能和熵项；不要把一组 TOTEN 与另一组 E0 混在一张表里。对这个两原子原胞，单胞能量差除以 2 才得到 eV/atom。针对相稳定性、吸附能或势垒，最终还要检验相应能量差本身，而不只是孤立的总能量。</p><div class=\"table-wrap\"><table><thead><tr><th>记录列</th><th>填写什么</th><th>判断方式</th></tr></thead><tbody><tr><td>ENCUT / k 网格</td><td>每组实际读入值</td><td>从 OUTCAR 核对，不能只相信目录名</td></tr><tr><td>E / atom</td><td>统一定义的能量除以原子数</td><td>相对最精细参考值画图</td></tr><tr><td>最大残余力 / 应力</td><td>同一结构上的力与应力</td><td>能量稳定不保证导数也稳定</td></tr><tr><td>计算耗时与内存</td><td>调度输出和 OUTCAR 记录</td><td>在精度满足后才比较成本</td></tr><tr><td>是否电子收敛</td><td>是 / 否及失败原因</td><td>失败点不得当作正常趋势数据</td></tr></tbody></table></div><p>课堂上可暂取“与更精细两组相比小于 1 meV/atom”作为能量收敛练习目标，但这不是对所有课题的统一标准。若你要讨论 0.5 meV/atom 的磁各向异性，这样的门槛显然不够。至少要求最后几个点形成稳定趋势，不能恰好两点接近就宣称完成。</p><div class=\"note\"><strong>研究习惯：</strong>把收敛曲线作为结果的一部分保存。写“ENCUT=520 eV”只报告了设置；写“提高到 600 eV 后，目标能量差变化小于预先定义的阈值”才报告了证据。后一句只有实际完成相应测试后才能使用。</div><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/ENCUT\" target=\"_blank\" rel=\"noopener noreferrer\">截断能与可比性</a> · <a href=\"https://vasp.at/wiki/KPOINTS\" target=\"_blank\" rel=\"noopener noreferrer\">k 点网格规则</a> · <a href=\"https://vasp.at/wiki/Volume_relaxation\" target=\"_blank\" rel=\"noopener noreferrer\">体积与数值收敛</a></p>"
+    },
+    {
+      "id": "relaxation",
+      "title": "结构优化：让原子与晶胞走向驻点",
+      "kicker": "05 · 力、应力与自由度",
+      "html": "<p>SCF 在固定结构上调整电子；结构优化在多个 SCF 之间移动原子，必要时也改变晶胞。能量对原子位移的负导数是力，能量对应变的响应决定应力。优化想要的是：电子先足够收敛，让力可信，再用这些力更新结构。过松的电子收敛会把数值噪声传给离子优化器。</p><p>在全新 <code>si-relax</code> 目录中放入上节 Si 的 POSCAR、相同 POTCAR 与已收敛的均匀 KPOINTS，再使用下面 INCAR。<strong>520 eV 仅在满足你的体积优化精度要求时才能保留。</strong>先核查是否至少达到约 1.3×max(ENMAX) 这一常见的提高截断能起点，再通过残余应力与更高截断能测试决定实际数值。</p><pre data-filename=\"si-relax/INCAR\"><code>SYSTEM = Si PBE cell relaxation learning example\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nISPIN = 1\nISTART = 0\nICHARG = 2\nALGO = Normal\nEDIFF = 1E-7\nNELM = 120\nISMEAR = 0\nSIGMA = 0.05\nIBRION = 2\nISIF = 3\nNSW = 100\nPOTIM = 0.5\nEDIFFG = -0.01\nLCHARG = .FALSE.\nLWAVE = .FALSE.\n</code></pre><div class=\"table-wrap\"><table><thead><tr><th>参数</th><th>作用</th><th>本例中的选择理由</th></tr></thead><tbody><tr><td><code>IBRION=2</code></td><td>共轭梯度离子优化</td><td>适合入门的常用稳健方案；接近极小值的大体系也可测试 IBRION=1</td></tr><tr><td><code>ISIF=2</code></td><td>放松原子位置，固定晶胞</td><td>表面、固定应变与已确定晶格常见；不用于求完整平衡晶格</td></tr><tr><td><code>ISIF=3</code></td><td>放松原子位置、晶胞形状和体积</td><td>本例为三维体相硅，允许晶格优化</td></tr><tr><td><code>NSW=100</code></td><td>离子步数上限</td><td>上限不是目标，走满步数不是收敛证明</td></tr><tr><td><code>POTIM=0.5</code></td><td>此优化算法的步长相关参数</td><td>不等于此时进行了 0.5 fs 的分子动力学</td></tr><tr><td><code>EDIFFG=-0.01</code></td><td>以受优化自由度的力为停止依据，eV/Å</td><td>负号非常重要；正值改为相邻离子步能量变化条件</td></tr><tr><td><code>EDIFF=1E-7</code></td><td>更严格的电子停止条件</td><td>让残余力检查少受电子噪声影响</td></tr></tbody></table></div><p>理想硅结构中两个原子的分数坐标可能从一开始就具有零净力，但初始晶胞体积仍未必最佳。因此本例不能只看原子坐标有没有变，还应比较晶格、体积和最终应力。对于固定部分原子的表面，优化条件只适用于允许运动的自由度，固定原子保留的力仍值得检查和报告。</p><p><strong>Pulay 应力为什么出现？</strong>有限平面波基组会随晶胞改变，其不完备误差可能看起来像额外应力。因此“外压接近零”在很低截断能下未必意味着可靠的平衡体积。使用较高截断能、足够精细网格，并从优化后的结构重新开始一轮，是检验晶格稳定性的实用方法；不要随意加一个 PSTRESS 数字把压力“调成零”。</p><p><strong>完成条件：</strong>看到离子优化停止条件确实满足，最后几个电子循环也都收敛；检查最终受优化自由度上的力、晶格自由度相关应力和结构合理性。查看 CONTCAR 是否出现不合理短键或意外坍塌。最后还需更精细的静态计算复核。几何优化找到的是一个局部驻点，是否为稳定极小值、是否存在更低能结构，还涉及声子和结构搜索。</p><details><summary>什么时候不能照搬 ISIF=3？</summary><p>含真空层的二维材料或表面不能任由算法把真空当作待优化晶格收缩；先确定面内晶格与真空设置，通常只放松内部原子，再按研究目的处理面内应变。外加应变、缺陷超胞、界面和分子盒子也需要明确固定哪些边界条件。不要因为 3 比 2 大就认为更“高级”。</p></details><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/ISIF\" target=\"_blank\" rel=\"noopener noreferrer\">ISIF 自由度</a> · <a href=\"https://vasp.at/wiki/IBRION\" target=\"_blank\" rel=\"noopener noreferrer\">离子优化算法</a> · <a href=\"https://vasp.at/wiki/EDIFFG\" target=\"_blank\" rel=\"noopener noreferrer\">EDIFFG 的符号</a> · <a href=\"https://vasp.at/wiki/Volume_relaxation\" target=\"_blank\" rel=\"noopener noreferrer\">Pulay 应力与体积</a></p>"
+    },
+    {
+      "id": "static-output",
+      "title": "优化后再做静态计算，并读懂输出",
+      "kicker": "06 · 结果不是一个能量数字",
+      "html": "<p>结构优化和最终性质计算通常分开做。前者的重点是找到结构，后者在不移动离子的条件下，用统一、较严格的数值设置生成可比能量、电荷与电子态。特别是在最后一次离子更新后，不应未经检查就把任何旧 CHGCAR 当成对应最终结构的已收敛密度。</p><p>在新的 <code>si-static</code> 目录中，把已经核验收敛的 <code>si-relax/CONTCAR</code> 复制为 POSCAR，使用相同 POTCAR。下面 12³ 网格和 520 eV 同样是示例，实际选定值必须来自你的收敛实验。为了减少初学者的重启混淆，这里选择从头做电子自洽；它可能比恰当复用波函数慢，但路径清楚。</p><pre data-filename=\"si-static/INCAR\"><code>SYSTEM = Si final static learning example\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nISPIN = 1\nISTART = 0\nICHARG = 2\nALGO = Normal\nEDIFF = 1E-7\nNELM = 120\nISMEAR = 0\nSIGMA = 0.05\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .TRUE.\n</code></pre><pre data-filename=\"si-static/KPOINTS\"><code>Si final uniform Gamma-centered mesh\n0\nGamma\n12 12 12\n0 0 0\n</code></pre><p>这份 INCAR 的 IBRION=-1、NSW=0 让结构固定；与第一项任务相比，电子阈值更紧，网格更密。它保存的 CHGCAR 可以作为下一章 PBE 能带计算的输入。必须同时记录它对应的 POSCAR，而不是只孤立保存 CHGCAR。</p><div class=\"table-wrap\"><table><thead><tr><th>在哪里看</th><th>看什么</th><th>为什么</th></tr></thead><tbody><tr><td>OUTCAR 开头和参数区</td><td>VASP 版本、元素、ENCUT、k 点数、泛函、自旋</td><td>防止实际输入与设想不同</td></tr><tr><td>OSZICAR 的电子迭代行</td><td>dE、d eps、rms(c) 随步数的变化</td><td>区分稳定收敛、振荡和停在最大步数</td></tr><tr><td>OUTCAR 的能量区</td><td>自由能 TOTEN、无熵能、sigma→0 外推能</td><td>它们不是始终同一个数；比较时必须说明定义</td></tr><tr><td>OUTCAR 最后的力与应力</td><td>力矢量、最大受优化力、压力与应力分量</td><td>静态再计算可暴露前一步优化残留误差</td></tr><tr><td>调度日志与 OUTCAR 结尾</td><td>退出码、截断文件、正常结束信息</td><td>正常结束也要与电子收敛信息一起判断</td></tr></tbody></table></div><p>电子 EDIFF 比较的是相邻迭代的能量变化，不是“DFT 与实验误差小于 10⁻⁷ eV”。即使数值收敛得极好，泛函近似、温度、缺陷浓度和模型边界条件仍可能带来更大的偏差。把数值误差与模型误差分别写清楚，是学习计算化学的重要一步。</p><p>总能量的绝对值通常很大且依赖势的参考基准，研究更常比较受控条件下的能量差。不同元素组成的结构不能直接按总能量大小排名稳定性，需要形成能、化学势或相图等合适定义。不同原子数比较时，也应先明确是每原子、每化学式还是整个超胞。</p><p><strong>交付给下一步的数据：</strong>确认收敛的 POSCAR、四输入的哈希与参数记录、CHGCAR、必要的 WAVECAR、OUTCAR、OSZICAR、结构化输出及作业日志。不要只留下一个截图或手抄能量；后续若发现某个设置有误，完整记录能让你判断哪些结果需要重做。</p><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/OSZICAR\" target=\"_blank\" rel=\"noopener noreferrer\">OSZICAR 字段</a> · <a href=\"https://vasp.at/wiki/CHGCAR\" target=\"_blank\" rel=\"noopener noreferrer\">CHGCAR 的内容与重启</a> · <a href=\"https://vasp.at/wiki/EDIFF\" target=\"_blank\" rel=\"noopener noreferrer\">电子收敛条件</a></p>"
+    },
+    {
+      "id": "cluster",
+      "title": "Linux 与集群：把任务提交到正确的位置",
+      "kicker": "07 · 安全、可改的作业模板",
+      "html": "<p>以下命令供 Linux 集群终端使用，不是 Windows PowerShell 命令。先用 <code>pwd</code> 确认位置，再看目录内容。所有正式计算使用新目录；复制前确认目标没有需要保留的文件。不要在不清楚路径时执行递归删除，也不要把“重新跑一遍”理解为直接抹掉上次失败证据。</p><pre data-filename=\"Linux · 只读检查与新目录\"><code>pwd\nls -lh\nhead -n 12 POSCAR\ncat INCAR\ncat KPOINTS\ngrep -E &#x27;TITEL|ZVAL|ENMAX&#x27; POTCAR\nsha256sum INCAR POSCAR KPOINTS POTCAR\n# 以下从共同上一级目录执行；仅从零建立新目录时执行 mkdir\n# 配套包若已有 si-static，先确认未混入旧结果，并略过下面这一行\nmkdir si-static\n# 核验 si-relax 确实收敛后，再复制；-i 避免静默覆盖\ncp -i si-relax/CONTCAR si-static/POSCAR\ncp -i si-relax/POTCAR si-static/POTCAR\n</code></pre><p>下面为 Slurm <strong>待配置模板</strong>，文件名以 <code>.template</code> 结尾。必须把 <code>YOUR_PARTITION</code> 与 <code>YOUR_VASP_MODULE</code> 替换为计算中心给出的真实值，核对核数、时限、内存要求和启动器后，再另存为 <code>submit.slurm</code>。有些机器采用 mpirun 或特定 srun 插件，应使用管理员给出的方式，不能把示例当作集群通用配置。</p><p>配套包中的模板位于共同父目录。完成配置后，将它保存为本次计算目录中的 <code>submit.slurm</code>，例如 <code>si-scf/submit.slurm</code>。提交前先进入保存四个输入文件的实际目录；在父目录执行 <code>sbatch si-scf/submit.slurm</code> 并不会自动把提交目录变成 <code>si-scf</code>。后续任务也分别保存自己的脚本，并从对应目录提交。</p><pre data-filename=\"submit.slurm.template\"><code>#!/bin/bash\n#SBATCH --job-name=si-scf\n#SBATCH --partition=YOUR_PARTITION\n#SBATCH --nodes=1\n#SBATCH --ntasks=8\n#SBATCH --cpus-per-task=1\n#SBATCH --time=00:30:00\n#SBATCH --output=slurm-%j.out\n#SBATCH --error=slurm-%j.err\n\n# Save the configured script as submit.slurm INSIDE the calculation directory.\n# Submit after cd into that directory, where all four input files are present.\n# For SOC/noncollinear tasks, replace BOTH vasp_std commands below with vasp_ncl.\nset -euo pipefail\n: &quot;${SLURM_SUBMIT_DIR:?Submit through sbatch after editing placeholders}&quot;\ncd &quot;$SLURM_SUBMIT_DIR&quot;\nmodule load YOUR_VASP_MODULE\nexport OMP_NUM_THREADS=1\nfor f in INCAR POSCAR KPOINTS POTCAR; do\n  test -s &quot;$f&quot; || { printf &#x27;Missing or empty input: %s\\n&#x27; &quot;$f&quot; &gt;&amp;2; exit 1; }\ndone\ncommand -v vasp_std &gt;/dev/null\nsha256sum INCAR POSCAR KPOINTS POTCAR &gt; inputs.sha256\nsrun vasp_std &gt; vasp.out 2&gt;&amp;1\n</code></pre><p><code>#SBATCH</code> 行是 Slurm 请求资源的指令，不是 VASP 参数。这里的 8 个 MPI 进程和 1 个线程只演示 CPU 作业；它不是性能推荐，更不适用于所有 GPU 环境。<code>set -euo pipefail</code> 让常见脚本错误及失败命令更早暴露，输入文件检查防止在错误目录误启动。输入哈希记录在作业目录里，不包含势文件正文。</p><pre data-filename=\"Linux · 提交和观察\"><code># 已完成配置，并保存为 si-scf/submit.slurm；以下从共同父目录开始\n# 如果当前已经在 si-scf 中，略过 cd 这一行\ncd si-scf\nsbatch submit.slurm\nsqueue -u &quot;$USER&quot;\n# 替换为 sbatch 返回的数字作业号\nsacct -j YOUR_JOB_ID --format=JobID,State,Elapsed,ExitCode\n# 在实际计算目录观察文本，不要边跑边改 INCAR\ntail -n 30 OSZICAR\ntail -n 40 vasp.out\n</code></pre><p>等待排队时，作业没有产生 OUTCAR 是正常的；运行后突然停止，则检查超时、内存限制和节点错误。取消作业时只取消你确认的具体作业号，避免批量操作影响其他任务。输入文件在计算运行中不应修改；需要改参数时，新建任务目录，并记下修改原因。</p><p>提交后要建立三个对应关系：目录对应哪个结构；作业号对应哪次运行；结果对应哪套实际参数。建议在研究笔记中记录“今天想检验什么假设”，而不只是“今天跑了 12 个作业”。模板中的时限 30 分钟不是软件对该任务耗时的保证，实际耗时取决于硬件与编译环境。</p><p class=\"source-line\">核对依据：<a href=\"https://slurm.schedmd.com/sbatch.html\" target=\"_blank\" rel=\"noopener noreferrer\">Slurm sbatch 官方文档</a> · <a href=\"https://vasp.at/wiki/Installing_VASP.6.X.X\" target=\"_blank\" rel=\"noopener noreferrer\">VASP 环境与安装</a></p>"
+    },
+    {
+      "id": "diagnostics",
+      "title": "不收敛时怎样定位，以及怎样写计算记录",
+      "kicker": "08 · 从运行成功走向结果可信",
+      "html": "<p>最容易浪费算力的做法，是看到失败就把 NELM 和 NSW 都加到很大。先判断失败发生在哪一层：程序能否启动、结构是否合理、电子是否收敛、离子是否收敛、目标性质是否随数值设置稳定。只有找对层次，修改参数才有意义。</p><div class=\"table-wrap\"><table><thead><tr><th>现象</th><th>先检查</th><th>下一步</th></tr></thead><tbody><tr><td>找不到程序 / MPI 报错</td><td>模块、路径、启动器与分配资源</td><td>用计算中心认可的小例子验证环境</td></tr><tr><td>刚启动就报元素或文件错误</td><td>文件名、文本格式、POSCAR/POTCAR 顺序</td><td>修正输入后在新目录重试</td></tr><tr><td>电子能量剧烈震荡</td><td>原子重叠、占据方式、磁性、错误电荷、旧重启文件</td><td>先回到结构和模型；再考虑算法或混合参数</td></tr><tr><td>每个离子步都跑满 NELM</td><td>电子收敛未解决，力可能不可靠</td><td>暂停优化，固定该结构先解决 SCF</td></tr><tr><td>力下降后又突然变大</td><td>步长、结构距离、电子误差、约束</td><td>查看结构轨迹，不只看最后一行</td></tr><tr><td>作业结束但没达到目标阈值</td><td>是否超时、耗尽 NSW、读取失败输出</td><td>保留日志并标记未收敛，不作为正常数据点</td></tr><tr><td>不同初始磁态得到不同结果</td><td>局部磁矩与结构是否相同</td><td>当作多个候选解比较，不能直接删掉“不好看”的解</td></tr></tbody></table></div><p>若能量持续震荡，可从头初始化排除不兼容 WAVECAR/CHGCAR，确认 ISMEAR 适合体系，再按照官方电子最小化说明逐项调整 ALGO 或混合参数。一次只改变一个有理由的选项，并保留对照。增加 NELM 只适用于确实在缓慢趋近收敛的情形；毫无下降趋势时延长运行往往只是重复失败。</p><p>原子数变大、表面真空变厚、体系从绝缘体变金属之后，原来有效的网格与混合参数可能需要重新检验。不要根据某个报错搜索到的一行参数，未经理解就复制进所有任务。遇到程序崩溃时，应保存报错上下文、软件版本、最小输入和运行环境，敏感势文件只按许可渠道共享。</p><p>科学问题也需要独立排查。例如“算出的晶格比实验大”可能涉及泛函、温度与零点振动；“带隙偏小”可能来自半局域泛函本身，不能靠加大 SIGMA 修正；“缺陷形成能负数”可能是参考化学势或计量关系出错，不能简单通过提高 ENCUT 解释。</p><pre data-filename=\"calculation-record.md.template\"><code># 计算记录：请逐项填写\n科学问题与待检验假设：\n结构来源 / 原胞或超胞 / 原子数 / 电荷状态：\nVASP 版本 / 编译环境 / 可执行程序：\nPOTCAR 发布版 / TITEL / ZVAL / ENMAX / SHA-256：\n泛函 / U 与 J / SOC / 自旋初态：\nENCUT / PREC / k 网格 / 展宽：\n电子与离子停止阈值 / 固定自由度：\n收敛测试目标量 / 阈值 / 对照目录：\n作业号 / 日期 / 资源 / 退出状态：\n电子是否收敛 / 最大力 / 最终应力：\n使用的能量定义 / 单位 / 归一化方式：\n后处理工具版本 / 脚本 / 图的数据来源：\n已知局限与下一步验证：\n</code></pre><p><strong>本章完成练习：</strong>画出 ENCUT 与 k 网格收敛图；比较初始结构和优化结构；用最终静态 OUTCAR 写一段真实的“计算方法”；说明你的证据能支持什么、还不能支持什么。暂时没有集群权限时，可以先完成文件阅读、结构可视化和实验设计，但不要填写假想能量充当运行结果。</p><p>下一步进入<a href=\"vasp-electronic-v6.html\">电子结构：DOS、能带、磁性与电荷分析</a>；需要按任务快速定位参数时，使用<a href=\"vasp-reference-v6.html\">参数与排错索引</a>。对于催化、声子、分子动力学等任务，请先确保已经理解本章的收敛和记录方法。</p><p class=\"source-line\">核对依据：<a href=\"https://vasp.at/wiki/ALGO\" target=\"_blank\" rel=\"noopener noreferrer\">ALGO 与电子迭代</a> · <a href=\"https://vasp.at/wiki/NELM\" target=\"_blank\" rel=\"noopener noreferrer\">NELM 的含义</a> · <a href=\"https://vasp.at/wiki/Category:Electronic_minimization\" target=\"_blank\" rel=\"noopener noreferrer\">电子最小化方法</a></p>"
+    }
+  ],
+  "sources": [
+    {
+      "title": "VASP 许可",
+      "url": "https://vasp.at/sign_in/registration_form/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "安装与可执行程序",
+      "url": "https://vasp.at/wiki/Installing_VASP.6.X.X",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "POSCAR",
+      "url": "https://vasp.at/wiki/POSCAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "POTCAR",
+      "url": "https://vasp.at/wiki/POTCAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "INCAR",
+      "url": "https://vasp.at/wiki/INCAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "KPOINTS",
+      "url": "https://vasp.at/wiki/KPOINTS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "ENCUT",
+      "url": "https://vasp.at/wiki/ENCUT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "PREC",
+      "url": "https://vasp.at/wiki/PREC",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LREAL",
+      "url": "https://vasp.at/wiki/LREAL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "EDIFF",
+      "url": "https://vasp.at/wiki/EDIFF",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "ALGO",
+      "url": "https://vasp.at/wiki/ALGO",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "NELM",
+      "url": "https://vasp.at/wiki/NELM",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "ISIF",
+      "url": "https://vasp.at/wiki/ISIF",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "IBRION",
+      "url": "https://vasp.at/wiki/IBRION",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "EDIFFG",
+      "url": "https://vasp.at/wiki/EDIFFG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Volume relaxation",
+      "url": "https://vasp.at/wiki/Volume_relaxation",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "OUTCAR",
+      "url": "https://vasp.at/wiki/OUTCAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "OSZICAR",
+      "url": "https://vasp.at/wiki/OSZICAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "CHGCAR",
+      "url": "https://vasp.at/wiki/CHGCAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Slurm sbatch",
+      "url": "https://slurm.schedmd.com/sbatch.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Electronic minimization",
+      "url": "https://vasp.at/wiki/Category:Electronic_minimization",
+      "accessed": "2026-09-19"
+    }
+  ],
+  "downloads": [
+    {
+      "path": "si-scf/POSCAR",
+      "title": "硅 SCF · POSCAR",
+      "content": "Diamond Si primitive cell; a=5.43 A\n5.4300000000\n0.0000000000 0.5000000000 0.5000000000\n0.5000000000 0.0000000000 0.5000000000\n0.5000000000 0.5000000000 0.0000000000\nSi\n2\nDirect\n0.0000000000 0.0000000000 0.0000000000\n0.2500000000 0.2500000000 0.2500000000\n",
+      "description": "教学输入；需自备授权 Si POTCAR，并核查 ENMAX 与收敛。"
+    },
+    {
+      "path": "si-scf/KPOINTS",
+      "title": "硅 SCF · KPOINTS",
+      "content": "Si uniform Gamma-centered mesh\n0\nGamma\n8 8 8\n0 0 0\n",
+      "description": "教学输入；需自备授权 Si POTCAR，并核查 ENMAX 与收敛。"
+    },
+    {
+      "path": "si-scf/INCAR",
+      "title": "硅 SCF · INCAR",
+      "content": "SYSTEM = Si PBE SCF learning example\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nISPIN = 1\nISTART = 0\nICHARG = 2\nALGO = Normal\nEDIFF = 1E-6\nNELM = 120\nISMEAR = 0\nSIGMA = 0.05\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .TRUE.\n",
+      "description": "教学输入；需自备授权 Si POTCAR，并核查 ENMAX 与收敛。"
+    },
+    {
+      "path": "si-scf/README.txt",
+      "title": "硅 SCF · README.txt",
+      "content": "SI LEARNING EXAMPLE — NOT A COMPUTED RESULT\n\nThis folder contains a two-atom diamond-Si primitive POSCAR, a PBE INCAR,\nand a Gamma-centered 8x8x8 KPOINTS mesh. It does not contain POTCAR or VASP.\n\nUse only an appropriately licensed VASP installation. Obtain the Si PAW_PBE\npotential from your institution's licensed distribution. Copy its unmodified\nPOTCAR to this folder. Record its release, TITEL, ZVAL, ENMAX and hash.\nPOSCAR species order must match POTCAR order. Do not publicly redistribute POTCAR.\n\nENCUT=520 eV and 8x8x8 are learning starting values, not convergence claims.\nENCUT must be >= max ENMAX of the actual POTCAR. Test ENCUT and k-point\nconvergence independently before drawing conclusions. For cell relaxation,\nstart with an increased cutoff (often at least 1.3*max ENMAX) and verify stress.\nUpdate ENCUT consistently in all dependent examples if a higher value is needed.\n\nThe 5.43 Angstrom lattice parameter is an initial geometry, not a relaxed result.\nUse vasp_std on a compute allocation; do not use vasp_gam for this mesh.\nThe website has not executed VASP or validated any numerical energies/band gaps.\n",
+      "description": "教学输入；需自备授权 Si POTCAR，并核查 ENMAX 与收敛。"
+    },
+    {
+      "path": "si-relax/INCAR",
+      "title": "硅晶胞优化 · INCAR",
+      "content": "SYSTEM = Si PBE cell relaxation learning example\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nISPIN = 1\nISTART = 0\nICHARG = 2\nALGO = Normal\nEDIFF = 1E-7\nNELM = 120\nISMEAR = 0\nSIGMA = 0.05\nIBRION = 2\nISIF = 3\nNSW = 100\nPOTIM = 0.5\nEDIFFG = -0.01\nLCHARG = .FALSE.\nLWAVE = .FALSE.\n",
+      "description": "配合相同硅 POSCAR/POTCAR 与已收敛网格；520 eV 必须核查体积优化精度。"
+    },
+    {
+      "path": "si-relax/README.txt",
+      "title": "硅晶胞优化 · 操作说明",
+      "content": "Use si-scf POSCAR and the same licensed POTCAR. Use a converged uniform KPOINTS mesh. ENCUT=520 is a teaching value: verify it is sufficient for stress/volume, starting from about 1.3*max(ENMAX). Check electronic convergence, forces AND stress. CONTCAR is not automatically a converged structure. No VASP results are distributed.\n",
+      "description": "优化不是已经完成的计算；请核验最终力与应力。"
+    },
+    {
+      "path": "si-static/INCAR",
+      "title": "硅最终静态 · INCAR",
+      "content": "SYSTEM = Si final static learning example\nGGA = PE\nENCUT = 520\nPREC = Accurate\nLREAL = .FALSE.\nISPIN = 1\nISTART = 0\nICHARG = 2\nALGO = Normal\nEDIFF = 1E-7\nNELM = 120\nISMEAR = 0\nSIGMA = 0.05\nIBRION = -1\nNSW = 0\nLCHARG = .TRUE.\nLWAVE = .TRUE.\n",
+      "description": "从已核验收敛的 si-relax/CONTCAR 复制 POSCAR，势文件保持一致。"
+    },
+    {
+      "path": "si-static/KPOINTS",
+      "title": "硅最终静态 · KPOINTS",
+      "content": "Si final uniform Gamma-centered mesh\n0\nGamma\n12 12 12\n0 0 0\n",
+      "description": "从已核验收敛的 si-relax/CONTCAR 复制 POSCAR，势文件保持一致。"
+    },
+    {
+      "path": "si-static/README.txt",
+      "title": "硅最终静态 · 操作说明",
+      "content": "After verifying si-relax convergence, copy its CONTCAR to POSCAR and use the SAME POTCAR. Check/update ENCUT and the 12x12x12 learning mesh using convergence tests. This directory deliberately contains no invented relaxed POSCAR. Keep the resulting converged CHGCAR together with its matching POSCAR for PBE bands.\n",
+      "description": "下载包不虚构优化后结构，需要先完成自己的优化。"
+    },
+    {
+      "path": "prepare_convergence.py",
+      "title": "独立收敛目录生成器",
+      "content": "#!/usr/bin/env python3\n\"\"\"Prepare independent input directories only. Does not submit jobs or run VASP.\"\"\"\nimport argparse\nimport csv\nimport math\nfrom pathlib import Path\nimport re\nimport shutil\n\np = argparse.ArgumentParser()\np.add_argument(\"mode\", choices=[\"encut\", \"kmesh\"])\np.add_argument(\"source\", type=Path)\np.add_argument(\"destination\", type=Path)\np.add_argument(\"values\", nargs=\"+\", type=float)\na = p.parse_args()\nsource = a.source.resolve()\ndestination = a.destination.resolve()\nfor name in [\"INCAR\", \"POSCAR\", \"KPOINTS\", \"POTCAR\"]:\n    if not (source / name).is_file():\n        raise SystemExit(f\"Missing source input: {name}\")\nif destination.exists():\n    raise SystemExit(\"Destination exists; choose a NEW directory to avoid overwriting\")\nincar = (source / \"INCAR\").read_text(encoding=\"utf-8\")\npotcar = (source / \"POTCAR\").read_text(encoding=\"utf-8\", errors=\"replace\")\nlimits = re.findall(r\"ENMAX\\s*=\\s*([0-9.]+)\", potcar)\nif not limits:\n    raise SystemExit(\"ENMAX not found; inspect POTCAR before proceeding\")\nmax_enmax = max(map(float, limits))\n# Restrict this educational generator to an unambiguous static source INCAR.\nsettings = {}\nfor number, raw in enumerate(incar.splitlines(), start=1):\n    clean = re.split(r\"[!#]\", raw, maxsplit=1)[0].strip()\n    if not clean:\n        continue\n    if \";\" in clean or clean.count(\"=\") != 1:\n        raise SystemExit(f\"Use one unambiguous tag per line (INCAR line {number})\")\n    key, value = (part.strip() for part in clean.split(\"=\", 1))\n    key = key.upper()\n    if key in settings:\n        raise SystemExit(f\"Duplicate INCAR tag: {key}\")\n    settings[key] = value\ntry:\n    nsw = int(settings.get(\"NSW\", \"0\"))\n    ibrion = int(settings.get(\"IBRION\", \"-1\"))\nexcept ValueError:\n    raise SystemExit(\"NSW and IBRION must be plain integers\")\nif nsw > 0 or ibrion != -1:\n    raise SystemExit(\"Source must be STATIC: NSW <= 0 and IBRION = -1; do not use a relaxation INCAR\")\nif a.mode == \"kmesh\":\n    try:\n        cutoff = float(settings[\"ENCUT\"].replace(\"D\", \"E\").replace(\"d\", \"e\"))\n    except (KeyError, ValueError):\n        raise SystemExit(\"kmesh source must set an explicit numeric ENCUT\")\n    if not math.isfinite(cutoff) or cutoff < max_enmax:\n        raise SystemExit(f\"Source ENCUT must be >= max ENMAX ({max_enmax} eV)\")\nvalues = a.values\nif any(not math.isfinite(x) or x <= 0 for x in values):\n    raise SystemExit(\"Values must be positive finite numbers\")\nif len(set(values)) != len(values):\n    raise SystemExit(\"Duplicate values\")\nif a.mode == \"encut\" and min(values) < max_enmax:\n    raise SystemExit(f\"All ENCUT values must be >= max ENMAX ({max_enmax} eV)\")\nif a.mode == \"kmesh\" and any(x != int(x) for x in values):\n    raise SystemExit(\"k mesh values must be positive integers\")\n# This generator expects the distributed one-tag-per-line INCAR, not an arbitrary INCAR.\nbase = []\nfor line in incar.splitlines():\n    key = line.split(\"=\", 1)[0].strip().upper()\n    if key not in {\"ISTART\", \"ICHARG\", \"LWAVE\", \"LCHARG\"} and not (a.mode == \"encut\" and key == \"ENCUT\"):\n        base.append(line)\nbase += [\"ISTART = 0\", \"ICHARG = 2\", \"LWAVE = .FALSE.\", \"LCHARG = .FALSE.\"]\ndestination.mkdir(parents=True)\nrows = []\nfor value in values:\n    label = f\"{value:g}\"\n    run = destination / ((\"e\" if a.mode == \"encut\" else \"k\") + label)\n    run.mkdir()\n    for name in [\"POSCAR\", \"POTCAR\"]:\n        shutil.copy2(source / name, run / name)\n    text = \"\\n\".join(base) + \"\\n\"\n    if a.mode == \"encut\":\n        text += f\"ENCUT = {value:g}\\n\"\n        shutil.copy2(source / \"KPOINTS\", run / \"KPOINTS\")\n    else:\n        n = int(value)\n        (run / \"KPOINTS\").write_text(f\"Gamma mesh convergence\\n0\\nGamma\\n{n} {n} {n}\\n0 0 0\\n\", encoding=\"utf-8\")\n    (run / \"INCAR\").write_text(text, encoding=\"utf-8\")\n    rows.append([run.name, a.mode, label, \"prepared_not_run\"])\nwith (destination / \"manifest.csv\").open(\"w\", newline=\"\", encoding=\"utf-8\") as f:\n    writer = csv.writer(f)\n    writer.writerow([\"directory\", \"variable\", \"value\", \"status\"])\n    writer.writerows(rows)\nprint(f\"Prepared {len(rows)} independent folders; submit manually after review\")\n",
+      "description": "只生成目录与输入，不提交、不运行 VASP；会拒绝覆盖目标目录。"
+    },
+    {
+      "path": "submit.slurm.template",
+      "title": "Slurm 提交模板",
+      "content": "#!/bin/bash\n#SBATCH --job-name=si-scf\n#SBATCH --partition=YOUR_PARTITION\n#SBATCH --nodes=1\n#SBATCH --ntasks=8\n#SBATCH --cpus-per-task=1\n#SBATCH --time=00:30:00\n#SBATCH --output=slurm-%j.out\n#SBATCH --error=slurm-%j.err\n\n# Save the configured script as submit.slurm INSIDE the calculation directory.\n# Submit after cd into that directory, where all four input files are present.\n# For SOC/noncollinear tasks, replace BOTH vasp_std commands below with vasp_ncl.\nset -euo pipefail\n: \"${SLURM_SUBMIT_DIR:?Submit through sbatch after editing placeholders}\"\ncd \"$SLURM_SUBMIT_DIR\"\nmodule load YOUR_VASP_MODULE\nexport OMP_NUM_THREADS=1\nfor f in INCAR POSCAR KPOINTS POTCAR; do\n  test -s \"$f\" || { printf 'Missing or empty input: %s\\n' \"$f\" >&2; exit 1; }\ndone\ncommand -v vasp_std >/dev/null\nsha256sum INCAR POSCAR KPOINTS POTCAR > inputs.sha256\nsrun vasp_std > vasp.out 2>&1\n",
+      "description": "必须替换队列和模块占位符，并按计算中心说明调整启动器。"
+    },
+    {
+      "path": "calculation-record.md.template",
+      "title": "可复现计算记录",
+      "content": "# 计算记录：请逐项填写\n科学问题与待检验假设：\n结构来源 / 原胞或超胞 / 原子数 / 电荷状态：\nVASP 版本 / 编译环境 / 可执行程序：\nPOTCAR 发布版 / TITEL / ZVAL / ENMAX / SHA-256：\n泛函 / U 与 J / SOC / 自旋初态：\nENCUT / PREC / k 网格 / 展宽：\n电子与离子停止阈值 / 固定自由度：\n收敛测试目标量 / 阈值 / 对照目录：\n作业号 / 日期 / 资源 / 退出状态：\n电子是否收敛 / 最大力 / 最终应力：\n使用的能量定义 / 单位 / 归一化方式：\n后处理工具版本 / 脚本 / 图的数据来源：\n已知局限与下一步验证：\n",
+      "description": "每次实际计算后填写，不使用假想结果。"
+    }
+  ]
+}

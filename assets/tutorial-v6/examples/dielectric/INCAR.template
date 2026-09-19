@@ -1,0 +1,20 @@
+# TEMPLATE: electronic (ion-clamped) static dielectric tensor / Born charges
+# For a nonmetallic system with supported semilocal DFT, NOT HSE.
+# Supply optimized POSCAR, converged KPOINTS/POTCAR, replace ENCUT.
+SYSTEM = pbe-dielectric-dfpt
+GGA = PE
+ENCUT = REPLACE_WITH_CONVERGED_ENCUT
+PREC = Accurate
+EDIFF = 1E-8
+ALGO = Normal
+LREAL = .FALSE.
+ISMEAR = 0
+SIGMA = 0.01
+IBRION = -1
+NSW = 0
+LEPSILON = .TRUE.
+LRPA = .FALSE.
+LWAVE = .FALSE.
+LCHARG = .FALSE.
+# Not the full ionic+electronic static permittivity of a relaxed crystal.
+# Do not append LOPTICS or excessive NBANDS to this separate DFPT task.

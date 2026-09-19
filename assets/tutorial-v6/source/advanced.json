@@ -1,0 +1,386 @@
+{
+  "title": "从结构到性质：VASP 进阶任务",
+  "subtitle": "把表面、缺陷、声子、反应路径和有限温度动力学变成可检查、可复现的研究流程。",
+  "filename": "vasp-advanced-v6.html",
+  "kicker": "04 / ADVANCED TASKS",
+  "estimatedMinutes": 210,
+  "sections": [
+    {
+      "id": "surfaces",
+      "title": "01 / 表面与吸附：先把模型定义清楚",
+      "kicker": "SLABS & ADSORPTION",
+      "html": "\n<p>体相计算让晶体在三个方向无限重复；真实表面却会终止。常用 slab 模型把若干原子层与真空放进同一个周期盒子，得到“薄片—真空—薄片”的重复体系。它并不是一块半无限晶体，层数、真空和侧向重复尺寸都会成为模型误差。建议先完成<a href=\"vasp-start-v6.html\">硅的自洽与优化练习</a>，再进入本节。</p>\n<h3>建立一个可比较的模型家族</h3>\n<ol><li><strong>确定材料和晶面。</strong>先用同一泛函优化体相，再切出所需 (hkl) 晶面。记录表面终止、表面化学计量、侧向超胞、层数、真空厚度。极性表面可能重构、改变终止或需要补偿，不能仅靠加大真空解决。</li><li><strong>将法向对准第三晶格矢量。</strong>对入门模型，让 c 与表面垂直，便于使用一维真空、k 网格和偶极校正。不要把倾斜晶胞里的 Cartesian z 和第三晶格方向不加区分地混用。</li><li><strong>固定与放松要服务于问题。</strong>例如固定底部若干层模拟体相支撑，放松顶部与吸附物。固定层数是需检验的模型选择，不能认定“底两层”对所有表面都成立；对称 slab 可采用中心层固定、两面相同终止。</li><li><strong>检查周期相邻原子。</strong>吸附分子可能从边界伸向邻胞；看单个盒子不重叠并不足够。将结构沿面内方向重复显示，检查最短距离、分子方向和覆盖度。</li></ol>\n<p>POSCAR 的 <code>Selective dynamics</code> 行启用逐原子自由度：<code>F F F</code> 固定，<code>T T T</code> 放松。通常的离子优化中，这些标志对应直接晶格坐标方向，即使位置用 Cartesian 写入也一样。斜晶胞里想“只固定垂直高度”，必须先弄清晶格方向。<a href=\"https://vasp.at/wiki/POSCAR\" target=\"_blank\" rel=\"noopener\">官方 POSCAR 定义</a>。</p>\n<h3>中性、非磁 slab 的优化起点</h3>\n<p>下列模板不含实际结构、k 网格或 POTCAR；<code>ENCUT</code> 与中心坐标必须替换。若研究磁性过渡金属、DFT+U 或分子弱吸附，还须单独验证相应设置。<code>ISMEAR=0</code> 是初始占据方案，金属表面须测试展宽和能量差收敛。</p>\n<pre data-filename=\"surface/INCAR.template\"><code># TEMPLATE: neutral, nonmagnetic slab; normal parallel to c\n# Supply POSCAR, converged KPOINTS and licensed POTCAR.\n# Replace ENCUT; add validated magnetic/U/vdW settings when needed.\nSYSTEM = neutral-slab-relax\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-6\nNELM = 120\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.05\nIBRION = 2\nNSW = 150\nISIF = 2\nEDIFFG = -0.02\nPOTIM = 0.3\nISYM = 0\nLDIPOL = .TRUE.\nIDIPOL = 3\nDIPOL = REPLACE_WITH_SLAB_CENTER_IN_FRACTIONAL_COORDINATES\nLWAVE = .FALSE.\nLCHARG = .FALSE.</code></pre>\n<p><code>ISIF=2</code> 固定整个晶胞，避免把真空当成应被压缩的体积；原子仍按选择性约束移动。<code>EDIFFG=-0.02</code> 是 0.02 eV/Å 的示范性力阈值，最终比较很小的吸附能差时应进一步收紧。先用不带偶极势的自洽结果预收敛，再启用校正，常有助于困难体系；这不是跳过最终校正的理由。</p>\n<p>对于有净偶极矩的中性非对称 slab，<code>IDIPOL=3</code> 指定沿第三晶格方向的能量校正，<code>LDIPOL=.TRUE.</code> 同时修正势与力；<code>DIPOL</code> 用分数坐标给出靠近 slab 质心的参考中心。不要机械填 <code>0.5 0.5 0.5</code>，应先把薄片放在对应位置。对称模型也应检查是否真的没有净偶极。参见 <a href=\"https://vasp.at/wiki/IDIPOL\" target=\"_blank\" rel=\"noopener\">IDIPOL</a>、<a href=\"https://vasp.at/wiki/LDIPOL\" target=\"_blank\" rel=\"noopener\">LDIPOL</a> 与 <a href=\"https://vasp.at/wiki/DIPOL\" target=\"_blank\" rel=\"noopener\">DIPOL</a>。</p>\n<p>当真空沿 c 方向且不同薄片已充分解耦时，常采用 Γ 中心 <code>Nₓ × Nᵧ × 1</code> 的 slab k 网格；面内 Nₓ、Nᵧ 要随超胞与倒格矢长度重新收敛。更大的面内超胞通常允许更稀的网格，但相同整数网格不代表相同采样密度。检查真空平台时，在最终静态任务用 <code>LVHAR=.TRUE.</code> 输出离子加 Hartree 电势，再做法向平面平均；该势不包含交换关联项。<a href=\"https://vasp.at/wiki/LVHAR\" target=\"_blank\" rel=\"noopener\">LVHAR</a>。</p><h3>吸附能不是只减两个数</h3>\n<div class=\"formula\">E<sub>ads</sub> = E(slab + X) − E(clean slab) − E(reference X)</div>\n<p>本教程约定：相对所选参考态，<strong>负值表示电子能层面的放热吸附</strong>。如果文献把“结合能”定义成相反符号，必须先统一定义再比较。对于 H 吸附，可选 ½E(H₂) 作为每个 H 的参考；选孤立 H 原子会得到不同数值，不能混称同一吸附能。若盒子中吸附了 n 个 X，报告总吸附能还是每个 X 的平均值也须说明。</p>\n<ol><li>分别优化清洁表面、多个吸附位点/取向、独立参考分子。气相分子使用足够大盒子和 Γ 点，并确认自旋态；O₂ 等开壳层分子不能按默认非磁态处理。</li><li>以一致泛函、POTCAR 数据集、ENCUT、面内 k 点密度和能量提取定义做最终静态计算。slab 与 slab+X 保持相同侧向晶胞和固定层策略；气相参考应单独做盒子收敛。</li><li>不要只测试总能；逐一增加层数、真空、侧向面积、k 网格，看吸附能与关键键长是否达到研究要求。真空可从约 15 Å 起步测试，不能把它当普适合格线。</li><li>如比较实验温压、电极电势或吸附自由能，另加一致的零点能、热贡献、熵、溶剂与电化学参考。仅有 ΔE 不等于 ΔG，更不直接给出反应速率。</li></ol>\n<div class=\"warning\"><strong>完成标准：</strong>不同初始位点确实探索过；最后电子循环和离子受力收敛；真空区平面平均势有合理平台；加厚模型不会改变结论。偶极修正不会修复过薄 slab、错误终止或带电 slab 的全部静电误差。</div>\n<details><summary>练习：为什么吸附更强不一定催化更好？</summary><p>吸附过弱可能难以捕获反应物，过强又可能阻碍脱附或中间体转化。把两个位点的吸附能差与反应能垒分开讨论，给出至少一种需要继续计算的步骤；不要从一个最负的吸附能直接宣布最佳催化剂。</p></details>\n"
+    },
+    {
+      "id": "defects",
+      "title": "02 / 缺陷：原子与电子都需要参考库",
+      "kicker": "DEFECTS & CHARGE STATES",
+      "html": "\n<p>空位、间隙与替位缺陷会改变局域键合、电荷俘获和离子迁移。一个含空位的周期超胞代表有周期缺陷阵列的材料，并不自动等于无限稀释的孤立缺陷。首先用最简单的中性空位练习，再讨论带电缺陷。</p>\n<h3>从中性硅空位开始</h3>\n<ol><li>由充分优化的体相构造多个大小的超胞。为每个大小计算完整母体参考，不要把不同数值精度的原胞能量直接拼接。</li><li>删除一个 Si 原子，更新元素计数与坐标行数；电子总数默认也随原子数改变。围绕空位给几组轻微扰动，避免高对称初态把结构锁在局部驻点。</li><li>通常固定已优化母体的晶格、只放松原子，即 <code>ISIF=2</code>；这对应稀缺陷处于体相晶格环境。若研究有限浓度或缺陷引起的宏观体积变化，需要另行定义晶格放松方案。</li><li>用一致静态设置取得 E<sub>defect</sub> 与 E<sub>host</sub>，同时记录局域几何、自旋、是否出现新的占据态，不能只保存一个总能量。</li></ol>\n<div class=\"formula\">E<sub>f</sub>(V<sub>Si</sub><sup>0</sup>) = E(Si<sub>N−1</sub>) − E(Si<sub>N</sub>) + μ<sub>Si</sub></div>\n<p>μ<sub>Si</sub> 是每个 Si 原子返回参考库时的化学势；纯硅在零温近似中常用一致计算的体相每原子能量。这里的“+μ”来自从超胞拿走一个原子。更换成孤立原子能量会改变物理参考，不是一个数值修补办法。</p>\n<h3>带电形成能中每一项是什么意思？</h3>\n<div class=\"formula\">E<sub>f</sub>(D<sup>q</sup>) = E(D<sup>q</sup>) − E(host) − Σ<sub>i</sub> n<sub>i</sub> μ<sub>i</sub> + q(E<sub>VBM</sub> + E<sub>F</sub>) + E<sub>corr</sub></div>\n<p>这里 n<sub>i</sub>&gt;0 表示向母体<strong>加入</strong>第 i 种原子，移走则为负；q&gt;0 表示从中性的该缺陷超胞<strong>移走电子</strong>。E<sub>F</sub> 从母体价带顶起算，E<sub>VBM</sub> 需处于一致电势基准。本式把所选方法的电势对齐与有限尺寸处理统一放入 E<sub>corr</sub>；若另一种写法显式加入 qΔV，就必须检查是否与 E<sub>corr</sub> 重复计数。</p>\n<p>不同电荷态应分别优化，形成能随 E<sub>F</sub> 的斜率是 q，最低包络的交点给出热力学电荷转变位置。光学跃迁是在不同结构约束下讨论的垂直过程，不能拿热力学交点直接当光谱峰。标准形成能框架与稀释极限问题可从 <a href=\"https://doi.org/10.1103/RevModPhys.86.253\" target=\"_blank\" rel=\"noopener\">Freysoldt 等的缺陷综述</a>继续学习。</p>\n<pre data-filename=\"defect/INCAR.template\"><code># TEMPLATE: charged bulk defect at fixed host lattice\n# Not a charged-slab template. Supply the actual supercell and references.\n# Replace ENCUT and NELECT. Set a justified spin state / MAGMOM if required.\nSYSTEM = bulk-defect-relax\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-7\nNELM = 150\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.05\nNELECT = REPLACE_WITH_NEUTRAL_DEFECT_ELECTRONS_MINUS_Q\nIBRION = 2\nNSW = 200\nISIF = 2\nEDIFFG = -0.01\nISYM = 0\nLWAVE = .FALSE.\nLCHARG = .TRUE.\n# No universal correction tag: specify and validate correction externally.</code></pre>\n<p><code>NELECT</code> 应由当前<strong>缺陷结构</strong>和 POTCAR 的价电子数求出中性 N₀，再取 <code>N₀−q</code>；不能用未删原子的母体电子数来判断 q。中性计算通常删除 <code>NELECT</code> 行，让程序按元素计数确定。非中性周期计算引入补偿背景，程序能够运行不代表带电总能可直接比较。参见 <a href=\"https://vasp.at/wiki/NELECT\" target=\"_blank\" rel=\"noopener\">NELECT 官方说明</a>。</p>\n<p>优化结束后将该电荷态的 CONTCAR 复制到单独静态目录，以 <code>IBRION=-1; NSW=0</code> 获取最终能量。如校正流程需要电势，可在缺陷和母体静态任务中一致设置 <code>LVHAR=.TRUE.</code> 并保存 LOCPOT；同时保证用于比较的网格、势定义和参考区域匹配。仅保存 CHGCAR 不能替代所选校正工具要求的电势数据。<a href=\"https://vasp.at/wiki/LVHAR\" target=\"_blank\" rel=\"noopener\">官方电势输出定义</a>。</p><h3>三个互相独立的误差来源</h3>\n<ul><li><strong>化学势范围：</strong>化合物的“富 A / 贫 A”条件受到母相与竞争相稳定性约束；不能同时把所有元素取成任意最高化学势。先列质量守恒和不析出竞争相的条件。</li><li><strong>有限尺寸：</strong>增大超胞、检查缺陷电荷是否局域，并采用适用于晶胞形状和介电张量的校正。FNV 及其扩展各有假设，软件输出校正数字后仍需比较尺寸趋势。参见 <a href=\"https://doi.org/10.1103/PhysRevB.89.195205\" target=\"_blank\" rel=\"noopener\">各向异性与弛豫相关的电荷校正研究</a>。</li><li><strong>电子结构：</strong>PBE 的带隙与局域化误差会影响电荷态排序。换 HSE 或 U 值后要一致重算相关参考，并说明改变的是近似方法，不只是“把能带画得更好看”。</li></ul>\n<div class=\"warning\"><strong>带电表面另行处理。</strong>体相缺陷的校正公式不能直接套在含真空 slab 上。普通补偿背景会产生随真空变化的伪影；VASP 6.5 起的库仑截断等功能有具体维度与版本条件。本教程不提供未经验证的带电 slab 一键模板。<a href=\"https://vasp.at/wiki/Charged_systems_with_density_functional_theory\" target=\"_blank\" rel=\"noopener\">官方带电体系讨论</a>。</div>\n<details><summary>交付时应画什么图？</summary><p>至少包括同一化学势条件下的形成能—费米能级图、超胞大小收敛表、低能缺陷构型与电荷分布。附所有电荷态的电子数、自旋初值和校正方案。图中无论是否“看起来合理”，都不能隐去未收敛的点。</p></details>\n"
+    },
+    {
+      "id": "phonons",
+      "title": "03 / 声子：从微小位移读出结构的曲率",
+      "kicker": "PHONONS & STABILITY",
+      "html": "\n<p>优化得到“力很小”的结构，只说明一阶导数接近零。它可能是谷底，也可能是鞍点。谐振声子研究平衡位置附近的二阶导数，把原子集体振动写成波矢 q 与模式支上的频率。它能讨论动力学稳定性、振动自由能和热容，但仅有谐声子不能给出真实热导率、强非谐相变或所有有限温度效应。</p>\n<div class=\"formula\">Φ<sub>iα,jβ</sub> ≈ −[F<sub>iα</sub>(u<sub>jβ</sub>+δ) − F<sub>iα</sub>(u<sub>jβ</sub>−δ)] / (2δ)</div>\n<p>有限位移方法从“推一下后，各原子受力怎样变化”求力常数。位移太小会放大力噪声，太大则偏离谐区间；所以电子收敛、结构残余力、位移幅度和超胞大小都需检验。</p>\n<h3>路线 A：VASP 自己生成位移</h3>\n<p><code>IBRION=5</code> 不借助对称性减少位移，<code>IBRION=6</code> 利用对称性；<code>NFREE=2</code> 采用正负中心差分，<code>POTIM=0.015</code> 在这里是 Å，绝不是 MD 的时间步。下面只求<strong>输入晶胞 Γ 点</strong>的振动。若输入是超胞，结果是该超胞 Γ 点，不是已经完成原胞整个布里渊区的色散。</p>\n<pre data-filename=\"phonon-internal/INCAR.template\"><code># TEMPLATE: internal finite-displacement Gamma modes of the INPUT cell\n# Start from a tightly optimized, nonmagnetic semiconductor/insulator.\n# Supply POSCAR / KPOINTS / POTCAR and replace ENCUT.\nSYSTEM = gamma-phonon-internal\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-8\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.01\nIBRION = 6\nNFREE = 2\nPOTIM = 0.015\nNSW = 1\nISIF = 2\nLWAVE = .FALSE.\nLCHARG = .FALSE.</code></pre>\n<p>在 OUTCAR 检查本征模式及频率，保留原子质量和本征矢。不要对本该完整振动的晶体随意固定原子；局域吸附物振动的部分 Hessian 是另一种近似，且内置有限位移的选择性约束支持与方向定义和普通优化不同，当前官方文档说明仅 <code>IBRION=5</code> 支持该约束，作用在 Cartesian Hessian 分量。<a href=\"https://vasp.at/wiki/Phonons_from_finite_differences\" target=\"_blank\" rel=\"noopener\">有限位移官方说明</a>、<a href=\"https://vasp.at/wiki/NFREE\" target=\"_blank\" rel=\"noopener\">NFREE</a>。</p>\n<h3>路线 B：Phonopy 生成超胞，VASP 只算力</h3>\n<p>这条路线易于并行：每个位移结构是独立静态任务。Phonopy 把多组力重建为力常数，再作傅里叶变换得到任意 q 处的动力学矩阵。关键是保留位移文件与输出的一一对应，不能重新排序原子、重新标准化晶胞，或把有位移的结构再次优化掉。</p>\n<pre data-filename=\"phonopy/INCAR-force.template\"><code># TEMPLATE: one externally displaced Phonopy supercell, SINGLE POINT ONLY\n# Do not relax POSCAR-xxx. Use identical settings for every displacement.\nSYSTEM = phonopy-force\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-8\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.01\nIBRION = -1\nNSW = 0\nISYM = 0\nLWAVE = .FALSE.\nLCHARG = .FALSE.</code></pre><pre data-filename=\"phonopy/workflow.txt.template\"><code># TEMPLATE: Phonopy 4.5-style workflow. Check your installed --version/--help.\n# Need optimized POSCAR-unitcell; this does not run VASP or supply POTCAR.\nphonopy-init -d --dim 2 2 2 --pa auto -c POSCAR-unitcell\n# Copy each generated POSCAR-xxx to its own disp-xxx/POSCAR.\n# Run STATIC VASP forces with the supplied INCAR-force.template there.\n# Replace this sample list with ALL files, in phonopy_disp.yaml order:\nphonopy-init --sp -f disp-001/vasprun.xml disp-002/vasprun.xml\n# --band auto requires seekpath in the SAME active Python environment.\n# Check: python -c &quot;import seekpath&quot;\n# If missing, follow the official install guide; e.g. conda install -c conda-forge seekpath\n# When phonopy_params.yaml has been created successfully:\nphonopy --band auto -p phonopy_params.yaml\n# Example post-processing q mesh; independently converge it:\nphonopy --mesh 20 20 20 -t phonopy_params.yaml\n# Older releases: see the manual; setup may use phonopy -d / phonopy -f,\n# and postprocessing may use phonopy-load. Do not mix CLI generations.</code></pre>\n<p>截至本教程核验的 Phonopy 4.5 文档，准备与收集阶段使用 <code>phonopy-init</code>，后处理使用 <code>phonopy</code>；旧版本常把准备阶段放在 <code>phonopy</code>，后处理可能用 <code>phonopy-load</code>。先记录安装版本和 <code>--help</code>，不要把两代命令拼接。<a href=\"https://phonopy.github.io/phonopy/phonopy-init.html\" target=\"_blank\" rel=\"noopener\">命令迁移说明</a>、<a href=\"https://phonopy.github.io/phonopy/vasp.html\" target=\"_blank\" rel=\"noopener\">VASP 接口</a>、<a href=\"https://phonopy.github.io/phonopy/phonopy.html\" target=\"_blank\" rel=\"noopener\">后处理命令</a>。</p>\n<p><code>--band auto</code> 还要求同一 Python 环境中可用 <code>seekpath</code>；安装了 Phonopy 并不代表每种安装方式都已包含这个可选依赖。先用 <code>python -c &quot;import seekpath&quot;</code> 检查，缺失时按<a href=\"https://phonopy.github.io/phonopy/install.html\" target=\"_blank\" rel=\"noopener\">官方安装说明</a>补齐，再生成自动路径；自行指定路径也要与实际原胞的倒易基矢一致。</p>\n<div class=\"table-wrap\"><table><thead><tr><th>三个不同的“网格”</th><th>控制什么</th><th>如何检查</th></tr></thead><tbody><tr><td>电子 k 网格</td><td>每个位移结构的 DFT 受力精度</td><td>加密后力与声子变化是否小</td></tr><tr><td>实空间超胞</td><td>容纳多远的力常数与周期镜像</td><td>扩大超胞后支与虚频是否稳定</td></tr><tr><td>后处理 q 网格</td><td>声子态密度、热容等积分精度</td><td>加密 q 积分不会补回缺失的长程力常数</td></tr></tbody></table></div>\n<p>极性绝缘体的长程偶极相互作用还会影响 Γ 附近 LO–TO 分裂。需要同一方法计算的 Born 有效电荷与电子介电张量，按 Phonopy 的非解析项修正要求提供 BORN 数据；不能从另一个泛函或无关文献随意借值。<a href=\"https://phonopy.github.io/phonopy/input-files.html\" target=\"_blank\" rel=\"noopener\">Phonopy 输入文件与 BORN</a>。</p>\n<h3>看见“负频率”后怎么做？</h3>\n<ol><li>先区分绘图约定：负轴常表示 ω²&lt;0 的虚频，并不是“振动向负方向”。</li><li>检查结构残余力、应力和磁态，增加 ENCUT/k 点、收紧 EDIFF，测试位移幅度与超胞。Γ 附近很小的声学偏移可能含数值或转动不变性误差，但不能一律删掉。</li><li>观察对应本征矢，把结构沿软模正负方向做小扰动后再优化，寻找可能的低能畸变；波矢非 Γ 时必须用容纳该畸变的超胞。</li><li>若收敛后仍存在显著虚频，应报告“在当前近似与结构条件下不具谐动力学稳定性”。若声称温度稳定了结构，还需要有限温度/非谐证据。</li></ol>\n<p>二维材料的面外声学支在 Γ 附近尤其敏感，不能仅用一张粗网格声子图下结论。<a href=\"https://vasp.at/wiki/How_to_handle_imaginary_phonon_modes\" target=\"_blank\" rel=\"noopener\">官方虚频排查与软模操作</a>。</p>\n"
+    },
+    {
+      "id": "elasticity",
+      "title": "04 / 弹性常数：应力、单位与稳定性",
+      "kicker": "ELASTIC RESPONSE",
+      "html": "\n<p>弹性常数描述晶体对微小均匀形变的抵抗；从数学上看，它是能量关于应变的二阶导数。它回答“沿某方向拉伸多难”，与原子局域振动、塑性变形、断裂强度并非同一物理量。计算前先明确对象是无外应力体相、指定压力下的晶体，还是含真空的二维薄层。</p>\n<div class=\"formula\">ΔE / V₀ = ½ Σ<sub>ij</sub>C<sub>ij</sub> ε<sub>i</sub>ε<sub>j</sub>；σ 与 ε 在线性范围内关联</div>\n<h3>两种计算思路</h3>\n<p>一种做法对晶胞施加若干独立、正负小应变，固定变形后的晶格，计算应力或能量并拟合；另一种使用 VASP 内置有限差分响应。前者便于看到线性区间，后者便于获取完整张量。无论哪条路线，<strong>钳位离子</strong>与允许内部原子位置响应的<strong>松弛离子</strong>弹性常数都要分清：后者通常更接近低频弹性测量。</p>\n<ol><li>用适合应力精度的 ENCUT 和 k 网格，充分优化参考结构，确认残余应力相对目标精度很小。能量已收敛不代表应力一定收敛。</li><li>内置路线以 <code>IBRION=6</code> 配合 <code>ISIF=3</code> 计算有限差分与内部应变响应。这里是在已优化结构附近求导，不是再做一次普通 CG 结构优化。<a href=\"https://vasp.at/wiki/IBRION\" target=\"_blank\" rel=\"noopener\">IBRION 官方说明</a>。</li><li>显式应变路线可选几组正负小应变测试，例如 0.3%、0.5%、1%，这些只是测试起点。求松弛离子响应时在每个变形晶胞中用 <code>ISIF=2</code> 优化内部坐标；不能把晶胞也放松回原样。</li><li>比较不同应变范围与计算精度下拟合斜率是否稳定；过小应变受噪声影响，过大应变混入非线性。不要仅取两个点而不给不确定性。</li></ol>\n<pre data-filename=\"elastic/INCAR.template\"><code># TEMPLATE: internally relaxed elastic tensor of a 3D BULK solid\n# Input must already be tightly relaxed at the target pressure.\n# Not suitable for directly reporting a vacuum-containing slab in GPa.\nSYSTEM = bulk-elastic-finite-difference\nGGA = PE\nENCUT = REPLACE_WITH_STRESS_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-8\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.05\nIBRION = 6\nISIF = 3\nNFREE = 2\nPOTIM = 0.015\nNSW = 1\nLWAVE = .FALSE.\nLCHARG = .FALSE.</code></pre>\n<h3>读 OUTCAR 时最常见的三个误会</h3>\n<ul><li><strong>kBar 不是 GPa。</strong><code>TOTAL ELASTIC MODULI (kBar)</code> 要乘 0.1 才得到 GPa。不要把输出数字直接加上 GPa 标签。</li><li><strong>看表头的剪切顺序。</strong>VASP 常列 <code>XX YY ZZ XY YZ ZX</code>，与常见 Voigt <code>xx yy zz yz xz xy</code> 不同。整理矩阵时行列都需同步映射，再使用对应应变约定；不能只把最后三个标签改名。</li><li><strong>应力符号有约定。</strong>VASP 的对角正应力对应压缩倾向。自己用“拉伸为正”的连续介质定义拟合时应先转换，否则可能得到整体负的 C。<a href=\"https://vasp.at/wiki/ISIF\" target=\"_blank\" rel=\"noopener\">ISIF 的应力定义</a>。</li></ul>\n<p>内置输出可能分列刚性离子贡献、内部弛豫贡献和总弹性模量；报告时要注明选了哪一张表。官方输出示例可见 <a href=\"https://vasp.at/forum/viewtopic.php?t=19735\" target=\"_blank\" rel=\"noopener\">弹性矩阵列序讨论</a>。对于含真空二维材料，GPa 会随人为盒子高度改变；如报告面内二维刚度，应使用清楚的厚度约定或换算成 N/m，并交代有效高度。</p>\n<h3>机械稳定不等于热力学最稳定</h3>\n<div class=\"formula\">无外应力立方晶体：C₁₁ − C₁₂ &gt; 0，C₁₁ + 2C₁₂ &gt; 0，C₄₄ &gt; 0</div>\n<p>这些条件只适用于相应对称性和无外应力条件。更一般地，应检查与采用的应变约定一致的弹性能二次型是否正定；有有限外压时需用相应修正后的稳定性条件。不能把立方公式套给所有晶系，也不能只看对角元为正。<a href=\"https://doi.org/10.1103/PhysRevB.90.224104\" target=\"_blank\" rel=\"noopener\">Mouhat 与 Coudert 的稳定性判据</a>。</p>\n<div class=\"note\">一套结构可能弹性稳定，却存在有限波矢软模；也可能声子稳定，却比别的相能量高。最终措辞应区分机械稳定、谐动力学稳定、热力学相稳定与动力学寿命。</div>\n"
+    },
+    {
+      "id": "neb",
+      "title": "05 / NEB 与 CI-NEB：把反应路径算出来",
+      "kicker": "REACTION PATHWAYS",
+      "html": "\n<p>两种稳定构型之间的能量差告诉我们反应热，却不告诉我们需要跨越多高的势垒。NEB 在已知初末态之间放置若干中间构型，沿路径维持间距、在垂直方向寻找低能通道。每个“image”是一份完整原子结构，不是图片文件。它寻找给定初始路径附近的最小能量路径，因此初猜与可能的替代机制很重要。</p>\n<h3>目录与结构必须一一对应</h3>\n<pre data-filename=\"neb-native/directory-layout.txt\"><code>neb-native/\n  INCAR       # rename a completed INCAR.template\n  KPOINTS     # same converged sampling for all images\n  POTCAR      # supplied locally by a licensed user\n  00/POSCAR   # relaxed initial state\n  01/POSCAR   # intermediate image 1\n  02/POSCAR\n  03/POSCAR\n  04/POSCAR\n  05/POSCAR   # intermediate image 5\n  06/POSCAR   # relaxed final state</code></pre>\n<p><code>IMAGES=5</code> 表示五个中间构型，所以共有七个结构目录。端点应事先独立充分优化并保存一致精度的能量；VASP 在父目录启动。不同 image 必须具有相同晶格、原子数、元素顺序、原子身份顺序和约束。仅元素总数相同还不够：如果插值时把原子 A 与另一个等价原子 B 交换了编号，路径可能穿过极高能重叠结构。</p>\n<ol><li>选择初末态，分别确认力收敛和局部稳定。对于扩散，先考虑周期最短路径；直接对 0.99 与 0.01 分数坐标插值可能绕盒子一圈。</li><li>构造少量中间结构并逐帧看动画，排除原子碰撞、整体平移和不必要转动。复杂反应可用更好的几何插值或分段机制；增加 image 不是修复错误原子对应的方法。</li><li>先预收敛普通路径，再提高精度或增加关键区间采样。提交 MPI 任务时按集群规则让 image 并行划分合理，总进程数通常需可按 image 数分组；不要照抄别人的总核数。</li><li>逐 image 检查电子收敛和 NEB 投影力；达到 NSW 上限不等于路径已经收敛。可继续运行，但需保存上一轮结果并让每个中间 CONTCAR 成为各自的新 POSCAR。</li></ol>\n<p>目录约定和固定晶胞限制参见 <a href=\"https://vasp.at/wiki/Nudged_elastic_bands\" target=\"_blank\" rel=\"noopener\">原生 NEB</a>与 <a href=\"https://vasp.at/wiki/IMAGES\" target=\"_blank\" rel=\"noopener\">IMAGES</a>。<code>SPRING=-5</code> 的负号是启用 NEB 形式的开关约定，不表示物理上的负刚度；参见 <a href=\"https://vasp.at/wiki/SPRING\" target=\"_blank\" rel=\"noopener\">SPRING</a>。</p>\n<h3>路线 A：原生 VASP 的普通 NEB</h3>\n<pre data-filename=\"neb-native/INCAR.template\"><code># TEMPLATE: NATIVE VASP NEB, fixed common cell; five intermediate images\n# Supply 00/POSCAR through 06/POSCAR, parent KPOINTS and licensed POTCAR.\n# Endpoints must be separately relaxed and calculated with matching settings.\nSYSTEM = native-neb\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-7\nNELM = 150\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.05\nIMAGES = 5\nSPRING = -5\nIBRION = 1\nNFREE = 2\nPOTIM = 0.3\nISIF = 2\nNSW = 250\nEDIFFG = -0.03\nISYM = 0\nLWAVE = .FALSE.\nLCHARG = .FALSE.\n# Native template: NO LCLIMB, NO IOPT, and NOT POTIM=0.</code></pre>\n<p>此处 <code>IBRION=1</code> 与较短历史 <code>NFREE=2</code> 是预收敛起点，<code>POTIM=0.3</code> 是有限离子步长尺度，需按路径稳定性调整。NEB 的投影约束可能使常规 <code>IBRION=2</code> 收敛困难，不能默认照搬一般结构优化设置。原生也可研究合适的 <code>IBRION=3</code> 配置，但它同样需要非零的有效步长。</p>\n<div class=\"warning\"><strong>不要把 VTST 教程误当原生功能。</strong>在未启用 VTST 优化器的程序中，<code>IBRION=3; POTIM=0</code> 会使原子不移动。<code>LCLIMB</code>、<code>IOPT</code> 也不能仅靠写入 INCAR 就“安装”扩展。VASP 官方支持明确区分普通 NEB 与 VTST 的 climbing-image 功能。<a href=\"https://vasp.at/forum/viewtopic.php?t=19977\" target=\"_blank\" rel=\"noopener\">官方排错说明</a>。</div>\n<h3>路线 B：确认安装 VTST 后再做 CI-NEB</h3>\n<p>CI-NEB 让最高能 image 沿路径爬向鞍点，同时在其他方向下降。先预收敛普通 NEB，待路径形状与最高点位置合理后再开启 climbing image，通常比一开始就爬坡更稳。所用 VASP、VTST 版本与编译配置都必须记录；这里只给扩展片段，不假定你的计算中心已安装。</p>\n<pre data-filename=\"neb-vtst/optimizer-overlay.INCAR.template\"><code># TEMPLATE: VTST-ENABLED VASP ONLY; not a standalone INCAR\n# Replace native ionic-optimizer lines with these (do not leave duplicates).\n# Retain validated electronic settings and fixed-cell NEB directory structure.\n# Confirm the executable was built with a compatible VTST code version.\nIBRION = 3\nPOTIM = 0\nIOPT = 7\nICHAIN = 0\nIMAGES = 5\nSPRING = -5\nISIF = 2\nNSW = 250\nEDIFFG = -0.03\nLCLIMB = .FALSE.\n# First preconverge the path. For the separate climbing-image continuation:\n# change the existing LCLIMB line to .TRUE. after inspecting the path.</code></pre>\n<p><code>IOPT=7</code> 指 VTST 的 FIRE 优化器。该片段先显式关闭 <code>LCLIMB</code>，确认路径后再在单独续算阶段开启。来源：<a href=\"https://www.henkelmanlab.org/vtsttools/neb.html\" target=\"_blank\" rel=\"noopener\">VTST NEB 文档</a>、<a href=\"https://www.henkelmanlab.org/vtsttools/contents.html\" target=\"_blank\" rel=\"noopener\">优化器文档目录</a>、<a href=\"https://henkelmanlab.org/forum/viewtopic.php?t=831\" target=\"_blank\" rel=\"noopener\">开发者关于 POTIM=0 的说明</a>。</p>\n<h3>能垒的验收</h3>\n<div class=\"formula\">E<sub>a,forward</sub> = E<sub>TS</sub> − E<sub>initial</sub>；E<sub>a,reverse</sub> = E<sub>TS</sub> − E<sub>final</sub></div>\n<p>绘图横轴应是累计构型位移等定义清楚的路径坐标，不要把 image 编号称为时间。普通 NEB 最高离散点只是势垒近似；鞍点应进一步精化，并在相关自由度上验证一个连接初末态的虚模。发现两个虚模可能说明仍未到一阶鞍点；局部约束 Hessian 的结论也仅对检查过的子空间成立。有限温度自由能垒、隧穿和动力学前因子需要额外理论，不能由零温 NEB 曲线直接推成实验速率。</p>\n"
+    },
+    {
+      "id": "aimd",
+      "title": "06 / AIMD：用电子结构产生一段可信轨迹",
+      "kicker": "FINITE-TEMPERATURE DYNAMICS",
+      "html": "\n<p>几何优化沿能量下降方向寻找驻点；第一性原理分子动力学把每个时刻的电子结构力代入核运动方程。它可以观察局域重排、键断裂和扩散，但一段短轨迹没有发生某事件，并不证明该事件不会发生。首先明确温度、体积、组成、初始相、模拟时长和要测量的物理量。</p>\n<h3>固定晶胞的 Langevin NVT 起步</h3>\n<p>下列例子以<strong>恰好两种 POTCAR 原子类型</strong>示范 300 K 固定体积轨迹。<code>POTIM=1.0</code> 在 MD 中单位是 fs；含 H 的高频体系、强碰撞或高温体系可能需要更小步长，必须实际检验。示例 2000 步只对应 2 ps，适合短程排错，不能视作通用的生产采样长度。</p>\n<pre data-filename=\"aimd-nvt/INCAR.template\"><code># TEMPLATE: fixed-cell Langevin NVT; EXAMPLE for exactly TWO species\n# Supply relaxed POSCAR, tested KPOINTS/POTCAR and electronic settings.\n# Replace ENCUT and adapt one LANGEVIN_GAMMA value per POTCAR species.\nSYSTEM = nvt-langevin-test\nGGA = PE\nENCUT = REPLACE_WITH_FORCE_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-6\nNELM = 120\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.05\nIBRION = 0\nMDALGO = 3\nISIF = 2\nISYM = 0\nPOTIM = 1.0\nNSW = 2000\nTEBEG = 300\nTEEND = 300\nLANGEVIN_GAMMA = 10.0 10.0\nLWAVE = .FALSE.\nLCHARG = .FALSE.\n# No SMASS: it does not set the Langevin thermostat strength.\n# 2000 * 1 fs = 2 ps; this is a short test, not a production guarantee.</code></pre>\n<div class=\"table-wrap\"><table><thead><tr><th>设置</th><th>作用</th><th>容易犯的错</th></tr></thead><tbody><tr><td>IBRION=0</td><td>进入分子动力学</td><td>保留优化用 IBRION=2，却把 NSW 误当 MD 步数</td></tr><tr><td>MDALGO=3</td><td>Langevin 热浴</td><td>未确认程序具备对应编译功能</td></tr><tr><td>ISIF=2</td><td>固定晶胞并输出应力</td><td>改成 3 后仍称为固定体积 NVT</td></tr><tr><td>LANGEVIN_GAMMA</td><td>每种原子类型的摩擦，ps⁻¹</td><td>按原子个数列值，或在三种元素体系仍写两个值</td></tr><tr><td>TEBEG / TEEND</td><td>初始与目标温度安排</td><td>两者不同时把升温轨迹当平衡统计</td></tr><tr><td>POTIM × NSW</td><td>计划模拟总时长</td><td>误把 1 fs × 2000 步当 2 ns</td></tr></tbody></table></div>\n<p><code>LANGEVIN_GAMMA</code> 的顺序跟 POTCAR 类型顺序一致；相同元素若被分成不同类型，也要按类型分别列。<code>SMASS</code> 用于其他热浴或某些离子算法，不能拿它代替 Langevin 摩擦参数。MD 支持依赖 <code>-Dtbdyn</code> 编译选项，当前官方模板通常包含它，仍应检查自己的可执行文件。参见 <a href=\"https://vasp.at/wiki/MDALGO\" target=\"_blank\" rel=\"noopener\">MDALGO</a>、<a href=\"https://vasp.at/wiki/LANGEVIN_GAMMA\" target=\"_blank\" rel=\"noopener\">摩擦系数</a>与 <a href=\"https://vasp.at/wiki/SMASS\" target=\"_blank\" rel=\"noopener\">SMASS</a>。</p>\n<h3>热平衡与生产采样分开</h3>\n<ol><li><strong>短测试：</strong>先跑少量步，检查是否原子重叠、温度异常、每一步电子循环耗尽 NELM。输入结构、力精度或时间步不合格时，增加总时长只会扩大问题。</li><li><strong>热平衡：</strong>在目标条件下观察温度、势能、体积（若可变）、配位与结构量是否脱离初态。温度围绕目标值波动是正常的，单步恰好等于 300 K 不是平衡标准。</li><li><strong>生产段：</strong>丢弃有理由选定的平衡段后再统计。分块平均、不同时间起点和独立初始速度用于估计相关性与误差，不能把每个相邻 MD 帧当独立样本。</li><li><strong>验证步长：</strong>用更小时间步和更严电子收敛比较关键量；必要时在合适的 NVE 条件下检查能量漂移。恒温器会交换能量，不能要求 NVT 物理总能像理想 NVE 那样严格不变。</li></ol>\n<p>记录 OUTCAR/OSZICAR、REPORT、XDATCAR 与终态 CONTCAR 的对应关系；重启时若希望连续轨迹，要保存速度及程序所需的重启状态，而不是只复制几何后重新随机分配速度。<a href=\"https://vasp.at/wiki/MD_runs\" target=\"_blank\" rel=\"noopener\">官方分子动力学流程</a>、<a href=\"https://vasp.at/wiki/TEBEG\" target=\"_blank\" rel=\"noopener\">初始速度与温度</a>。</p>\n<h3>扩散系数与“看起来在动”不同</h3>\n<div class=\"formula\">D = lim<sub>t→∞</sub> [1/(2 d t)] ⟨|r(t) − r(0)|²⟩</div>\n<p>计算均方位移前要跨周期边界解包轨迹，并按需要去除整体漂移；分子体系还应区分质心扩散与分子内部振动。只有进入近似线性的长时扩散区，且经历足够多迁移事件后，斜率才有统计意义。三维用 d=3，严格二维扩散用 d=2；不能给各向异性体系只报一个数字而不交代方向。</p>\n<div class=\"warning\">“在几皮秒内没有分解”只能描述这次轨迹窗口，不能宣称材料已获实验稳定性验证。强 Langevin 摩擦会改变动力学相关性；若目标是时间关联或输运性质，还需验证热浴影响、采样长度与有限尺寸效应。用高温短轨迹外推室温扩散，更应报告拟合区间和相结构是否保持。</div>\n<details><summary>NpT 为什么不能只把 ISIF 改成 3？</summary><p>Langevin NpT 除原子摩擦，还涉及晶格摩擦 <code>LANGEVIN_GAMMA_L</code>、虚拟晶格质量 <code>PMASS</code> 与目标压力等。过快的晶胞动力学可能导致畸变，尤其是液体或柔软材料。应从专门验证的 NpT 工作流开始，不把上述 NVT 模板随意改一行后直接投入长算。</p></details>\n"
+    },
+    {
+      "id": "methods",
+      "title": "07 / vdW 与 HSE：选方法比堆标签更重要",
+      "kicker": "DISPERSION & HYBRIDS",
+      "html": "\n<p>计算参数有两类：一类决定数值精度，例如 ENCUT、k 点与 EDIFF；另一类定义近似物理模型，例如交换关联泛函、U、色散和自旋轨道耦合。提高前一类并不能自动纠正后一类的系统偏差。做研究时应先写下“希望改进什么物理”，再决定方法。</p>\n<h3>色散：分子、层状材料与弱吸附</h3>\n<p>半局域泛函往往不能充分描述长程色散相互作用。层间距离、分子取向、弱吸附能等问题可比较一致选择的色散修正或非局域 vdW 泛函。D3(BJ) 是一种几何相关的色散修正，本教程以 PBE 配套 <code>IVDW=12</code> 示范；<code>IVDW=11</code> 则对应另一种阻尼形式，数值不可当成“精度等级”随意互换。</p>\n<pre data-filename=\"vdw/pbe-d3bj-overlay.INCAR.template\"><code># TEMPLATE OVERLAY ONLY: PBE with D3(BJ) dispersion\n# Add to ONE otherwise complete, validated PBE INCAR.\n# Do not stack onto another dispersion-corrected functional uncritically.\nGGA = PE\nIVDW = 12\n# Apply the same method to all comparable structures / references.</code></pre>\n<p>使用时要检查两件事：实际输出是否识别了预期色散方案，以及该泛函是否有支持的阻尼参数。不要为了贴近实验单独调一组经验系数却仍称为标准 PBE-D3(BJ)。换成别的泛函，或使用需要外部库的新方案，必须重新核对版本与参数支持。<a href=\"https://vasp.at/wiki/DFT-D3\" target=\"_blank\" rel=\"noopener\">D3 官方方法与参数说明</a>。</p>\n<ol><li>对同一体系比较 PBE 与选定 vdW 方法的结构，例如层间距或分子—表面高度；随后看目标能量差的变化，而非只比较两次总能数值。</li><li>若最终报告采用 vdW 方法，应在该方法下取得与问题对应的结构或明确声明“在 PBE 几何上的单点修正”。几何响应与能量修正不是同一件事。</li><li>计算吸附或相变能时，各项必须使用同一方法；不能只给吸附态加色散而给气相/清洁表面用不同定义。</li><li>不要把已经含非局域色散的泛函再无条件叠加 D3，否则可能重复计数；含 U、磁性或表面模型的适用性也要独立验证。</li></ol>\n<h3>HSE06：轨道依赖的屏蔽混合泛函</h3>\n<p>HSE06 用一定比例的短程精确交换替换半局域交换。典型定义是 PBE 基础、<code>AEXX=0.25</code> 与 <code>HFSCREEN=0.2</code> Å⁻¹；只写 <code>LHFCALC=.TRUE.</code> 并不等于已经选择 HSE06。混合泛函常用于检查半导体带隙、局域电子与某些缺陷，但“更贵”不等于对每一种能量、金属体系或实验条件都更准确。<a href=\"https://vasp.at/wiki/HFSCREEN\" target=\"_blank\" rel=\"noopener\">HFSCREEN</a>。</p>\n<pre data-filename=\"hse06/INCAR.template\"><code># TEMPLATE: HSE06 static self-consistent calculation from scratch\n# For a nonmagnetic semiconductor; regular k mesh REQUIRED.\n# Supply POSCAR, KPOINTS and suitable licensed PAW-PBE POTCAR.\nSYSTEM = hse06-static\nGGA = PE\nLHFCALC = .TRUE.\nAEXX = 0.25\nHFSCREEN = 0.2\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-7\nNELM = 150\nALGO = Damped\nTIME = 0.4\nLREAL = .FALSE.\nLASPH = .TRUE.\nISMEAR = 0\nSIGMA = 0.05\nISTART = 0\nICHARG = 2\nIBRION = -1\nNSW = 0\nLWAVE = .TRUE.\nLCHARG = .TRUE.\n# PBE WAVECAR restart is possible with compatible settings and ISTART=1;\n# review ICHARG/restart settings then. NEVER set ICHARG=11 for this task.</code></pre>\n<p>模板显式启用 <code>LASPH=.TRUE.</code>，包含 PAW 球内密度梯度的非球形成分；这对含 d/f 电子、过渡金属氧化物等体系的混合泛函尤其重要。用于方法对照的 PBE 计算也应一致启用该设置，避免把设置差异混入泛函差异。<a href=\"https://vasp.at/wiki/LASPH\" target=\"_blank\" rel=\"noopener\">LASPH 官方说明</a>。</p>\n<p><code>ALGO=Damped</code> 与 <code>TIME</code> 控制电子轨道优化；TIME 不等于离子优化或 MD 的 POTIM。发生振荡时可测试更保守的 TIME。官方不建议为混合泛函沿用 <code>ALGO=Fast</code>；具体优化器和版本性能应以小任务测试。<a href=\"https://vasp.at/wiki/LHFCALC\" target=\"_blank\" rel=\"noopener\">混合泛函的电子优化建议</a>。</p>\n<h3>为什么不能用 PBE 的 CHGCAR + ICHARG=11 算 HSE 能带？</h3>\n<p>半局域哈密顿量可由密度确定，而混合泛函还需要规则 k 网格上占据轨道构造非局域交换。固定 PBE 电荷并只沿高对称线求解，会遗漏必要信息。因此 HSE 必须按轨道依赖方法自洽，重启应保留兼容的 WAVECAR；PBE 波函数可作初猜，却不是最终 HSE 波函数。</p>\n<p>带结构可用“有权重的规则网格 + 零权重路径点”，或使用支持版本的 KPOINTS_OPT 让规则网格与路径分开定义。两者都不能把规则网格删除，也不能设置 <code>ICHARG=11</code>。路径点的收敛检查与内存成本也不同于普通 SCF，先阅读<a href=\"https://vasp.at/wiki/Band-structure_calculation_using_hybrid_functionals\" target=\"_blank\" rel=\"noopener\">官方 HSE 能带流程</a>，再使用<a href=\"vasp-electronic-v6.html\">电子结构章节</a>的绘图原则。</p>\n<p>对于有带隙体系的 HSE 能带，官方建议研究 <code>HFRCUT=-1</code> 的交换库仑截断以避免某些路径不连续。显式零权点的轨道不直接决定 SCF 总能判据，从已收敛 HSE 波函数重启时可能过早停止；应独立检查路径能带的迭代收敛，必要时验证增加 NELMIN 的效果。这个设置属于能带专门流程，不能用“总能已收敛”代替路径轨道检查。</p><div class=\"note\"><strong>方法比较练习：</strong>选一个半导体，分别记录 PBE 与 HSE06 的晶格、带隙和计算成本；明确带隙来自哪套几何、是否含 SOC。若调整精确交换比例去拟合某个实验带隙，应称为经过调参的混合泛函，并在独立性质上验证可迁移性。</div>\n"
+    },
+    {
+      "id": "optics",
+      "title": "08 / 光学与介电：先问测量对应哪种响应",
+      "kicker": "OPTICAL & DIELECTRIC RESPONSE",
+      "html": "\n<p>介电函数描述电场扰动下材料的响应，通常是依赖频率和方向的复张量。频率很高时原子核来不及运动；更低频时晶格振动也能贡献极化。因此“介电常数”至少要说明电子贡献还是电子加离子贡献、静态还是动态、哪个晶向，以及是否包含局域场与激子效应。</p>\n<div class=\"table-wrap\"><table><thead><tr><th>你想求什么</th><th>入门路线</th><th>不能自动得到什么</th></tr></thead><tbody><tr><td>电子频率响应 ε(ω)</td><td>LOPTICS，求和占据—空带跃迁</td><td>标准路线不含束缚激子</td></tr><tr><td>电子静态介电张量、Born 有效电荷</td><td>适用半局域 DFT 的 LEPSILON</td><td>仅写此标志不等于完整离子松弛介电常数</td></tr><tr><td>轨道依赖泛函的静态响应</td><td>研究适用的有限电场 LCALCEPS 流程</td><td>不能照抄 LEPSILON 作为 HSE 的通用 DFPT</td></tr><tr><td>带激子的光谱</td><td>进一步学习 GW/BSE 等多体流程</td><td>把 PBE 谱平移不等于完成 BSE</td></tr></tbody></table></div>\n<h3>独立粒子光学谱的实操顺序</h3>\n<ol><li>用明确的几何与泛函建立电子基态。光学积分用密集规则 k 网格，不是能带图用的高对称路径。</li><li>增加空带并查看最高带覆盖的跃迁能量范围。<code>NBANDS</code> 包含占据和空态，程序默认的空态余量往往不是光学收敛值。逐级增加直到目标能区谱形稳定，不能只看总能是否变化。</li><li>分别加密 k 点、增加频率采样、改变展宽并比较。光谱更平滑可以只是展宽更大，不代表微观计算更准确。</li><li>在 OUTCAR 或支持的输出中提取实部与虚部张量，标明分量、能量单位和展宽。每个曲线都要能追溯到同一套输入。</li></ol>\n<pre data-filename=\"optics/INCAR.template\"><code># TEMPLATE: independent-particle PBE optics of a nonmagnetic 3D insulator\n# Supply optimized POSCAR, DENSE regular KPOINTS, POTCAR; replace two fields.\n# This is a self-consistent static calculation, not a band-line calculation.\nSYSTEM = pbe-independent-particle-optics\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-8\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.01\nIBRION = -1\nNSW = 0\nLOPTICS = .TRUE.\nNBANDS = REPLACE_WITH_CONVERGED_NUMBER_OF_BANDS\nNEDOS = 2000\nCSHIFT = 0.10\nLWAVE = .TRUE.\nLCHARG = .TRUE.</code></pre>\n<p><code>LOPTICS</code> 在电子基态后计算频率响应，标准独立粒子近似忽略相应局域场变化；不能把谱峰直接称为实验激子峰。它可与混合泛函结合，但仍需采用混合泛函自洽与适用优化器。电子带隙、光学吸收起始与含声子/激子的实验阈值可能不同。<a href=\"https://vasp.at/wiki/LOPTICS\" target=\"_blank\" rel=\"noopener\">LOPTICS 的近似与适用条件</a>。</p>\n<p><code>CSHIFT=0.10</code> 的单位为 eV，用于 Lorentz 展宽；同时使用高斯占据时也有 SIGMA 影响，所以模板让 SIGMA 明显小于 CSHIFT，仍须检查谱尾与频率范围。<code>NEDOS=2000</code> 只是输出频率采样示例，不是 k 点数。参见 <a href=\"https://vasp.at/wiki/CSHIFT\" target=\"_blank\" rel=\"noopener\">CSHIFT</a>、<a href=\"https://vasp.at/wiki/NEDOS\" target=\"_blank\" rel=\"noopener\">NEDOS</a>与 <a href=\"https://vasp.at/wiki/NBANDS\" target=\"_blank\" rel=\"noopener\">NBANDS</a>。</p>\n<h3>电子静态响应与 Born 电荷</h3>\n<pre data-filename=\"dielectric/INCAR.template\"><code># TEMPLATE: electronic (ion-clamped) static dielectric tensor / Born charges\n# For a nonmetallic system with supported semilocal DFT, NOT HSE.\n# Supply optimized POSCAR, converged KPOINTS/POTCAR, replace ENCUT.\nSYSTEM = pbe-dielectric-dfpt\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-8\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.01\nIBRION = -1\nNSW = 0\nLEPSILON = .TRUE.\nLRPA = .FALSE.\nLWAVE = .FALSE.\nLCHARG = .FALSE.\n# Not the full ionic+electronic static permittivity of a relaxed crystal.\n# Do not append LOPTICS or excessive NBANDS to this separate DFPT task.</code></pre>\n<p>Born 有效电荷是原子位移与宏观极化变化之间的响应张量，不等于 Bader 净电荷，也不必等于形式氧化态。<code>LEPSILON</code> 的 DFPT 路线不需要像 LOPTICS 那样大量增加空带，<code>LRPA=.FALSE.</code> 对应保留适当交换关联响应的设置；两条任务分开做更清楚。<a href=\"https://vasp.at/wiki/LEPSILON\" target=\"_blank\" rel=\"noopener\">LEPSILON</a>。</p>\n<p>需要完整静态介电响应时，进一步结合适用的振动与离子响应计算，并把电子 ε∞ 和离子贡献分别报告。HSE 等轨道依赖方法可研究有限电场路线，但场强需要做线性区测试，绝缘性也必须保持。官方当前说明 LEPSILON 不适用于混合泛函；参考 <a href=\"https://vasp.at/wiki/LCALCEPS\" target=\"_blank\" rel=\"noopener\">LCALCEPS</a>。</p>\n<div class=\"warning\">二维材料的三维超胞介电张量会含有真空稀释效应：把真空变大，输出“介电常数”可能变小，这不等于单层本征极化突然变弱。应采用适合二维的极化率/光学量定义并明确归一化。对金属，还需处理低频自由载流子等贡献，不能无解释地沿用绝缘体模板。</div>\n<details><summary>练习：怎么判断漂亮的光谱是否可信？</summary><p>请做四张对照：增加空带、加密 k 点、改变展宽、改变频率采样。然后说明哪类变化会移动峰、哪类主要改变宽度，以及你的误差标准是什么。没有这些比较时，只能把结果称为该参数集下的预测谱。</p></details>\n"
+    },
+    {
+      "id": "quality",
+      "title": "09 / 排错、成本与可复现报告",
+      "kicker": "QUALITY & REPRODUCIBILITY",
+      "html": "\n<p>进阶计算最容易出现的失败不是程序崩溃，而是完成了一套与科学问题不匹配的计算。每个任务开始前写一句目标，例如“比较相同覆盖度下两个吸附位点的电子吸附能”，再据此决定需要多严格的能量差、力、尺寸和温度采样标准。</p>\n<h3>从症状回到最小可诊断问题</h3>\n<div class=\"table-wrap\"><table><thead><tr><th>症状</th><th>优先检查</th><th>不应直接得出的结论</th></tr></thead><tbody><tr><td>每次 SCF 都到 NELM 上限</td><td>几何重叠、占据、自旋初值、空带与算法；先做固定几何小任务</td><td>“多加 NELM 就一定得到正确态”</td></tr><tr><td>优化忽然跳步或能量升高</td><td>电子循环是否可靠、力噪声、优化步长、约束和最近结构</td><td>“所有升高都代表化学反应发生”</td></tr><tr><td>NEB 每步能量一样</td><td>原生/VTST 程序是否对应、POTIM 是否错误为 0、原子是否全固定</td><td>“势能面完全平坦”</td></tr><tr><td>加厚真空后带电能量漂移</td><td>带电模型、补偿背景、维度适用的静电处理</td><td>“把真空继续加大一定能解决”</td></tr><tr><td>声子出现小虚频</td><td>结构、力精度、位移、超胞和模式本征矢</td><td>“小虚频全部可删除”</td></tr><tr><td>任务被调度器杀死</td><td>调度日志中的内存、时限、磁盘配额和并行配置</td><td>“材料本身不稳定”</td></tr><tr><td>输出有最终结构，但结果异常</td><td>是否真正达到电子/离子阈值，还是达到步数或作业时限</td><td>“有 CONTCAR 就代表收敛”</td></tr></tbody></table></div>\n<p>排错时保存原输入与日志，在新目录一次只改变有理由的一组设置。可以用较便宜设置定位错误，但最终物理结果必须恢复并验证所需精度。不要往 INCAR 中同时堆入十几个来源不明的标签，使问题无法归因。<a href=\"https://vasp.at/wiki/Troubleshooting_electronic_convergence\" target=\"_blank\" rel=\"noopener\">官方电子收敛排查</a>。</p>\n<h3>先做小规模计时，再估算总成本</h3>\n<ul><li><strong>声子：</strong>总成本取决于不等价位移数乘以每个超胞静态受力成本；每个位移可独立提交，但要避免文件排序错误。</li><li><strong>NEB：</strong>中间结构数量、每幅最困难的电子循环与离子步数都会影响等待时间。并行 image 不会让总计算资源消耗消失。</li><li><strong>AIMD：</strong>用试跑测每步平均成本，再乘生产步数，并为热平衡、重复轨迹与失败重启预留资源。</li><li><strong>HSE/光学：</strong>更多轨道、k 点与交换计算可能显著增加内存；把核数加倍不保证耗时减半，甚至可能因通信更慢。</li></ul>\n<p>使用本机型、本程序版本和近似相同体系测试并行。<code>NCORE</code>、<code>KPAR</code>、image 分组与 GPU/OpenMP 限制互有关联，不能把某个 CPU 节点上的最佳参数当通用模板。先核验 dry-run 或 <code>ALGO=None</code> 支持，再检查实际 bands、k 点、内存和短程计时。<a href=\"https://vasp.at/wiki/Optimizing_the_parallelization\" target=\"_blank\" rel=\"noopener\">官方并行优化流程</a>。</p>\n<h3>人工智能能把哪里做得更快？</h3>\n<p>机器学习势可从 DFT 的能量、力和应力学习势能面，在经过验证的构型范围内扩大动力学时间与空间尺度；主动学习则优先补算模型不熟悉的局部环境。VASP 本身提供基于在线学习的 MLFF 路线，具体标签随版本与模式而定，入门应先学会评估数据质量。<a href=\"https://vasp.at/wiki/Machine-learned_force_fields\" target=\"_blank\" rel=\"noopener\">官方 MLFF 总览</a>。</p>\n<p>合理的验证集应覆盖独立温度、结构扰动、缺陷或反应环境，而不是把同一条轨迹相邻帧随机分到训练和测试。低平均力误差不保证迁移能垒、罕见事件和新相也正确；关键候选结构和鞍点仍应返回相同基准 DFT 复核。模型继承训练泛函的偏差，无法靠数据量自动变成实验真值。</p>\n<p>大语言模型适合解释输出、帮助生成检查脚本与整理文档。它也可能编造不存在的参数或把 VTST 当原生功能，所以将自动建议转成计算前，应核对官方定义、单位、兼容性，并检查真正生效的输出。研究报告分别标明“AI 预测”“DFT 复核”“有限温度模拟”与“实验验证”。</p>\n<h3>一份合格的任务记录</h3>\n<ol><li><strong>问题与模型：</strong>结构来源、晶胞、组成、电荷、自旋、表面终止、固定层和参考态。</li><li><strong>软件与输入：</strong>VASP/外部工具版本、构建或扩展信息、POTCAR 标识及校验信息、泛函、ENCUT、k 点、展宽、优化与响应参数。</li><li><strong>证据：</strong>电子/离子收敛、超胞与数值精度测试、所用输出文件、后处理脚本和单位转换。</li><li><strong>结论范围：</strong>哪些是确定的数值趋势，哪些是当前模型的预测，哪些仍需更大模型、更多采样或实验检验。</li></ol>\n<p>不要只保留截图和最终表格。保存原始输入、软件输出、结构与分析流程；公开可复现材料时不分发受许可限制的 POTCAR 文件。回到<a href=\"tutorial-v6.html\">课程地图</a>选择练习，或在<a href=\"vasp-reference-v6.html\">参数与检查清单</a>逐项核对。</p>\n<div class=\"note\"><strong>本页的验证边界：</strong>本教程提供经文档核验的解释与任务模板，没有在本网站后台执行 VASP，也没有生成真实吸附能、扩散系数、声子或能垒结果。含 REPLACE 字段的文件需按实际体系补完；网页展示正常与数值任务完成是两件不同的事。</div>\n"
+    }
+  ],
+  "sources": [
+    {
+      "title": "官方 POSCAR 定义",
+      "url": "https://vasp.at/wiki/POSCAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "IDIPOL",
+      "url": "https://vasp.at/wiki/IDIPOL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LDIPOL",
+      "url": "https://vasp.at/wiki/LDIPOL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "DIPOL",
+      "url": "https://vasp.at/wiki/DIPOL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LVHAR",
+      "url": "https://vasp.at/wiki/LVHAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Freysoldt 等的缺陷综述",
+      "url": "https://doi.org/10.1103/RevModPhys.86.253",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "NELECT 官方说明",
+      "url": "https://vasp.at/wiki/NELECT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "各向异性与弛豫相关的电荷校正研究",
+      "url": "https://doi.org/10.1103/PhysRevB.89.195205",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方带电体系讨论",
+      "url": "https://vasp.at/wiki/Charged_systems_with_density_functional_theory",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "有限位移官方说明",
+      "url": "https://vasp.at/wiki/Phonons_from_finite_differences",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "NFREE",
+      "url": "https://vasp.at/wiki/NFREE",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "命令迁移说明",
+      "url": "https://phonopy.github.io/phonopy/phonopy-init.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP 接口",
+      "url": "https://phonopy.github.io/phonopy/vasp.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "后处理命令",
+      "url": "https://phonopy.github.io/phonopy/phonopy.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Phonopy 输入文件与 BORN",
+      "url": "https://phonopy.github.io/phonopy/input-files.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方虚频排查与软模操作",
+      "url": "https://vasp.at/wiki/How_to_handle_imaginary_phonon_modes",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "IBRION 官方说明",
+      "url": "https://vasp.at/wiki/IBRION",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "ISIF 的应力定义",
+      "url": "https://vasp.at/wiki/ISIF",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "弹性矩阵列序讨论",
+      "url": "https://vasp.at/forum/viewtopic.php?t=19735",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Mouhat 与 Coudert 的稳定性判据",
+      "url": "https://doi.org/10.1103/PhysRevB.90.224104",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "原生 NEB",
+      "url": "https://vasp.at/wiki/Nudged_elastic_bands",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "IMAGES",
+      "url": "https://vasp.at/wiki/IMAGES",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "SPRING",
+      "url": "https://vasp.at/wiki/SPRING",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方排错说明",
+      "url": "https://vasp.at/forum/viewtopic.php?t=19977",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VTST NEB 文档",
+      "url": "https://www.henkelmanlab.org/vtsttools/neb.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "优化器文档目录",
+      "url": "https://www.henkelmanlab.org/vtsttools/contents.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "开发者关于 POTIM=0 的说明",
+      "url": "https://henkelmanlab.org/forum/viewtopic.php?t=831",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "MDALGO",
+      "url": "https://vasp.at/wiki/MDALGO",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "摩擦系数",
+      "url": "https://vasp.at/wiki/LANGEVIN_GAMMA",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "SMASS",
+      "url": "https://vasp.at/wiki/SMASS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方分子动力学流程",
+      "url": "https://vasp.at/wiki/MD_runs",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "初始速度与温度",
+      "url": "https://vasp.at/wiki/TEBEG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "D3 官方方法与参数说明",
+      "url": "https://vasp.at/wiki/DFT-D3",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "HFSCREEN",
+      "url": "https://vasp.at/wiki/HFSCREEN",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "混合泛函的电子优化建议",
+      "url": "https://vasp.at/wiki/LHFCALC",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方 HSE 能带流程",
+      "url": "https://vasp.at/wiki/Band-structure_calculation_using_hybrid_functionals",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LOPTICS 的近似与适用条件",
+      "url": "https://vasp.at/wiki/LOPTICS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "CSHIFT",
+      "url": "https://vasp.at/wiki/CSHIFT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "NEDOS",
+      "url": "https://vasp.at/wiki/NEDOS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "NBANDS",
+      "url": "https://vasp.at/wiki/NBANDS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LEPSILON",
+      "url": "https://vasp.at/wiki/LEPSILON",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LCALCEPS",
+      "url": "https://vasp.at/wiki/LCALCEPS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方电子收敛排查",
+      "url": "https://vasp.at/wiki/Troubleshooting_electronic_convergence",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方并行优化流程",
+      "url": "https://vasp.at/wiki/Optimizing_the_parallelization",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方 MLFF 总览",
+      "url": "https://vasp.at/wiki/Machine-learned_force_fields",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Phonopy 安装与 seekpath 依赖",
+      "url": "https://phonopy.github.io/phonopy/install.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LASPH：PAW 非球形成分",
+      "url": "https://vasp.at/wiki/LASPH",
+      "accessed": "2026-09-19"
+    }
+  ],
+  "downloads": [
+    {
+      "path": "surface/INCAR.template",
+      "title": "中性表面优化模板",
+      "content": "# TEMPLATE: neutral, nonmagnetic slab; normal parallel to c\n# Supply POSCAR, converged KPOINTS and licensed POTCAR.\n# Replace ENCUT; add validated magnetic/U/vdW settings when needed.\nSYSTEM = neutral-slab-relax\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-6\nNELM = 120\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.05\nIBRION = 2\nNSW = 150\nISIF = 2\nEDIFFG = -0.02\nPOTIM = 0.3\nISYM = 0\nLDIPOL = .TRUE.\nIDIPOL = 3\nDIPOL = REPLACE_WITH_SLAB_CENTER_IN_FRACTIONAL_COORDINATES\nLWAVE = .FALSE.\nLCHARG = .FALSE.\n",
+      "description": "需补 slab 结构、许可 POTCAR、已收敛 k 网格、ENCUT 和 DIPOL；示例不含磁性或电荷态。"
+    },
+    {
+      "path": "defect/INCAR.template",
+      "title": "体相带电缺陷优化模板",
+      "content": "# TEMPLATE: charged bulk defect at fixed host lattice\n# Not a charged-slab template. Supply the actual supercell and references.\n# Replace ENCUT and NELECT. Set a justified spin state / MAGMOM if required.\nSYSTEM = bulk-defect-relax\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-7\nNELM = 150\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.05\nNELECT = REPLACE_WITH_NEUTRAL_DEFECT_ELECTRONS_MINUS_Q\nIBRION = 2\nNSW = 200\nISIF = 2\nEDIFFG = -0.01\nISYM = 0\nLWAVE = .FALSE.\nLCHARG = .TRUE.\n# No universal correction tag: specify and validate correction externally.\n",
+      "description": "需补真实超胞、k 点、赝势、电子数与自旋方案；不含自动形成能或通用电荷校正。"
+    },
+    {
+      "path": "phonon-internal/INCAR.template",
+      "title": "VASP 内置有限位移模板",
+      "content": "# TEMPLATE: internal finite-displacement Gamma modes of the INPUT cell\n# Start from a tightly optimized, nonmagnetic semiconductor/insulator.\n# Supply POSCAR / KPOINTS / POTCAR and replace ENCUT.\nSYSTEM = gamma-phonon-internal\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-8\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.01\nIBRION = 6\nNFREE = 2\nPOTIM = 0.015\nNSW = 1\nISIF = 2\nLWAVE = .FALSE.\nLCHARG = .FALSE.\n",
+      "description": "仅限已优化结构的输入晶胞 Γ 点模式；需对力精度和位移收敛，不是完整声子色散。"
+    },
+    {
+      "path": "phonopy/INCAR-force.template",
+      "title": "Phonopy 位移结构静态受力模板",
+      "content": "# TEMPLATE: one externally displaced Phonopy supercell, SINGLE POINT ONLY\n# Do not relax POSCAR-xxx. Use identical settings for every displacement.\nSYSTEM = phonopy-force\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-8\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.01\nIBRION = -1\nNSW = 0\nISYM = 0\nLWAVE = .FALSE.\nLCHARG = .FALSE.\n",
+      "description": "用于每个外部位移超胞，禁止离子优化；需统一参数、补齐结构与赝势。"
+    },
+    {
+      "path": "phonopy/workflow.txt.template",
+      "title": "Phonopy 分步命令说明",
+      "content": "# TEMPLATE: Phonopy 4.5-style workflow. Check your installed --version/--help.\n# Need optimized POSCAR-unitcell; this does not run VASP or supply POTCAR.\nphonopy-init -d --dim 2 2 2 --pa auto -c POSCAR-unitcell\n# Copy each generated POSCAR-xxx to its own disp-xxx/POSCAR.\n# Run STATIC VASP forces with the supplied INCAR-force.template there.\n# Replace this sample list with ALL files, in phonopy_disp.yaml order:\nphonopy-init --sp -f disp-001/vasprun.xml disp-002/vasprun.xml\n# --band auto requires seekpath in the SAME active Python environment.\n# Check: python -c \"import seekpath\"\n# If missing, follow the official install guide; e.g. conda install -c conda-forge seekpath\n# When phonopy_params.yaml has been created successfully:\nphonopy --band auto -p phonopy_params.yaml\n# Example post-processing q mesh; independently converge it:\nphonopy --mesh 20 20 20 -t phonopy_params.yaml\n# Older releases: see the manual; setup may use phonopy -d / phonopy -f,\n# and postprocessing may use phonopy-load. Do not mix CLI generations.\n",
+      "description": "按官方 Phonopy 4.5 命令体系编写；实际位移数量和路径需替换，未提供或执行真实计算。"
+    },
+    {
+      "path": "elastic/INCAR.template",
+      "title": "三维体相弹性响应模板",
+      "content": "# TEMPLATE: internally relaxed elastic tensor of a 3D BULK solid\n# Input must already be tightly relaxed at the target pressure.\n# Not suitable for directly reporting a vacuum-containing slab in GPa.\nSYSTEM = bulk-elastic-finite-difference\nGGA = PE\nENCUT = REPLACE_WITH_STRESS_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-8\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.05\nIBRION = 6\nISIF = 3\nNFREE = 2\nPOTIM = 0.015\nNSW = 1\nLWAVE = .FALSE.\nLCHARG = .FALSE.\n",
+      "description": "只适用已充分优化的三维体相；需收敛应力精度，不能直接用于含真空二维模量。"
+    },
+    {
+      "path": "neb-native/INCAR.template",
+      "title": "原生 VASP NEB 模板",
+      "content": "# TEMPLATE: NATIVE VASP NEB, fixed common cell; five intermediate images\n# Supply 00/POSCAR through 06/POSCAR, parent KPOINTS and licensed POTCAR.\n# Endpoints must be separately relaxed and calculated with matching settings.\nSYSTEM = native-neb\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-7\nNELM = 150\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.05\nIMAGES = 5\nSPRING = -5\nIBRION = 1\nNFREE = 2\nPOTIM = 0.3\nISIF = 2\nNSW = 250\nEDIFFG = -0.03\nISYM = 0\nLWAVE = .FALSE.\nLCHARG = .FALSE.\n# Native template: NO LCLIMB, NO IOPT, and NOT POTIM=0.\n",
+      "description": "固定晶胞，五个中间结构；需七套端点/中间 POSCAR。原生优化器使用有限 POTIM。"
+    },
+    {
+      "path": "neb-vtst/optimizer-overlay.INCAR.template",
+      "title": "仅限 VTST 的 CI-NEB 优化器片段",
+      "content": "# TEMPLATE: VTST-ENABLED VASP ONLY; not a standalone INCAR\n# Replace native ionic-optimizer lines with these (do not leave duplicates).\n# Retain validated electronic settings and fixed-cell NEB directory structure.\n# Confirm the executable was built with a compatible VTST code version.\nIBRION = 3\nPOTIM = 0\nIOPT = 7\nICHAIN = 0\nIMAGES = 5\nSPRING = -5\nISIF = 2\nNSW = 250\nEDIFFG = -0.03\nLCLIMB = .FALSE.\n# First preconverge the path. For the separate climbing-image continuation:\n# change the existing LCLIMB line to .TRUE. after inspecting the path.\n",
+      "description": "非完整 INCAR；仅替换已验证 VTST 程序的对应行。普通 VASP 禁止使用 POTIM=0 片段。"
+    },
+    {
+      "path": "aimd-nvt/INCAR.template",
+      "title": "Langevin NVT 分子动力学模板",
+      "content": "# TEMPLATE: fixed-cell Langevin NVT; EXAMPLE for exactly TWO species\n# Supply relaxed POSCAR, tested KPOINTS/POTCAR and electronic settings.\n# Replace ENCUT and adapt one LANGEVIN_GAMMA value per POTCAR species.\nSYSTEM = nvt-langevin-test\nGGA = PE\nENCUT = REPLACE_WITH_FORCE_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-6\nNELM = 120\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.05\nIBRION = 0\nMDALGO = 3\nISIF = 2\nISYM = 0\nPOTIM = 1.0\nNSW = 2000\nTEBEG = 300\nTEEND = 300\nLANGEVIN_GAMMA = 10.0 10.0\nLWAVE = .FALSE.\nLCHARG = .FALSE.\n# No SMASS: it does not set the Langevin thermostat strength.\n# 2000 * 1 fs = 2 ps; this is a short test, not a production guarantee.\n",
+      "description": "两种原子类型的短程试算；需修改元素摩擦数组、时间步和生产采样长度，不提供真实轨迹。"
+    },
+    {
+      "path": "vdw/pbe-d3bj-overlay.INCAR.template",
+      "title": "PBE-D3(BJ) 方法片段",
+      "content": "# TEMPLATE OVERLAY ONLY: PBE with D3(BJ) dispersion\n# Add to ONE otherwise complete, validated PBE INCAR.\n# Do not stack onto another dispersion-corrected functional uncritically.\nGGA = PE\nIVDW = 12\n# Apply the same method to all comparable structures / references.\n",
+      "description": "仅为补充片段，需合并到完整且验证过的 PBE 输入；不能与其他色散方案盲目叠加。"
+    },
+    {
+      "path": "hse06/INCAR.template",
+      "title": "HSE06 自洽静态模板",
+      "content": "# TEMPLATE: HSE06 static self-consistent calculation from scratch\n# For a nonmagnetic semiconductor; regular k mesh REQUIRED.\n# Supply POSCAR, KPOINTS and suitable licensed PAW-PBE POTCAR.\nSYSTEM = hse06-static\nGGA = PE\nLHFCALC = .TRUE.\nAEXX = 0.25\nHFSCREEN = 0.2\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-7\nNELM = 150\nALGO = Damped\nTIME = 0.4\nLREAL = .FALSE.\nLASPH = .TRUE.\nISMEAR = 0\nSIGMA = 0.05\nISTART = 0\nICHARG = 2\nIBRION = -1\nNSW = 0\nLWAVE = .TRUE.\nLCHARG = .TRUE.\n# PBE WAVECAR restart is possible with compatible settings and ISTART=1;\n# review ICHARG/restart settings then. NEVER set ICHARG=11 for this task.\n",
+      "description": "从头开始的非磁半导体静态计算；需要规则 k 网格及已收敛 ENCUT，不能使用固定 PBE 电荷密度捷径。"
+    },
+    {
+      "path": "optics/INCAR.template",
+      "title": "PBE 独立粒子光学模板",
+      "content": "# TEMPLATE: independent-particle PBE optics of a nonmagnetic 3D insulator\n# Supply optimized POSCAR, DENSE regular KPOINTS, POTCAR; replace two fields.\n# This is a self-consistent static calculation, not a band-line calculation.\nSYSTEM = pbe-independent-particle-optics\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-8\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.01\nIBRION = -1\nNSW = 0\nLOPTICS = .TRUE.\nNBANDS = REPLACE_WITH_CONVERGED_NUMBER_OF_BANDS\nNEDOS = 2000\nCSHIFT = 0.10\nLWAVE = .TRUE.\nLCHARG = .TRUE.\n",
+      "description": "三维非磁绝缘体的自洽频率响应；NBANDS、ENCUT 与 k 网格均需收敛，不含激子。"
+    },
+    {
+      "path": "dielectric/INCAR.template",
+      "title": "半局域 DFT 静态介电模板",
+      "content": "# TEMPLATE: electronic (ion-clamped) static dielectric tensor / Born charges\n# For a nonmetallic system with supported semilocal DFT, NOT HSE.\n# Supply optimized POSCAR, converged KPOINTS/POTCAR, replace ENCUT.\nSYSTEM = pbe-dielectric-dfpt\nGGA = PE\nENCUT = REPLACE_WITH_CONVERGED_ENCUT\nPREC = Accurate\nEDIFF = 1E-8\nALGO = Normal\nLREAL = .FALSE.\nISMEAR = 0\nSIGMA = 0.01\nIBRION = -1\nNSW = 0\nLEPSILON = .TRUE.\nLRPA = .FALSE.\nLWAVE = .FALSE.\nLCHARG = .FALSE.\n# Not the full ionic+electronic static permittivity of a relaxed crystal.\n# Do not append LOPTICS or excessive NBANDS to this separate DFPT task.\n",
+      "description": "电子钳位离子介电响应与 Born 电荷；不含完整离子贡献，不适用于 HSE 的 LEPSILON 计算。"
+    },
+    {
+      "path": "advanced-README.md",
+      "title": "进阶模板使用说明",
+      "content": "# V6 advanced-task templates / 进阶任务模板\n\n这些文件是教学起点，不是已运行并验证的材料计算结果。\n所有 INCAR.template 须先复制到自己的新任务目录，补齐标为 REPLACE 的数值，检查后才改名为 INCAR。\n必须自行提供真实 POSCAR、经收敛的 KPOINTS 和有许可的 POTCAR；不在本包分发 POTCAR。\n示例通常针对非磁半导体/绝缘体；实际金属、磁性、U、SOC、带电体系不可无审查直接套用。\n表面/缺陷模板的参考态、电子数与固定层由研究问题决定。\n\n## 原生 NEB 与 VTST 的关键差别\nneb-native/INCAR.template 使用原生优化器和有限 POTIM，五个中间结构对应 00 至 06 七个 POSCAR。\nneb-vtst/optimizer-overlay.INCAR.template 仅限确认编译了相容 VTST 的 VASP：IBRION=3、POTIM=0、IOPT=7。\n在普通 VASP 中抄 POTIM=0 会导致离子不动。不能仅写 LCLIMB / IOPT 就启用 VTST。\nVTST 片段需替换原 INCAR 对应行，不能让冲突设置并存。先 LCLIMB=.FALSE. 预收敛，检查路径后再单独续算并开启。\n\n## Phonopy 与内置有限位移\nphonon-internal 是 VASP 自行位移、求输入晶胞 Gamma 振动的路线。\nphonopy 的 INCAR-force 用于外部位移结构的静态力，禁止再优化位移结构。\nworkflow.txt.template 按 Phonopy 4.5 风格提供 phonopy-init / phonopy 命令，需匹配安装版本。\n样例只列两个 vasprun.xml 路径，必须替换成实际全部位移，严格保持 phonopy_disp.yaml 顺序。\n\n## 其他限制\nAIMD 模板 LANGEVIN_GAMMA 有两个值，只适用于两种 POTCAR 类型；POTIM 单位 fs。\nHSE 需规则 k 网格与自洽轨道，不能 ICHARG=11 固定 PBE 密度。\nLOPTICS 为独立粒子响应，不等于激子光谱；LEPSILON 模板不适用于 HSE。\n弹性模板仅针对 3D bulk；含真空模型的 GPa 依赖盒子高度。\n所有示范阈值与网格都必须按目标性质收敛，而非复制即达论文精度。\n\n核验日期：2026-09-19。完整论述与官方链接见 vasp-advanced-v6.html。\n",
+      "description": "先读此说明；明确原生 NEB / VTST、Phonopy 版本与所有模板的适用限制。"
+    }
+  ]
+}

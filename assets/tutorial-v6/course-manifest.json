@@ -1,0 +1,1079 @@
+{
+  "version": "v6",
+  "preparedOn": "2026-09-19",
+  "scope": "local-preview",
+  "vaspNumericalCalculationsPerformed": false,
+  "moduleCount": 6,
+  "lessonCount": 44,
+  "chineseCharacterCount": 38154,
+  "parameterCount": 60,
+  "downloadCount": 46,
+  "sources": [
+    {
+      "title": "MIT 5.61 Lecture 5: Free Particle and Particle in a 1D Box",
+      "url": "https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2017/resources/mit5_61f17_lec5/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "MIT 5.61: Born-Oppenheimer approximation and variational principle",
+      "url": "https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2007/resources/lecture28to29/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "MIT 5.61 Lecture 24: Matrix Mechanics and Variational Principle",
+      "url": "https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2017/resources/mit5_61f17_lec24/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "MIT 5.61 Lecture 28: Basis Sets",
+      "url": "https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2017/resources/mit5_61f17_lec28/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "MIT 5.61 Lecture 29: Electron Correlation",
+      "url": "https://ocw.mit.edu/courses/5-61-physical-chemistry-fall-2017/resources/mit5_61f17_lec29/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Kohn & Sham (1965): Self-Consistent Equations Including Exchange and Correlation Effects",
+      "url": "https://doi.org/10.1103/PhysRev.140.A1133",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Exchange-correlation functionals",
+      "url": "https://vasp.at/wiki/Exchange-correlation_functional",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Perdew & Levy (1983): Physical Content of the Exact Kohn-Sham Orbital Energies",
+      "url": "https://doi.org/10.1103/PhysRevLett.51.1884",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Self-consistency cycle",
+      "url": "https://vasp.at/wiki/Self-consistency_cycle",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Smearing technique",
+      "url": "https://vasp.at/wiki/Smearing_technique",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: MAGMOM",
+      "url": "https://vasp.at/wiki/MAGMOM",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: EDIFF",
+      "url": "https://vasp.at/wiki/EDIFF",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "KPOINTS",
+      "url": "https://vasp.at/wiki/KPOINTS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Integrating over all orbitals",
+      "url": "https://vasp.at/wiki/K-point_integration",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Projector-augmented-wave formalism",
+      "url": "https://vasp.at/wiki/Projector-augmented-wave_formalism",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ENCUT",
+      "url": "https://vasp.at/wiki/ENCUT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Pulay stress",
+      "url": "https://vasp.at/wiki/Pulay_stress",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: EDIFFG",
+      "url": "https://vasp.at/wiki/EDIFFG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Machine learning force field theory",
+      "url": "https://vasp.at/wiki/Machine_learning_force_field%3A_Theory",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Best practices for machine-learned force fields",
+      "url": "https://vasp.at/wiki/Best_practices_for_machine-learned_force_fields",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP 许可",
+      "url": "https://vasp.at/sign_in/registration_form/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "安装与可执行程序",
+      "url": "https://vasp.at/wiki/Installing_VASP.6.X.X",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方 POSCAR 定义",
+      "url": "https://vasp.at/wiki/POSCAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "POTCAR",
+      "url": "https://vasp.at/wiki/POTCAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: INCAR",
+      "url": "https://vasp.at/wiki/INCAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: PREC",
+      "url": "https://vasp.at/wiki/PREC",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LREAL",
+      "url": "https://vasp.at/wiki/LREAL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ALGO",
+      "url": "https://vasp.at/wiki/ALGO",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NELM",
+      "url": "https://vasp.at/wiki/NELM",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ISIF",
+      "url": "https://vasp.at/wiki/ISIF",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: IBRION",
+      "url": "https://vasp.at/wiki/IBRION",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Volume relaxation",
+      "url": "https://vasp.at/wiki/Volume_relaxation",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "OUTCAR",
+      "url": "https://vasp.at/wiki/OUTCAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "OSZICAR",
+      "url": "https://vasp.at/wiki/OSZICAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "CHGCAR",
+      "url": "https://vasp.at/wiki/CHGCAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Slurm sbatch",
+      "url": "https://slurm.schedmd.com/sbatch.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Electronic minimization",
+      "url": "https://vasp.at/wiki/Category:Electronic_minimization",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ISMEAR",
+      "url": "https://vasp.at/wiki/ISMEAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ICHARG",
+      "url": "https://vasp.at/wiki/ICHARG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LORBIT",
+      "url": "https://vasp.at/wiki/LORBIT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NEDOS",
+      "url": "https://vasp.at/wiki/NEDOS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NBANDS",
+      "url": "https://vasp.at/wiki/NBANDS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "py4vasp DOS",
+      "url": "https://vasp.at/py4vasp/latest/calculation/dos/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Band-structure calculation using DFT",
+      "url": "https://vasp.at/wiki/Band-structure_calculation_using_DFT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方金刚石硅教程",
+      "url": "https://vasp.at/tutorials/latest/bulk/part2/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "py4vasp 能带",
+      "url": "https://vasp.at/py4vasp/latest/calculation/band/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方 HSE 能带流程",
+      "url": "https://vasp.at/wiki/Band-structure_calculation_using_hybrid_functionals",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ISPIN",
+      "url": "https://vasp.at/wiki/ISPIN",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ISYM",
+      "url": "https://vasp.at/wiki/ISYM",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LASPH",
+      "url": "https://vasp.at/wiki/LASPH",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LDAUTYPE",
+      "url": "https://vasp.at/wiki/LDAUTYPE",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LDAUL",
+      "url": "https://vasp.at/wiki/LDAUL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LDAUU",
+      "url": "https://vasp.at/wiki/LDAUU",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LDAUJ",
+      "url": "https://vasp.at/wiki/LDAUJ",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LMAXMIX",
+      "url": "https://vasp.at/wiki/LMAXMIX",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LSORBIT",
+      "url": "https://vasp.at/wiki/LSORBIT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LNONCOLLINEAR",
+      "url": "https://vasp.at/wiki/LNONCOLLINEAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: SAXIS",
+      "url": "https://vasp.at/wiki/SAXIS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LAECHG",
+      "url": "https://vasp.at/wiki/LAECHG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Bader 工具作者说明",
+      "url": "https://www.henkelmanlab.org/code/bader/",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "NGXF",
+      "url": "https://vasp.at/wiki/NGXF",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NELECT",
+      "url": "https://vasp.at/wiki/NELECT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "GGA_COMPAT",
+      "url": "https://vasp.at/wiki/GGA_COMPAT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: IDIPOL",
+      "url": "https://vasp.at/wiki/IDIPOL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LDIPOL",
+      "url": "https://vasp.at/wiki/LDIPOL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: DIPOL",
+      "url": "https://vasp.at/wiki/DIPOL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LVHAR",
+      "url": "https://vasp.at/wiki/LVHAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Freysoldt 等的缺陷综述",
+      "url": "https://doi.org/10.1103/RevModPhys.86.253",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "各向异性与弛豫相关的电荷校正研究",
+      "url": "https://doi.org/10.1103/PhysRevB.89.195205",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方带电体系讨论",
+      "url": "https://vasp.at/wiki/Charged_systems_with_density_functional_theory",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "有限位移官方说明",
+      "url": "https://vasp.at/wiki/Phonons_from_finite_differences",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "NFREE",
+      "url": "https://vasp.at/wiki/NFREE",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "命令迁移说明",
+      "url": "https://phonopy.github.io/phonopy/phonopy-init.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP 接口",
+      "url": "https://phonopy.github.io/phonopy/vasp.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "后处理命令",
+      "url": "https://phonopy.github.io/phonopy/phonopy.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Phonopy 输入文件与 BORN",
+      "url": "https://phonopy.github.io/phonopy/input-files.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方虚频排查与软模操作",
+      "url": "https://vasp.at/wiki/How_to_handle_imaginary_phonon_modes",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "弹性矩阵列序讨论",
+      "url": "https://vasp.at/forum/viewtopic.php?t=19735",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Mouhat 与 Coudert 的稳定性判据",
+      "url": "https://doi.org/10.1103/PhysRevB.90.224104",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "原生 NEB",
+      "url": "https://vasp.at/wiki/Nudged_elastic_bands",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: IMAGES",
+      "url": "https://vasp.at/wiki/IMAGES",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: SPRING",
+      "url": "https://vasp.at/wiki/SPRING",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方排错说明",
+      "url": "https://vasp.at/forum/viewtopic.php?t=19977",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VTST NEB 文档",
+      "url": "https://www.henkelmanlab.org/vtsttools/neb.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "优化器文档目录",
+      "url": "https://www.henkelmanlab.org/vtsttools/contents.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "开发者关于 POTIM=0 的说明",
+      "url": "https://henkelmanlab.org/forum/viewtopic.php?t=831",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: MDALGO",
+      "url": "https://vasp.at/wiki/MDALGO",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LANGEVIN_GAMMA",
+      "url": "https://vasp.at/wiki/LANGEVIN_GAMMA",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "SMASS",
+      "url": "https://vasp.at/wiki/SMASS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方分子动力学流程",
+      "url": "https://vasp.at/wiki/MD_runs",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: TEBEG",
+      "url": "https://vasp.at/wiki/TEBEG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "D3 官方方法与参数说明",
+      "url": "https://vasp.at/wiki/DFT-D3",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: HFSCREEN",
+      "url": "https://vasp.at/wiki/HFSCREEN",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LHFCALC",
+      "url": "https://vasp.at/wiki/LHFCALC",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LOPTICS 的近似与适用条件",
+      "url": "https://vasp.at/wiki/LOPTICS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "CSHIFT",
+      "url": "https://vasp.at/wiki/CSHIFT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LEPSILON",
+      "url": "https://vasp.at/wiki/LEPSILON",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "LCALCEPS",
+      "url": "https://vasp.at/wiki/LCALCEPS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方电子收敛排查",
+      "url": "https://vasp.at/wiki/Troubleshooting_electronic_convergence",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方并行优化流程",
+      "url": "https://vasp.at/wiki/Optimizing_the_parallelization",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "官方 MLFF 总览",
+      "url": "https://vasp.at/wiki/Machine-learned_force_fields",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "Phonopy 安装与 seekpath 依赖",
+      "url": "https://phonopy.github.io/phonopy/install.html",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: GPU ports of VASP",
+      "url": "https://vasp.at/wiki/OpenACC_GPU_port_of_VASP",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ADDGRID",
+      "url": "https://vasp.at/wiki/ADDGRID",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: KSPACING",
+      "url": "https://vasp.at/wiki/KSPACING",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: KGAMMA",
+      "url": "https://vasp.at/wiki/KGAMMA",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: SIGMA",
+      "url": "https://vasp.at/wiki/SIGMA",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ISTART",
+      "url": "https://vasp.at/wiki/ISTART",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: GGA",
+      "url": "https://vasp.at/wiki/GGA",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: METAGGA",
+      "url": "https://vasp.at/wiki/METAGGA",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NSW",
+      "url": "https://vasp.at/wiki/NSW",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: POTIM",
+      "url": "https://vasp.at/wiki/POTIM",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: PSTRESS",
+      "url": "https://vasp.at/wiki/PSTRESS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: SYMPREC",
+      "url": "https://vasp.at/wiki/SYMPREC",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LDAU",
+      "url": "https://vasp.at/wiki/LDAU",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LWAVE",
+      "url": "https://vasp.at/wiki/LWAVE",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LCHARG",
+      "url": "https://vasp.at/wiki/LCHARG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: EMIN",
+      "url": "https://vasp.at/wiki/EMIN",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: EMAX",
+      "url": "https://vasp.at/wiki/EMAX",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: AEXX",
+      "url": "https://vasp.at/wiki/AEXX",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: IVDW",
+      "url": "https://vasp.at/wiki/IVDW",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NCORE",
+      "url": "https://vasp.at/wiki/NCORE",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NPAR",
+      "url": "https://vasp.at/wiki/NPAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: KPAR",
+      "url": "https://vasp.at/wiki/KPAR",
+      "accessed": "2026-09-19"
+    }
+  ],
+  "pages": [
+    {
+      "file": "quantum-v6.html",
+      "title": "量子化学与 DFT 基础",
+      "sections": [
+        {
+          "id": "wavefunction",
+          "title": "电子为什么要用波函数描述？"
+        },
+        {
+          "id": "born-oppenheimer",
+          "title": "从电子能量到势能面与几何优化"
+        },
+        {
+          "id": "variation-hf",
+          "title": "变分、基组与电子关联：近似从哪里来？"
+        },
+        {
+          "id": "dft",
+          "title": "DFT：用电子密度组织多电子问题"
+        },
+        {
+          "id": "scf-spin",
+          "title": "自洽循环、占据与自旋：为什么算了很多步？"
+        },
+        {
+          "id": "periodic-kpoints",
+          "title": "晶体、倒空间与 k 点：有限计算怎样表示无限材料？"
+        },
+        {
+          "id": "plane-wave-paw",
+          "title": "平面波、PAW 与截断能：ENCUT 到底截掉了什么？"
+        },
+        {
+          "id": "reliability",
+          "title": "从“算完了”到“结论可信”：误差、收敛与 AI"
+        }
+      ]
+    },
+    {
+      "file": "vasp-start-v6.html",
+      "title": "VASP 入门：从四个文件到可信结果",
+      "sections": [
+        {
+          "id": "environment",
+          "title": "先知道自己在运行什么"
+        },
+        {
+          "id": "four-inputs",
+          "title": "四个输入文件，连接物理模型与数值方法"
+        },
+        {
+          "id": "silicon-scf",
+          "title": "第一项任务：硅原胞的自洽电子计算"
+        },
+        {
+          "id": "convergence",
+          "title": "收敛实验：先证明结果不再依赖计算旋钮"
+        },
+        {
+          "id": "relaxation",
+          "title": "结构优化：让原子与晶胞走向驻点"
+        },
+        {
+          "id": "static-output",
+          "title": "优化后再做静态计算，并读懂输出"
+        },
+        {
+          "id": "cluster",
+          "title": "Linux 与集群：把任务提交到正确的位置"
+        },
+        {
+          "id": "diagnostics",
+          "title": "不收敛时怎样定位，以及怎样写计算记录"
+        }
+      ]
+    },
+    {
+      "file": "vasp-electronic-v6.html",
+      "title": "电子结构：从 DOS 到磁性与电荷",
+      "sections": [
+        {
+          "id": "map-smearing",
+          "title": "先选问题，再选择电子结构计算方式"
+        },
+        {
+          "id": "dos",
+          "title": "任务一：硅的总态密度和投影态密度"
+        },
+        {
+          "id": "bands",
+          "title": "任务二：PBE 能带，先自洽再沿路径采样"
+        },
+        {
+          "id": "magnetism",
+          "title": "任务三：磁性计算要比较多个初态"
+        },
+        {
+          "id": "dft-u",
+          "title": "任务四：DFT+U 不是随手加一个数"
+        },
+        {
+          "id": "soc",
+          "title": "任务五：加入自旋轨道耦合"
+        },
+        {
+          "id": "charge",
+          "title": "任务六：Bader 电荷与差分电荷密度"
+        }
+      ]
+    },
+    {
+      "file": "vasp-advanced-v6.html",
+      "title": "从结构到性质：VASP 进阶任务",
+      "sections": [
+        {
+          "id": "surfaces",
+          "title": "表面与吸附：先把模型定义清楚"
+        },
+        {
+          "id": "defects",
+          "title": "缺陷：原子与电子都需要参考库"
+        },
+        {
+          "id": "phonons",
+          "title": "声子：从微小位移读出结构的曲率"
+        },
+        {
+          "id": "elasticity",
+          "title": "弹性常数：应力、单位与稳定性"
+        },
+        {
+          "id": "neb",
+          "title": "NEB 与 CI-NEB：把反应路径算出来"
+        },
+        {
+          "id": "aimd",
+          "title": "AIMD：用电子结构产生一段可信轨迹"
+        },
+        {
+          "id": "methods",
+          "title": "vdW 与 HSE：选方法比堆标签更重要"
+        },
+        {
+          "id": "optics",
+          "title": "光学与介电：先问测量对应哪种响应"
+        },
+        {
+          "id": "quality",
+          "title": "排错、成本与可复现报告"
+        }
+      ]
+    },
+    {
+      "file": "vasp-reference-v6.html",
+      "title": "参数速查与计算审阅",
+      "sections": [
+        {
+          "id": "read-tags",
+          "title": "先读懂参数，再复制模板"
+        },
+        {
+          "id": "parameter-table",
+          "title": "常用参数：按用途检索"
+        },
+        {
+          "id": "task-matrix",
+          "title": "从任务反推前置文件"
+        },
+        {
+          "id": "input-review",
+          "title": "本地 INCAR 输入审阅"
+        },
+        {
+          "id": "parallel",
+          "title": "并行设置：先分清 MPI、线程与 GPU"
+        },
+        {
+          "id": "restart-records",
+          "title": "重启、输出与可复现记录"
+        },
+        {
+          "id": "report-template",
+          "title": "一份能让他人复核的结果报告"
+        }
+      ]
+    },
+    {
+      "file": "practice-v6.html",
+      "title": "练习与自查：把计算过程变成证据",
+      "sections": [
+        {
+          "id": "practice-convergence",
+          "title": "硅收敛报告：证明精度够用"
+        },
+        {
+          "id": "practice-bands",
+          "title": "从自洽到 DOS 与能带：让三份结果互相核对"
+        },
+        {
+          "id": "practice-topic",
+          "title": "选一个小问题：磁态，或中性缺陷"
+        },
+        {
+          "id": "practice-path",
+          "title": "表面与路径：先让计算方案经得起审查"
+        },
+        {
+          "id": "practice-md",
+          "title": "AIMD 采样计划：分清轨迹、统计与证据"
+        }
+      ]
+    }
+  ],
+  "downloads": [
+    {
+      "path": "si-scf/POSCAR",
+      "title": "硅 SCF · POSCAR",
+      "description": "教学输入；需自备授权 Si POTCAR，并核查 ENMAX 与收敛。"
+    },
+    {
+      "path": "si-scf/KPOINTS",
+      "title": "硅 SCF · KPOINTS",
+      "description": "教学输入；需自备授权 Si POTCAR，并核查 ENMAX 与收敛。"
+    },
+    {
+      "path": "si-scf/INCAR",
+      "title": "硅 SCF · INCAR",
+      "description": "教学输入；需自备授权 Si POTCAR，并核查 ENMAX 与收敛。"
+    },
+    {
+      "path": "si-scf/README.txt",
+      "title": "硅 SCF · README.txt",
+      "description": "教学输入；需自备授权 Si POTCAR，并核查 ENMAX 与收敛。"
+    },
+    {
+      "path": "si-relax/INCAR",
+      "title": "硅晶胞优化 · INCAR",
+      "description": "配合相同硅 POSCAR/POTCAR 与已收敛网格；520 eV 必须核查体积优化精度。"
+    },
+    {
+      "path": "si-relax/README.txt",
+      "title": "硅晶胞优化 · 操作说明",
+      "description": "优化不是已经完成的计算；请核验最终力与应力。"
+    },
+    {
+      "path": "si-static/INCAR",
+      "title": "硅最终静态 · INCAR",
+      "description": "从已核验收敛的 si-relax/CONTCAR 复制 POSCAR，势文件保持一致。"
+    },
+    {
+      "path": "si-static/KPOINTS",
+      "title": "硅最终静态 · KPOINTS",
+      "description": "从已核验收敛的 si-relax/CONTCAR 复制 POSCAR，势文件保持一致。"
+    },
+    {
+      "path": "si-static/README.txt",
+      "title": "硅最终静态 · 操作说明",
+      "description": "下载包不虚构优化后结构，需要先完成自己的优化。"
+    },
+    {
+      "path": "prepare_convergence.py",
+      "title": "独立收敛目录生成器",
+      "description": "只生成目录与输入，不提交、不运行 VASP；会拒绝覆盖目标目录。"
+    },
+    {
+      "path": "submit.slurm.template",
+      "title": "Slurm 提交模板",
+      "description": "必须替换队列和模块占位符，并按计算中心说明调整启动器。"
+    },
+    {
+      "path": "calculation-record.md.template",
+      "title": "可复现计算记录",
+      "description": "每次实际计算后填写，不使用假想结果。"
+    },
+    {
+      "path": "si-dos/INCAR",
+      "title": "硅 DOS · INCAR",
+      "description": "需要同一硅原胞已收敛的 POSCAR、POTCAR 和 CHGCAR；数值为待检验教学起点。"
+    },
+    {
+      "path": "si-dos/KPOINTS",
+      "title": "硅 DOS · KPOINTS",
+      "description": "需要同一硅原胞已收敛的 POSCAR、POTCAR 和 CHGCAR；数值为待检验教学起点。"
+    },
+    {
+      "path": "si-bands/INCAR",
+      "title": "硅 PBE 能带 · INCAR",
+      "description": "需要同一硅原胞已收敛的 POSCAR、POTCAR 和 CHGCAR；数值为待检验教学起点。"
+    },
+    {
+      "path": "si-bands/KPOINTS",
+      "title": "硅 PBE 能带 · 路径",
+      "description": "需要同一硅原胞已收敛的 POSCAR、POTCAR 和 CHGCAR；数值为待检验教学起点。"
+    },
+    {
+      "path": "si-dos/README.txt",
+      "title": "硅 DOS · 前置说明",
+      "description": "避免将 ICHARG=1 误认为固定电荷密度。"
+    },
+    {
+      "path": "si-bands/README.txt",
+      "title": "硅能带 · 前置说明",
+      "description": "路径仅对应本教程原胞，不能直接移植到其他晶胞。"
+    },
+    {
+      "path": "fe-fm/POSCAR",
+      "title": "铁磁初态练习 · POSCAR",
+      "description": "自备授权 Fe PAW-PBE 势，重新做 Fe 的收敛测试。2.87 Å 为固定教学几何。"
+    },
+    {
+      "path": "fe-fm/KPOINTS",
+      "title": "铁磁初态练习 · KPOINTS",
+      "description": "自备授权 Fe PAW-PBE 势，重新做 Fe 的收敛测试。2.87 Å 为固定教学几何。"
+    },
+    {
+      "path": "fe-fm/INCAR",
+      "title": "铁磁初态练习 · INCAR",
+      "description": "自备授权 Fe PAW-PBE 势，重新做 Fe 的收敛测试。2.87 Å 为固定教学几何。"
+    },
+    {
+      "path": "fe-afm/INCAR",
+      "title": "反向磁矩初态 · INCAR",
+      "description": "复制 fe-fm 的相同结构、网格和势；从头初始化，不读已有磁化密度。"
+    },
+    {
+      "path": "fe-afm/README.txt",
+      "title": "磁性对照 · 前置说明",
+      "description": "对照结果需要实际求解，反向初态未必保持到最终。"
+    },
+    {
+      "path": "dft-u/INCAR.template",
+      "title": "DFT+U · 待配置模板",
+      "description": "明确未就绪：需要 Ni2O2 磁性结构、相容网格、Ni O 势文件，以及有依据的 Ueff 和截断能。"
+    },
+    {
+      "path": "dft-u/README.txt",
+      "title": "DFT+U · 配置边界",
+      "description": "避免臆定磁性晶胞或“通用 U”。"
+    },
+    {
+      "path": "si-soc/INCAR",
+      "title": "硅 SOC · INCAR",
+      "description": "必须使用 vasp_ncl；配套复制非磁性硅静态结构、势、CHGCAR 和均匀网格。"
+    },
+    {
+      "path": "si-soc/README.txt",
+      "title": "硅 SOC · 前置说明",
+      "description": "三分量磁矩和程序类型必须同时正确。"
+    },
+    {
+      "path": "si-charge/INCAR",
+      "title": "硅电荷分析 · INCAR",
+      "description": "配套相同已核验结构、势和收敛网格；LAECHG 输出后还需检验细 FFT 网格。"
+    },
+    {
+      "path": "si-charge/README.txt",
+      "title": "电荷分析 · 前置说明",
+      "description": "不把 Bader 分区电荷直接当作整数氧化态。"
+    },
+    {
+      "path": "surface/INCAR.template",
+      "title": "中性表面优化模板",
+      "description": "需补 slab 结构、许可 POTCAR、已收敛 k 网格、ENCUT 和 DIPOL；示例不含磁性或电荷态。"
+    },
+    {
+      "path": "defect/INCAR.template",
+      "title": "体相带电缺陷优化模板",
+      "description": "需补真实超胞、k 点、赝势、电子数与自旋方案；不含自动形成能或通用电荷校正。"
+    },
+    {
+      "path": "phonon-internal/INCAR.template",
+      "title": "VASP 内置有限位移模板",
+      "description": "仅限已优化结构的输入晶胞 Γ 点模式；需对力精度和位移收敛，不是完整声子色散。"
+    },
+    {
+      "path": "phonopy/INCAR-force.template",
+      "title": "Phonopy 位移结构静态受力模板",
+      "description": "用于每个外部位移超胞，禁止离子优化；需统一参数、补齐结构与赝势。"
+    },
+    {
+      "path": "phonopy/workflow.txt.template",
+      "title": "Phonopy 分步命令说明",
+      "description": "按官方 Phonopy 4.5 命令体系编写；实际位移数量和路径需替换，未提供或执行真实计算。"
+    },
+    {
+      "path": "elastic/INCAR.template",
+      "title": "三维体相弹性响应模板",
+      "description": "只适用已充分优化的三维体相；需收敛应力精度，不能直接用于含真空二维模量。"
+    },
+    {
+      "path": "neb-native/INCAR.template",
+      "title": "原生 VASP NEB 模板",
+      "description": "固定晶胞，五个中间结构；需七套端点/中间 POSCAR。原生优化器使用有限 POTIM。"
+    },
+    {
+      "path": "neb-vtst/optimizer-overlay.INCAR.template",
+      "title": "仅限 VTST 的 CI-NEB 优化器片段",
+      "description": "非完整 INCAR；仅替换已验证 VTST 程序的对应行。普通 VASP 禁止使用 POTIM=0 片段。"
+    },
+    {
+      "path": "aimd-nvt/INCAR.template",
+      "title": "Langevin NVT 分子动力学模板",
+      "description": "两种原子类型的短程试算；需修改元素摩擦数组、时间步和生产采样长度，不提供真实轨迹。"
+    },
+    {
+      "path": "vdw/pbe-d3bj-overlay.INCAR.template",
+      "title": "PBE-D3(BJ) 方法片段",
+      "description": "仅为补充片段，需合并到完整且验证过的 PBE 输入；不能与其他色散方案盲目叠加。"
+    },
+    {
+      "path": "hse06/INCAR.template",
+      "title": "HSE06 自洽静态模板",
+      "description": "从头开始的非磁半导体静态计算；需要规则 k 网格及已收敛 ENCUT，不能使用固定 PBE 电荷密度捷径。"
+    },
+    {
+      "path": "optics/INCAR.template",
+      "title": "PBE 独立粒子光学模板",
+      "description": "三维非磁绝缘体的自洽频率响应；NBANDS、ENCUT 与 k 网格均需收敛，不含激子。"
+    },
+    {
+      "path": "dielectric/INCAR.template",
+      "title": "半局域 DFT 静态介电模板",
+      "description": "电子钳位离子介电响应与 Born 电荷；不含完整离子贡献，不适用于 HSE 的 LEPSILON 计算。"
+    },
+    {
+      "path": "advanced-README.md",
+      "title": "进阶模板使用说明",
+      "description": "先读此说明；明确原生 NEB / VTST、Phonopy 版本与所有模板的适用限制。"
+    },
+    {
+      "path": "report/calculation-report.md",
+      "title": "计算复现记录模板",
+      "description": "空白研究记录，含模型、方法、收敛、运行环境与证据边界；可按具体任务填写。"
+    },
+    {
+      "path": "report/practice-checklist.md",
+      "title": "综合练习记录与自查清单",
+      "description": "可填写的报告框架；所有结果留空，不包含模拟数据或自动评分。"
+    },
+    {
+      "path": "tools/inspect_vasp_run.py",
+      "title": "OUTCAR 摘要提取脚本",
+      "description": "只读提取最后能量与力、停止消息和文件哈希；不自动认证收敛。Python标准库即可运行。"
+    }
+  ]
+}

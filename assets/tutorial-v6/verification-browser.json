@@ -1,0 +1,402 @@
+{
+  "checkedAtUtc": "2026-09-19T07:31:40.750870+00:00",
+  "baseUrl": "http://127.0.0.1:8766/",
+  "httpFilesChecked": 57,
+  "allHttpBodiesMatchLocal": true,
+  "httpFiles": [
+    {
+      "file": "index-v6.html",
+      "status": 200,
+      "bytes": 82344,
+      "matchesLocal": true
+    },
+    {
+      "file": "research-v6.html",
+      "status": 200,
+      "bytes": 46720,
+      "matchesLocal": true
+    },
+    {
+      "file": "tutorial-v6.html",
+      "status": 200,
+      "bytes": 236574,
+      "matchesLocal": true
+    },
+    {
+      "file": "quantum-v6.html",
+      "status": 200,
+      "bytes": 277645,
+      "matchesLocal": true
+    },
+    {
+      "file": "vasp-start-v6.html",
+      "status": 200,
+      "bytes": 270548,
+      "matchesLocal": true
+    },
+    {
+      "file": "vasp-electronic-v6.html",
+      "status": 200,
+      "bytes": 266878,
+      "matchesLocal": true
+    },
+    {
+      "file": "vasp-advanced-v6.html",
+      "status": 200,
+      "bytes": 291572,
+      "matchesLocal": true
+    },
+    {
+      "file": "vasp-reference-v6.html",
+      "status": 200,
+      "bytes": 271699,
+      "matchesLocal": true
+    },
+    {
+      "file": "practice-v6.html",
+      "status": 200,
+      "bytes": 239873,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-scf/POSCAR",
+      "status": 200,
+      "bytes": 256,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-scf/KPOINTS",
+      "status": 200,
+      "bytes": 51,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-scf/INCAR",
+      "status": 200,
+      "bytes": 235,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-scf/README.txt",
+      "status": 200,
+      "bytes": 1131,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-relax/INCAR",
+      "status": 200,
+      "bytes": 286,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-relax/README.txt",
+      "status": 200,
+      "bytes": 330,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-static/INCAR",
+      "status": 200,
+      "bytes": 240,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-static/KPOINTS",
+      "status": 200,
+      "bytes": 60,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-static/README.txt",
+      "status": 200,
+      "bytes": 315,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/prepare_convergence.py",
+      "status": 200,
+      "bytes": 4103,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/submit.slurm.template",
+      "status": 200,
+      "bytes": 868,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/calculation-record.md.template",
+      "status": 200,
+      "bytes": 640,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-dos/INCAR",
+      "status": 200,
+      "bytes": 254,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-dos/KPOINTS",
+      "status": 200,
+      "bytes": 53,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-bands/INCAR",
+      "status": 200,
+      "bytes": 270,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-bands/KPOINTS",
+      "status": 200,
+      "bytes": 295,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-dos/README.txt",
+      "status": 200,
+      "bytes": 456,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-bands/README.txt",
+      "status": 200,
+      "bytes": 1314,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/fe-fm/POSCAR",
+      "status": 200,
+      "bytes": 264,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/fe-fm/KPOINTS",
+      "status": 200,
+      "bytes": 61,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/fe-fm/INCAR",
+      "status": 200,
+      "bytes": 289,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/fe-afm/INCAR",
+      "status": 200,
+      "bytes": 301,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/fe-afm/README.txt",
+      "status": 200,
+      "bytes": 360,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/dft-u/INCAR.template",
+      "status": 200,
+      "bytes": 549,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/dft-u/README.txt",
+      "status": 200,
+      "bytes": 498,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-soc/INCAR",
+      "status": 200,
+      "bytes": 378,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-soc/README.txt",
+      "status": 200,
+      "bytes": 565,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-charge/INCAR",
+      "status": 200,
+      "bytes": 258,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/si-charge/README.txt",
+      "status": 200,
+      "bytes": 412,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/surface/INCAR.template",
+      "status": 200,
+      "bytes": 537,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/defect/INCAR.template",
+      "status": 200,
+      "bytes": 589,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/phonon-internal/INCAR.template",
+      "status": 200,
+      "bytes": 441,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/phonopy/INCAR-force.template",
+      "status": 200,
+      "bytes": 362,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/phonopy/workflow.txt.template",
+      "status": 200,
+      "bytes": 1030,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/elastic/INCAR.template",
+      "status": 200,
+      "bytes": 461,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/neb-native/INCAR.template",
+      "status": 200,
+      "bytes": 573,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/neb-vtst/optimizer-overlay.INCAR.template",
+      "status": 200,
+      "bytes": 549,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/aimd-nvt/INCAR.template",
+      "status": 200,
+      "bytes": 666,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/vdw/pbe-d3bj-overlay.INCAR.template",
+      "status": 200,
+      "bytes": 266,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/hse06/INCAR.template",
+      "status": 200,
+      "bytes": 641,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/optics/INCAR.template",
+      "status": 200,
+      "bytes": 542,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/dielectric/INCAR.template",
+      "status": 200,
+      "bytes": 601,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/advanced-README.md",
+      "status": 200,
+      "bytes": 2061,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/report/calculation-report.md",
+      "status": 200,
+      "bytes": 1208,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/report/practice-checklist.md",
+      "status": 200,
+      "bytes": 2671,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/tools/inspect_vasp_run.py",
+      "status": 200,
+      "bytes": 4779,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/vasp-learning-examples-v6.zip",
+      "status": 200,
+      "bytes": 29460,
+      "matchesLocal": true
+    },
+    {
+      "file": "assets/tutorial-v6/examples/README.md",
+      "status": 200,
+      "bytes": 6733,
+      "matchesLocal": true
+    }
+  ],
+  "browser": {
+    "pages": [
+      "index-v6.html",
+      "research-v6.html",
+      "tutorial-v6.html",
+      "quantum-v6.html",
+      "vasp-start-v6.html",
+      "vasp-electronic-v6.html",
+      "vasp-advanced-v6.html",
+      "vasp-reference-v6.html",
+      "practice-v6.html"
+    ],
+    "viewportsChecked": [
+      320,
+      390,
+      900,
+      1100
+    ],
+    "noDocumentHorizontalOverflow": true,
+    "checks": [
+      "course-home-and-main-site-entry",
+      "same-version-navigation",
+      "mobile-toc-and-Escape",
+      "global-search-including-parameter-table",
+      "copy-POSCAR-exact-text",
+      "completion-persists-across-reload-and-history",
+      "quantum-well-n-and-energy",
+      "mobile-SCF-and-kpoint-SVG-diagrams",
+      "parameter-search-and-group-filter",
+      "INCAR-missing-MD-step-hybrid-fixed-charge-duplicates-zero-step-and-no-certificate",
+      "learning-route-selection",
+      "self-check-answer-disclosure",
+      "persistent-live-status-DOM-updates"
+    ],
+    "consoleErrorsOrWarningsObserved": false,
+    "actualScreenReaderTestPerformed": false,
+    "noScriptFallback": "code-reviewed-not-browser-emulated"
+  },
+  "scientificValidation": {
+    "VaspNumericalCalculationsPerformed": false,
+    "phonopyOrVtstNumericalCalculationsPerformed": false,
+    "downloadPythonHelpers": "syntax-and-synthetic-fixtures-only",
+    "analyticalQuantumWell": "n=1,L=1nm gives 0.3760 eV; n=4 gives 6.0165 eV and 3 internal nodes"
+  },
+  "referenceAvailability": {
+    "checkedLinks": 124,
+    "http200": 123,
+    "rateLimited429": 1,
+    "rateLimitedUrl": "https://vasp.at/forum/viewtopic.php?t=19735",
+    "confirmed404or410": 0,
+    "meaning": "URL availability only, not a replacement for scientific review"
+  }
+}

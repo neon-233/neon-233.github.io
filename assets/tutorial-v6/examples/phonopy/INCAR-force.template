@@ -1,0 +1,16 @@
+# TEMPLATE: one externally displaced Phonopy supercell, SINGLE POINT ONLY
+# Do not relax POSCAR-xxx. Use identical settings for every displacement.
+SYSTEM = phonopy-force
+GGA = PE
+ENCUT = REPLACE_WITH_CONVERGED_ENCUT
+PREC = Accurate
+EDIFF = 1E-8
+ALGO = Normal
+LREAL = .FALSE.
+ISMEAR = 0
+SIGMA = 0.01
+IBRION = -1
+NSW = 0
+ISYM = 0
+LWAVE = .FALSE.
+LCHARG = .FALSE.

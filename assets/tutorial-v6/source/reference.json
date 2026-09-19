@@ -1,0 +1,918 @@
+{
+  "title": "参数速查与计算审阅",
+  "subtitle": "查清参数的物理作用、单位与前提，建立可重启、可复现、可解释的计算记录。",
+  "filename": "vasp-reference-v6.html",
+  "kicker": "05 / REFERENCE",
+  "estimatedMinutes": 75,
+  "sections": [
+    {
+      "id": "read-tags",
+      "title": "01 · 先读懂参数，再复制模板",
+      "kicker": "READ A TAG",
+      "html": "<p>INCAR 规定计算方法与控制项，POSCAR 描述结构，POTCAR 提供与元素顺序对应的 PAW 数据，KPOINTS 或 KSPACING 决定采样。一个标签写得合法，不代表这些文件彼此一致。读参数时依次确认：它控制什么物理或数值步骤、值的类型和单位、何时生效、与哪些输入有关，以及你的程序版本是否支持。</p>\n<p>默认值表示“不写此项时程序怎样做”，并不表示它最适合你的材料。有些默认值还随其他标签变化，例如是否开启杂化泛函、是否读取成功的波函数，都会影响后续行为。教材中的某个数字同样只是带前提的起点；计算报告应记录实际采用的设置和收敛证据，而不是只写“采用默认精度”。</p>\n<pre data-filename=\"INCAR · 语法示意，非完整输入\"><code>SYSTEM = Describe your model\nENCUT = 520       # eV; replace after convergence tests\nEDIFF = 1E-6      ! electronic stopping threshold, eV\nISMEAR = 0; SIGMA = 0.05\nLWAVE = .TRUE.\n</code></pre>\n<p>此处仅示范普通赋值、注释与分号，不足以独立定义一个可靠任务。逻辑量通常写成 .TRUE. 或 .FALSE.；数组既有逐原子项，也有逐物种项，不能混用。例如 MAGMOM 通常按原子序列展开，而 LDAUL、LDAUU、LDAUJ 按 POTCAR 物种顺序对应。<code>4*0.0</code> 表示四个相同数组值，并不表示算术乘法后只得到一个数字。</p>\n<div class=\"note\"><strong>两种“物种数”。</strong> 为设置不同动力学或其他处理，同一种化学元素也可能在输入中分成多个物种区块。逐物种数组应对应实际 POSCAR/POTCAR 区块，不能只按化学式里不同元素的个数填写。</div>\n<p>下面速查表整理常用项，不声称包含全部 VASP 参数。每项链接到<a href=\"https://vasp.at/wiki/INCAR\" target=\"_blank\" rel=\"noopener\">官方 INCAR 文档</a>或对应标签页；涉及特殊算法时，请继续阅读其适用性与版本说明。</p>"
+    },
+    {
+      "id": "parameter-table",
+      "title": "02 · 常用参数：按用途检索",
+      "kicker": "PARAMETER INDEX",
+      "html": "<p>可按标签、关键词或类别查找。先看“作用”和“前提”，再决定数值；“精度”类解决数值表示，“电子/磁性”类还可能改变所求的物理状态，不能把它们统一理解为越大越好。</p>\n<div id=\"parameter-table-slot\"></div>\n<p>严格能量比较要保持一致的泛函、PAW 数据、截断策略及能量定义。改变 U、交换混合比例或电子数，常意味着改变研究模型，不能按总能越低就宣称方法越好。所有关键比较都要落回<a href=\"quantum-v6.html#reliability\">目标性质的误差与收敛</a>。</p>"
+    },
+    {
+      "id": "task-matrix",
+      "title": "03 · 从任务反推前置文件",
+      "kicker": "WORKFLOW MATRIX",
+      "html": "<p>下面列出常见工作流的依赖。所有行都仍需要相容的结构、方法、PAW 数据与采样；表中“额外文件”不是可以省略基本输入的意思。优先为不同任务建立独立目录，留下明确的上一阶段来源。</p>\n<div class=\"table-wrap\"><table><thead><tr><th>任务</th><th>进入前应具备</th><th>额外文件或处理</th><th>完成后重点检查</th></tr></thead><tbody>\n<tr><td>第一次固定结构 SCF</td><td>合理结构、电子数、磁态与采样</td><td>可从原子密度开始，不强求已有 CHGCAR</td><td>是否达到电子停止条件；磁态与占据是否合理</td></tr>\n<tr><td>几何优化</td><td>已测试的能量与力精度</td><td>IBRION、NSW、ISIF 与约束须相互匹配</td><td>残余力、应力、停止原因及局部驻点性质</td></tr>\n<tr><td>最终静态能量</td><td>优化后的 CONTCAR 经检查转作 POSCAR</td><td>固定结构；按目标量收敛更精细采样</td><td>比较对象方法一致，电子收敛，不误取中途结构</td></tr>\n<tr><td>LDA/GGA 固定密度能带</td><td>规则网格 SCF 的收敛电荷</td><td>兼容 CHGCAR、ICHARG=11、对应晶胞的路径</td><td>能量零点来自可靠 SCF；路径不用于总能积分</td></tr>\n<tr><td>DFT+U 能带</td><td>含一致 U、J、磁态与足够 LMAXMIX 的 SCF</td><td>前后使用相容的 CHGCAR；d/f 通道分别核对4/6</td><td>固定密度重算原规则网格是否重现原结果</td></tr>\n<tr><td>杂化/meta-GGA 能带</td><td>对应方法可用的轨道/密度状态</td><td>按算法与版本采用正确路径；不能一律仅复制 CHGCAR</td><td>空带、交换采样、算法及版本条件</td></tr>\n<tr><td>有限位移声子</td><td>充分优化且力噪声足够小的结构</td><td>位移超胞与一致的力计算设置</td><td>位移幅度、超胞、声学模与虚频振型</td></tr>\n<tr><td>NEB</td><td>分别优化的初末态、相同原子映射与晶胞</td><td>中间图像目录；原生 VASP 或 VTST 的明确实现</td><td>路径是否穿原子、各图像的投影力与路径分辨率</td></tr>\n<tr><td>AIMD</td><td>稳定结构、合适初速度/温度、明确系综</td><td>时间步、热浴/压浴与兼容重启状态</td><td>能量漂移、平衡段、采样长度与统计误差</td></tr>\n</tbody></table></div>\n<p>版本例子：依赖动能密度的 meta-GGA 固定密度能带流程，在 VASP 6.6.0 前后有区别；新版本需按官方说明保留相应动能密度信息。不要把旧 PBE 教程的目录复制法当作所有泛函通用操作。详见<a href=\"https://vasp.at/wiki/Band-structure_calculation_using_DFT\" target=\"_blank\" rel=\"noopener\">官方能带步骤</a>及本课<a href=\"vasp-electronic-v6.html\">电子结构任务</a>。</p>"
+    },
+    {
+      "id": "input-review",
+      "title": "04 · 本地 INCAR 输入审阅",
+      "kicker": "LOCAL INPUT REVIEW",
+      "html": "<p>把 INCAR 文本粘贴到下方，工具会识别普通 <code>TAG = VALUE</code>、<code>#</code> 与 <code>!</code> 注释，以及同一行的分号分隔，提示重复标签和部分常见组合问题。文本在本页浏览器内处理；工具不会提交集群任务，也不会运行 VASP。</p>\n<div id=\"incar-checker-slot\"></div>\n<div class=\"warning\"><strong>“没有提示”不表示设置正确。</strong> 这里没有读取 POSCAR、POTCAR、KPOINTS、CHGCAR 或输出文件，也不知道物种顺序、磁序、程序构建和目标精度。它不验证收敛、不预测结构合理性，不完整实现 VASP 的续行、数组、区块与全部语法。实际采用的输入仍需在 OUTCAR 中核对。</div>\n<p>例如看到“检查 LMAXMIX”，应回到所研究的 d/f 轨道、前一步电荷保存设置与后一步固定密度流程，而不是机械复制一个数。看到“NEB 实现需确认”，应核对是否安装相应补丁与优化器，不能把 VTST 的参数直接写给未修改的原生程序。</p>\n<details><summary>练习：审阅器识别了 20 个参数，没有强警告，还要检查什么？</summary><p>检查四类基本输入之间的元素、原子数与坐标顺序；查明所有重启文件来源；确认编译功能与版本；运行后检查实际读入的参数和停止原因；最后测试目标量对截断、采样和模型尺寸的收敛。这些都不是单看 INCAR 文本能完成的。</p></details>"
+    },
+    {
+      "id": "parallel",
+      "title": "05 · 并行设置：先分清 MPI、线程与 GPU",
+      "kicker": "PARALLEL EXECUTION",
+      "html": "<p>增加核数不总能缩短时间。电子态之间要正交化，FFT 需要通信，文件读写也有成本。MPI rank 是进程，OpenMP 线程是进程内的并行单元，GPU 是另一种计算设备；提交脚本里的任务数不能不加区分地照抄成 NCORE。</p>\n<p>对常见、没有额外图像或特殊算法分组的 CPU MPI 任务，KPAR 把进程划分给 k 点组，NCORE 规定一条能带由多少进程协作，NPAR 是对应的能带分组数。此时可用关系 <code>NPAR = 总 MPI ranks / (KPAR × NCORE)</code> 帮助检查整除关系；存在 IMAGES 或其他算法分组时要先扣除相应层次。这是分工关系，不是建议把三个参数都同时写入。</p>\n<p>NCORE 与 NPAR 不应同时设置。若并存，官方说明 NPAR 因兼容旧输入而优先；现代 CPU MPI 调优通常优先使用 NCORE。应在同一代表性结构、同一物理参数下用短任务比较总耗时、每电子步耗时与峰值内存，再选合适组合。不能让一次测试改变了 NBANDS、收敛步数或硬件占用，却把全部差异归因于并行参数。</p>\n<div class=\"note\"><strong>GPU 与 OpenMP 路径不同。</strong> 当前官方说明 GPU 路径、以及启用相应 OpenMP 线程并行时，会把 NCORE 重置为1；不要把纯 MPI 的 NCORE 调优表直接移过去。GPU 构建按每个可用 GPU 设备一个 MPI rank 配置，再结合 CPU 线程；部分多芯片设备有独立可见子设备，要按计算中心实际暴露的设备数理解。</div>\n<p>GPU 构建也并非所有算法都在 GPU 上执行。核实具体 VASP 版本、GPU 实现、编译库与功能支持后，再用输出确认实际设备分配。KPAR 可减少部分通信，但过多分组可能负载不均或增加内存压力；Γ-only 任务没有很多 k 点可供分配。相关最新条件见<a href=\"https://vasp.at/wiki/NCORE\" target=\"_blank\" rel=\"noopener\">NCORE</a>、<a href=\"https://vasp.at/wiki/KPAR\" target=\"_blank\" rel=\"noopener\">KPAR</a>、<a href=\"https://vasp.at/wiki/OpenACC_GPU_port_of_VASP\" target=\"_blank\" rel=\"noopener\">GPU 构建与运行说明</a>。</p>"
+    },
+    {
+      "id": "restart-records",
+      "title": "06 · 重启、输出与可复现记录",
+      "kicker": "RESTART & RECORDS",
+      "html": "<p>重启文件是某一步计算状态的保存，不是对任意新任务都合适的加速包。WAVECAR 保存波函数相关信息，CHGCAR 保存电荷与 PAW 单中心信息，CONTCAR 保存任务进行后的结构。它们是否完整、是否来自已收敛状态、能否与新晶胞、采样、电子数、方法和程序构建兼容，都需要核对。</p>\n<p>从 CONTCAR 开始新一轮优化时，先检查结构、原子顺序与约束再写为新目录的 POSCAR。对动力学，速度和其他延续状态也可能重要；只保留坐标重新随机速度，不能叫作原轨迹的严格连续延长。进行文件复制前应保留上一轮日志，防止同名 OUTCAR 把导致问题的证据覆盖掉。</p>\n<div class=\"table-wrap\"><table><thead><tr><th>输出</th><th>能帮助回答</th><th>不能仅凭它断言</th></tr></thead><tbody><tr><td>OUTCAR</td><td>实际设置、电子/离子步骤、力、应力及方法信息</td><td>存在文件不等于任务完成；必须看末尾与停止原因</td></tr><tr><td>OSZICAR / 标准输出</td><td>快速追踪能量与迭代走势</td><td>不是完整参数档案，也不替代详细收敛检查</td></tr><tr><td>CONTCAR</td><td>当前或最终结构及有关延续信息</td><td>不自动证明结构已经优化到力阈值</td></tr><tr><td>vasprun.xml / vaspout.h5</td><td>结构化数据，方便受控后处理</td><td>具体可用性取决于版本、构建与写出完整性</td></tr><tr><td>DOSCAR / PROCAR / EIGENVAL</td><td>态密度、投影或能带相关数据</td><td>投影电荷不等于唯一原子电荷；线模式费米能不可靠</td></tr></tbody></table></div>\n<p>建议每个计算目录附一份报告：结构来源与哈希、软件与数据集标识、提交脚本、全部关键输入、重启来源、停止判据、收敛曲线、后处理版本和结果单位。POTCAR 受许可管理，公开复现记录可写数据集名称、生成信息和校验值；不应把受限数据文件作为教学下载随意分发。</p>\n<p>重启设置细节见<a href=\"https://vasp.at/wiki/ISTART\" target=\"_blank\" rel=\"noopener\">ISTART</a>与<a href=\"https://vasp.at/wiki/ICHARG\" target=\"_blank\" rel=\"noopener\">ICHARG</a>。重新从头运行和读取旧状态运行应得到相容的目标量；若差异明显，先调查局部磁态、方法变化、PAW 单中心信息与收敛，再谈“机器误差”。</p>"
+    },
+    {
+      "id": "report-template",
+      "title": "07 · 一份能让他人复核的结果报告",
+      "kicker": "REPORT YOUR RESULT",
+      "html": "<p>“计算得到吸附能 −0.6 eV”缺少必要上下文：相对于什么参考态、几种构型里哪一个、是否含零点能和熵、单位按一次吸附还是每个原子？用下列模板可以把这些问题放在计算开始前，而不是论文写作时再倒推补齐。</p>\n<pre data-filename=\"calculation-report.md\"><code>研究问题：比较 A、B 两个明确的候选构型。\n目标量：写出计算定义、符号约定及单位。\n模型：写明晶胞、组成、磁态、环境与结构来源。\n方法：软件版本、PAW 数据、泛函、关键参数及依据。\n数值检查：记录收敛测试及目标量变化，不只写最终阈值。\n结果：写出数值、误差尺度、备选解释与验证范围。\n可复现材料：输入、输出、提交脚本和后处理方法的保存位置。\n</code></pre>\n<p>把“预测”“模拟”和“实验验证”分开书写。例如“在给定 PBE+U 模型与超胞内，A 的电子能比 B 低”是一项受条件限定的计算结论；它没有自动证明实际样品在有限温度和气氛下只生成 A。记录这种边界不会削弱结果，反而让下一步验证更明确。</p>\n<details><summary>练习：相同输入在两台机器上得到末位不同的总能，首先怎样排查？</summary><p>先确认 VASP 与 PAW 数据版本、编译功能、有效 NBANDS、实际读入设置及最终磁态相同；比较是否都达到足够的停止阈值。并行浮点运算顺序可带来微小差异，但不能用它解释远大于数值精度尺度的变化。把比较重点放在目标能量差、力与性质是否落在已建立的误差范围内。</p></details>\n<p>完整记录模板可在本页下载区获取。回到<a href=\"tutorial-v6.html\">课程首页</a>，按自己的研究问题选择下一项练习。</p><h3>从 OUTCAR 提取一份可核对的摘要</h3><p>配套的 <a href=\"assets/tutorial-v6/examples/tools/inspect_vasp_run.py\" download>inspect_vasp_run.py</a> 只读取文件，不修改计算目录。它提取最后的 TOTEN、无熵能量与 sigma→0 能量、最后一组原子力，以及程序的停止消息和文件 SHA-256。不同能量字段有不同含义，做差前必须统一约定。</p><p>使用整包示例时，从解压后的示例根目录运行下行命令，脚本位于 <code>tools</code> 子目录；若单独下载脚本，则把命令中的脚本路径改为实际保存位置。将 <code>/path/to/run/OUTCAR</code> 替换为自己的输出文件。</p><pre data-filename=\"Terminal\"><code>python tools/inspect_vasp_run.py /path/to/run/OUTCAR &gt; summary.json</code></pre><p>脚本需要 Python 3，不依赖额外软件包。若输出尚未写完，某些字段会是 null。最大力对所有读到的原子取模，包括被固定的原子，因此不能不加区分地拿它代替实际约束下的优化判据。</p><div class=\"warning\"><strong>摘要不是自动验收。</strong><p>文件内出现过 EDIFF 停止消息，并不能证明最后一轮或每轮电子迭代都收敛；出现计时页脚也不代表结构优化达到力阈值。脚本始终把 automatically_certified_converged 设为 false，请结合 OSZICAR、结构约束、计算目标和收敛实验判断。</p></div>"
+    }
+  ],
+  "sources": [
+    {
+      "title": "VASP Wiki: INCAR",
+      "url": "https://vasp.at/wiki/INCAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: Band-structure calculation using DFT",
+      "url": "https://vasp.at/wiki/Band-structure_calculation_using_DFT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: GPU ports of VASP",
+      "url": "https://vasp.at/wiki/OpenACC_GPU_port_of_VASP",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ENCUT",
+      "url": "https://vasp.at/wiki/ENCUT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: PREC",
+      "url": "https://vasp.at/wiki/PREC",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: EDIFF",
+      "url": "https://vasp.at/wiki/EDIFF",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: EDIFFG",
+      "url": "https://vasp.at/wiki/EDIFFG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LREAL",
+      "url": "https://vasp.at/wiki/LREAL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ADDGRID",
+      "url": "https://vasp.at/wiki/ADDGRID",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LASPH",
+      "url": "https://vasp.at/wiki/LASPH",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: KSPACING",
+      "url": "https://vasp.at/wiki/KSPACING",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: KGAMMA",
+      "url": "https://vasp.at/wiki/KGAMMA",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ALGO",
+      "url": "https://vasp.at/wiki/ALGO",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NELM",
+      "url": "https://vasp.at/wiki/NELM",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ISMEAR",
+      "url": "https://vasp.at/wiki/ISMEAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: SIGMA",
+      "url": "https://vasp.at/wiki/SIGMA",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NBANDS",
+      "url": "https://vasp.at/wiki/NBANDS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NELECT",
+      "url": "https://vasp.at/wiki/NELECT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ICHARG",
+      "url": "https://vasp.at/wiki/ICHARG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ISTART",
+      "url": "https://vasp.at/wiki/ISTART",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: GGA",
+      "url": "https://vasp.at/wiki/GGA",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: METAGGA",
+      "url": "https://vasp.at/wiki/METAGGA",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: IBRION",
+      "url": "https://vasp.at/wiki/IBRION",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NSW",
+      "url": "https://vasp.at/wiki/NSW",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ISIF",
+      "url": "https://vasp.at/wiki/ISIF",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: POTIM",
+      "url": "https://vasp.at/wiki/POTIM",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: PSTRESS",
+      "url": "https://vasp.at/wiki/PSTRESS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ISYM",
+      "url": "https://vasp.at/wiki/ISYM",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: SYMPREC",
+      "url": "https://vasp.at/wiki/SYMPREC",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: ISPIN",
+      "url": "https://vasp.at/wiki/ISPIN",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: MAGMOM",
+      "url": "https://vasp.at/wiki/MAGMOM",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LNONCOLLINEAR",
+      "url": "https://vasp.at/wiki/LNONCOLLINEAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LSORBIT",
+      "url": "https://vasp.at/wiki/LSORBIT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: SAXIS",
+      "url": "https://vasp.at/wiki/SAXIS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LDAU",
+      "url": "https://vasp.at/wiki/LDAU",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LDAUTYPE",
+      "url": "https://vasp.at/wiki/LDAUTYPE",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LDAUL",
+      "url": "https://vasp.at/wiki/LDAUL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LDAUU",
+      "url": "https://vasp.at/wiki/LDAUU",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LDAUJ",
+      "url": "https://vasp.at/wiki/LDAUJ",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LMAXMIX",
+      "url": "https://vasp.at/wiki/LMAXMIX",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LWAVE",
+      "url": "https://vasp.at/wiki/LWAVE",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LCHARG",
+      "url": "https://vasp.at/wiki/LCHARG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LORBIT",
+      "url": "https://vasp.at/wiki/LORBIT",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NEDOS",
+      "url": "https://vasp.at/wiki/NEDOS",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: EMIN",
+      "url": "https://vasp.at/wiki/EMIN",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: EMAX",
+      "url": "https://vasp.at/wiki/EMAX",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LVHAR",
+      "url": "https://vasp.at/wiki/LVHAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LAECHG",
+      "url": "https://vasp.at/wiki/LAECHG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LHFCALC",
+      "url": "https://vasp.at/wiki/LHFCALC",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: AEXX",
+      "url": "https://vasp.at/wiki/AEXX",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: HFSCREEN",
+      "url": "https://vasp.at/wiki/HFSCREEN",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: IVDW",
+      "url": "https://vasp.at/wiki/IVDW",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LDIPOL",
+      "url": "https://vasp.at/wiki/LDIPOL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: IDIPOL",
+      "url": "https://vasp.at/wiki/IDIPOL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: DIPOL",
+      "url": "https://vasp.at/wiki/DIPOL",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: IMAGES",
+      "url": "https://vasp.at/wiki/IMAGES",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: SPRING",
+      "url": "https://vasp.at/wiki/SPRING",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: MDALGO",
+      "url": "https://vasp.at/wiki/MDALGO",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: TEBEG",
+      "url": "https://vasp.at/wiki/TEBEG",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: LANGEVIN_GAMMA",
+      "url": "https://vasp.at/wiki/LANGEVIN_GAMMA",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NCORE",
+      "url": "https://vasp.at/wiki/NCORE",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: NPAR",
+      "url": "https://vasp.at/wiki/NPAR",
+      "accessed": "2026-09-19"
+    },
+    {
+      "title": "VASP Wiki: KPAR",
+      "url": "https://vasp.at/wiki/KPAR",
+      "accessed": "2026-09-19"
+    }
+  ],
+  "parameters": [
+    {
+      "tag": "ENCUT",
+      "group": "精度",
+      "unit": "eV；正实数",
+      "meaning": "平面波基组动能截断",
+      "usage": "按目标能量差、力或应力测试",
+      "caution": "不是电子能量上限；比较计算需统一已验证的截断",
+      "url": "https://vasp.at/wiki/ENCUT"
+    },
+    {
+      "tag": "PREC",
+      "group": "精度",
+      "unit": "字符串，如 Accurate",
+      "meaning": "控制相关数值精度与 FFT 网格策略",
+      "usage": "与 ENCUT、网格及任务共同检查",
+      "caution": "Accurate 不代表所有误差已收敛",
+      "url": "https://vasp.at/wiki/PREC"
+    },
+    {
+      "tag": "EDIFF",
+      "group": "精度",
+      "unit": "eV；实数",
+      "meaning": "电子自洽停止阈值",
+      "usage": "核对全计算单元的相邻步能量变化",
+      "caution": "不是每原子误差；设0改为固定 NELM 步",
+      "url": "https://vasp.at/wiki/EDIFF"
+    },
+    {
+      "tag": "EDIFFG",
+      "group": "精度",
+      "unit": "正值 eV；负值对应 eV/Å",
+      "meaning": "离子优化停止条件",
+      "usage": "负值按力范数；正值按离子步能量变化",
+      "caution": "不用于判定分子动力学是否充分采样",
+      "url": "https://vasp.at/wiki/EDIFFG"
+    },
+    {
+      "tag": "LREAL",
+      "group": "精度",
+      "unit": "Auto 或逻辑选项",
+      "meaning": "选择非局域投影的实/倒空间处理",
+      "usage": "较大体系可测试 Auto 的费用和误差",
+      "caution": "Auto 与 .FALSE. 需做目标量对照",
+      "url": "https://vasp.at/wiki/LREAL"
+    },
+    {
+      "tag": "ADDGRID",
+      "group": "精度",
+      "unit": "逻辑量",
+      "meaning": "增广电荷的附加支持网格",
+      "usage": "测试是否确实降低所需力噪声",
+      "caution": "可能出现插值问题，不应无测试地对所有任务开启",
+      "url": "https://vasp.at/wiki/ADDGRID"
+    },
+    {
+      "tag": "LASPH",
+      "group": "精度",
+      "unit": "逻辑量",
+      "meaning": "PAW 球内梯度相关的非球形贡献",
+      "usage": "d/f、+U、杂化与 meta-GGA 等尤其需核对",
+      "caution": "更改后应保持能量比较对象一致",
+      "url": "https://vasp.at/wiki/LASPH"
+    },
+    {
+      "tag": "KSPACING",
+      "group": "精度",
+      "unit": "Å⁻¹；正实数",
+      "meaning": "未提供 KPOINTS 时自动生成网格的间距尺度",
+      "usage": "值减小通常增加 k 点",
+      "caution": "存在 KPOINTS 时被忽略；查看实际生成网格",
+      "url": "https://vasp.at/wiki/KSPACING"
+    },
+    {
+      "tag": "KGAMMA",
+      "group": "精度",
+      "unit": "逻辑量",
+      "meaning": "自动网格是否以 Γ 为中心",
+      "usage": "与 KSPACING 和晶体对称性配合",
+      "caution": "不能覆盖显式 KPOINTS 的网格方式",
+      "url": "https://vasp.at/wiki/KGAMMA"
+    },
+    {
+      "tag": "ALGO",
+      "group": "电子",
+      "unit": "字符串",
+      "meaning": "电子优化算法选择",
+      "usage": "先用适合方法的稳健算法，再做性能测试",
+      "caution": "杂化中 Fast 不正确支持，VeryFast 不支持；按方法核对算法",
+      "url": "https://vasp.at/wiki/ALGO"
+    },
+    {
+      "tag": "NELM",
+      "group": "电子",
+      "unit": "正整数；步",
+      "meaning": "最大电子迭代次数",
+      "usage": "查看是否因达到上限而退出",
+      "caution": "加大上限不能修复错误结构或持续振荡",
+      "url": "https://vasp.at/wiki/NELM"
+    },
+    {
+      "tag": "ISMEAR",
+      "group": "电子",
+      "unit": "整数选项",
+      "meaning": "决定占据与积分/展宽方式",
+      "usage": "按金属、带隙、静态或力任务选择",
+      "caution": "正值不宜直接用于有隙体系；四面体需合适网格",
+      "url": "https://vasp.at/wiki/ISMEAR"
+    },
+    {
+      "tag": "SIGMA",
+      "group": "电子",
+      "unit": "eV；实数",
+      "meaning": "占据展宽宽度",
+      "usage": "与 k 网格一起测试能量和力",
+      "caution": "只有相应费米统计展宽可直接作电子温度解释",
+      "url": "https://vasp.at/wiki/SIGMA"
+    },
+    {
+      "tag": "NBANDS",
+      "group": "电子",
+      "unit": "正整数",
+      "meaning": "计算的能带数量",
+      "usage": "金属、杂化、光学等需足够空带",
+      "caution": "默认值或基态够用的数量不保证激发性质收敛",
+      "url": "https://vasp.at/wiki/NBANDS"
+    },
+    {
+      "tag": "NELECT",
+      "group": "电子",
+      "unit": "电子数；实数",
+      "meaning": "指定体系电子总数",
+      "usage": "相对 PAW 价电子总数明确电荷态",
+      "caution": "周期带电体系需考虑背景、有限尺寸与参考能",
+      "url": "https://vasp.at/wiki/NELECT"
+    },
+    {
+      "tag": "ICHARG",
+      "group": "电子",
+      "unit": "整数选项",
+      "meaning": "初始化或固定电荷密度的方式",
+      "usage": "11 常用于兼容 CHGCAR 的固定密度步骤",
+      "caution": "固定密度不等于自洽；轨道依赖方法另核对",
+      "url": "https://vasp.at/wiki/ICHARG"
+    },
+    {
+      "tag": "ISTART",
+      "group": "电子",
+      "unit": "整数选项",
+      "meaning": "波函数起始与重启方式",
+      "usage": "按可用且兼容的 WAVECAR 选择",
+      "caution": "从实际输出确认是否成功读取，不能仅看文件名",
+      "url": "https://vasp.at/wiki/ISTART"
+    },
+    {
+      "tag": "GGA",
+      "group": "电子",
+      "unit": "字符串，如 PE",
+      "meaning": "选择相应 LDA/GGA 形式",
+      "usage": "与目标方法及 PAW 数据兼容；PE 表示 PBE",
+      "caution": "不是把任何输入变成正确 PBE 工作流的单一开关",
+      "url": "https://vasp.at/wiki/GGA"
+    },
+    {
+      "tag": "METAGGA",
+      "group": "电子",
+      "unit": "字符串",
+      "meaning": "选择 meta-GGA 泛函",
+      "usage": "核查版本、PAW 与动能密度等要求",
+      "caution": "网格和固定密度能带步骤可能不同于 GGA",
+      "url": "https://vasp.at/wiki/METAGGA"
+    },
+    {
+      "tag": "IBRION",
+      "group": "离子",
+      "unit": "整数选项",
+      "meaning": "离子更新、MD 或响应任务选择",
+      "usage": "2 常用于共轭梯度优化；0 为 MD",
+      "caution": "不是所有正值都是几何优化；按具体任务读取文档",
+      "url": "https://vasp.at/wiki/IBRION"
+    },
+    {
+      "tag": "NSW",
+      "group": "离子",
+      "unit": "整数；离子或动力学步数",
+      "meaning": "离子或动力学步数上限",
+      "usage": "与 IBRION 一起定义任务长度",
+      "caution": "NSW 用尽不证明优化收敛；MD步数不等于平衡时间",
+      "url": "https://vasp.at/wiki/NSW"
+    },
+    {
+      "tag": "ISIF",
+      "group": "离子",
+      "unit": "整数0–8",
+      "meaning": "应力计算与允许改变的晶胞/原子自由度",
+      "usage": "区分仅原子优化、变体积与变形状",
+      "caution": "含真空模型勿随意放开晶胞；8需VASP6.4.1+",
+      "url": "https://vasp.at/wiki/ISIF"
+    },
+    {
+      "tag": "POTIM",
+      "group": "离子",
+      "unit": "MD为fs；有限位移为Å；其他随算法",
+      "meaning": "时间步或离子位移/步长尺度",
+      "usage": "IBRION=0时必须显式提供合适时间步",
+      "caution": "不同 IBRION 下含义和单位不同",
+      "url": "https://vasp.at/wiki/POTIM"
+    },
+    {
+      "tag": "PSTRESS",
+      "group": "离子",
+      "unit": "kbar",
+      "meaning": "外部压力或相关压力项",
+      "usage": "明确应力符号及目标边界条件",
+      "caution": "1 kbar = 0.1 GPa；不能无依据当作拟合晶格常数的旋钮",
+      "url": "https://vasp.at/wiki/PSTRESS"
+    },
+    {
+      "tag": "ISYM",
+      "group": "离子",
+      "unit": "整数选项",
+      "meaning": "控制对称性使用",
+      "usage": "结构、初始磁矩与研究畸变共同决定",
+      "caution": "ISYM=0 与 −1 不完全等价；关闭对称性不是万能修复",
+      "url": "https://vasp.at/wiki/ISYM"
+    },
+    {
+      "tag": "SYMPREC",
+      "group": "离子",
+      "unit": "实数；对称识别容差",
+      "meaning": "决定对称分析中的数值精度",
+      "usage": "核对坐标舍入及真实小畸变",
+      "caution": "放宽容差可能把真实畸变识别成高对称结构",
+      "url": "https://vasp.at/wiki/SYMPREC"
+    },
+    {
+      "tag": "ISPIN",
+      "group": "磁性",
+      "unit": "1或2",
+      "meaning": "非自旋极化或共线自旋极化",
+      "usage": "允许磁性时通常配合多个 MAGMOM 初态",
+      "caution": "非共线另用 LNONCOLLINEAR；留意新版本组合限制",
+      "url": "https://vasp.at/wiki/ISPIN"
+    },
+    {
+      "tag": "MAGMOM",
+      "group": "磁性",
+      "unit": "μB；逐原子数组",
+      "meaning": "初始磁矩与磁性对称性信息",
+      "usage": "共线每原子1项，非共线每原子3项",
+      "caution": "不固定最终磁矩；重启随意删除可能改变对称性",
+      "url": "https://vasp.at/wiki/MAGMOM"
+    },
+    {
+      "tag": "LNONCOLLINEAR",
+      "group": "磁性",
+      "unit": "逻辑量",
+      "meaning": "允许非共线自旋密度",
+      "usage": "使用 vasp_ncl 和正确的三分量输入",
+      "caution": "不需要靠 ISPIN=2 激活；核对版本兼容组合",
+      "url": "https://vasp.at/wiki/LNONCOLLINEAR"
+    },
+    {
+      "tag": "LSORBIT",
+      "group": "磁性",
+      "unit": "逻辑量",
+      "meaning": "开启自旋–轨道耦合",
+      "usage": "使用 vasp_ncl，核对磁化方向与对称性",
+      "caution": "磁各向异性能量差很小，需严谨数值收敛",
+      "url": "https://vasp.at/wiki/LSORBIT"
+    },
+    {
+      "tag": "SAXIS",
+      "group": "磁性",
+      "unit": "三分量方向；无量纲",
+      "meaning": "定义自旋量子化轴与自旋坐标基",
+      "usage": "与 MAGMOM 三分量及输出坐标约定配合",
+      "caution": "不是施加外磁场；改变轴要同时核对向量解释",
+      "url": "https://vasp.at/wiki/SAXIS"
+    },
+    {
+      "tag": "LDAU",
+      "group": "磁性",
+      "unit": "逻辑量",
+      "meaning": "开启局域相互作用修正",
+      "usage": "与 LDAUTYPE/LDAUL/U/J 成组设置",
+      "caution": "不应只开开关而未定义轨道和参数依据",
+      "url": "https://vasp.at/wiki/LDAU"
+    },
+    {
+      "tag": "LDAUTYPE",
+      "group": "磁性",
+      "unit": "整数选项",
+      "meaning": "选择 +U 或相关线性响应形式",
+      "usage": "2 为 Dudarev 形式；明确有效 U−J 定义",
+      "caution": "不同形式下 U/J 含义不同，不能混用文献数值",
+      "url": "https://vasp.at/wiki/LDAUTYPE"
+    },
+    {
+      "tag": "LDAUL",
+      "group": "磁性",
+      "unit": "逐物种整数数组",
+      "meaning": "指定施加修正的角动量通道",
+      "usage": "d为2，f为3，−1表示该物种不加",
+      "caution": "与 POTCAR 顺序一致，不是逐原子列表",
+      "url": "https://vasp.at/wiki/LDAUL"
+    },
+    {
+      "tag": "LDAUU",
+      "group": "磁性",
+      "unit": "eV；逐物种数组",
+      "meaning": "所选形式中的 U 等势强参数",
+      "usage": "注明来源、计算或拟合方法",
+      "caution": "不同 U 下的绝对总能不能直接用于优劣排名",
+      "url": "https://vasp.at/wiki/LDAUU"
+    },
+    {
+      "tag": "LDAUJ",
+      "group": "磁性",
+      "unit": "eV；逐物种数组",
+      "meaning": "所选形式中的 J 等势强参数",
+      "usage": "Dudarev 形式与 U 一起给出 U−J",
+      "caution": "LDAUTYPE=3 时含义不同，应读对应说明",
+      "url": "https://vasp.at/wiki/LDAUJ"
+    },
+    {
+      "tag": "LMAXMIX",
+      "group": "磁性",
+      "unit": "非负整数",
+      "meaning": "进入混合与电荷文件的单中心角动量上限",
+      "usage": "d/f 固定密度 +U 常需4/6并贯穿前后阶段",
+      "caution": "后一步提高它，不能恢复前一步未写出的信息",
+      "url": "https://vasp.at/wiki/LMAXMIX"
+    },
+    {
+      "tag": "LWAVE",
+      "group": "输出",
+      "unit": "逻辑量",
+      "meaning": "控制波函数相关文件写出",
+      "usage": "需要重启或相应后处理时保存",
+      "caution": "关掉后不能假设目录里旧 WAVECAR 属于当前任务",
+      "url": "https://vasp.at/wiki/LWAVE"
+    },
+    {
+      "tag": "LCHARG",
+      "group": "输出",
+      "unit": "逻辑量",
+      "meaning": "控制电荷密度相关文件写出",
+      "usage": "固定密度能带或电荷分析前规划保存",
+      "caution": "同名旧 CHGCAR 可能与当前结构不一致",
+      "url": "https://vasp.at/wiki/LCHARG"
+    },
+    {
+      "tag": "LORBIT",
+      "group": "输出",
+      "unit": "整数选项",
+      "meaning": "局域轨道投影及相关输出",
+      "usage": "11 常用于按角动量分解的投影",
+      "caution": "投影依赖方法，不是唯一的原子电荷或氧化态",
+      "url": "https://vasp.at/wiki/LORBIT"
+    },
+    {
+      "tag": "NEDOS",
+      "group": "输出",
+      "unit": "正整数",
+      "meaning": "DOS 能量轴采样点数",
+      "usage": "结合 EMIN/EMAX 设置所需网格",
+      "caution": "增大它不能代替增加 k 点或空带",
+      "url": "https://vasp.at/wiki/NEDOS"
+    },
+    {
+      "tag": "EMIN",
+      "group": "输出",
+      "unit": "eV；实数",
+      "meaning": "DOS等能量窗口下限",
+      "usage": "在一致能量参考下定义范围",
+      "caution": "不等于自动设为相对费米能的下限",
+      "url": "https://vasp.at/wiki/EMIN"
+    },
+    {
+      "tag": "EMAX",
+      "group": "输出",
+      "unit": "eV；实数",
+      "meaning": "DOS等能量窗口上限",
+      "usage": "与 EMIN、NEDOS 和实际能带覆盖配合",
+      "caution": "窗口超过空带覆盖并不能产生缺失的态",
+      "url": "https://vasp.at/wiki/EMAX"
+    },
+    {
+      "tag": "LVHAR",
+      "group": "输出",
+      "unit": "逻辑量",
+      "meaning": "输出离子与 Hartree 部分的局域势",
+      "usage": "功函数等需明确取的是哪种势",
+      "caution": "LOCPOT 零点、真空平台与偶极修正均需核对",
+      "url": "https://vasp.at/wiki/LVHAR"
+    },
+    {
+      "tag": "LAECHG",
+      "group": "输出",
+      "unit": "逻辑量",
+      "meaning": "重建并输出全电子特征的电荷密度",
+      "usage": "Bader 等分析须按所用流程选参考密度",
+      "caution": "输出含核、原子叠加、收敛价密度等不同文件，勿混淆",
+      "url": "https://vasp.at/wiki/LAECHG"
+    },
+    {
+      "tag": "LHFCALC",
+      "group": "进阶",
+      "unit": "逻辑量",
+      "meaning": "开启 HF 型/杂化交换计算",
+      "usage": "配合泛函、AEXX、屏蔽及兼容算法",
+      "caution": "不是写一个开关就完成 HSE06 的全部定义",
+      "url": "https://vasp.at/wiki/LHFCALC"
+    },
+    {
+      "tag": "AEXX",
+      "group": "进阶",
+      "unit": "无量纲实数",
+      "meaning": "HF型精确交换的混合比例",
+      "usage": "随所选杂化形式明确记录",
+      "caution": "调比例是改变方法，不是普通收敛参数",
+      "url": "https://vasp.at/wiki/AEXX"
+    },
+    {
+      "tag": "HFSCREEN",
+      "group": "进阶",
+      "unit": "Å⁻¹；实数",
+      "meaning": "范围分离参数",
+      "usage": "标准 HSE06 使用0.2并需其他相容定义",
+      "caution": "不支持任意 GGA/meta-GGA 与屏蔽组合",
+      "url": "https://vasp.at/wiki/HFSCREEN"
+    },
+    {
+      "tag": "IVDW",
+      "group": "进阶",
+      "unit": "整数选项",
+      "meaning": "选择成对或多体色散修正",
+      "usage": "记录具体修正及其与泛函的搭配",
+      "caution": "11与12阻尼不同；不要重复计入色散项",
+      "url": "https://vasp.at/wiki/IVDW"
+    },
+    {
+      "tag": "LDIPOL",
+      "group": "进阶",
+      "unit": "逻辑量",
+      "meaning": "加入偶极修正的势/力处理",
+      "usage": "配合 IDIPOL、DIPOL 与足够真空",
+      "caution": "不是任意带电周期体系误差的通用修复",
+      "url": "https://vasp.at/wiki/LDIPOL"
+    },
+    {
+      "tag": "IDIPOL",
+      "group": "进阶",
+      "unit": "整数方向选项",
+      "meaning": "选择偶极等静电修正方向",
+      "usage": "表面按法向与晶胞设置选择",
+      "caution": "方向与维度不匹配会改变物理解释",
+      "url": "https://vasp.at/wiki/IDIPOL"
+    },
+    {
+      "tag": "DIPOL",
+      "group": "进阶",
+      "unit": "三分量分数坐标",
+      "meaning": "计算偶极矩的参考中心",
+      "usage": "表面/分子常以合适的原子质量中心附近为起点",
+      "caution": "不是Å坐标；需保证修正区域与真空位置合理",
+      "url": "https://vasp.at/wiki/DIPOL"
+    },
+    {
+      "tag": "IMAGES",
+      "group": "进阶",
+      "unit": "非负整数",
+      "meaning": "图像/副本计算的数量",
+      "usage": "NEB中对应中间图像并配初末态目录",
+      "caution": "也用于其他多副本方法，须核实任务和目录约定",
+      "url": "https://vasp.at/wiki/IMAGES"
+    },
+    {
+      "tag": "SPRING",
+      "group": "进阶",
+      "unit": "弹簧常数选项，eV/Å²",
+      "meaning": "控制路径图像间的弹簧与 NEB 处理",
+      "usage": "原生 VASP 负值用于 nudged elastic band",
+      "caution": "不是越大路径越准；勿混用不同实现的优化器设置",
+      "url": "https://vasp.at/wiki/SPRING"
+    },
+    {
+      "tag": "MDALGO",
+      "group": "进阶",
+      "unit": "整数选项",
+      "meaning": "选择动力学热浴/晶格动力学算法",
+      "usage": "与 IBRION=0、ISIF 和热浴参数成组设置",
+      "caution": "设置温度并不自动得到目标系综或完成热化",
+      "url": "https://vasp.at/wiki/MDALGO"
+    },
+    {
+      "tag": "TEBEG",
+      "group": "进阶",
+      "unit": "K；实数",
+      "meaning": "初始/目标温度相关设置",
+      "usage": "结合速度、热浴与 TEEND 等任务定义理解",
+      "caution": "它不是电子展宽 SIGMA；瞬时温度可涨落",
+      "url": "https://vasp.at/wiki/TEBEG"
+    },
+    {
+      "tag": "LANGEVIN_GAMMA",
+      "group": "进阶",
+      "unit": "ps⁻¹；逐物种数组",
+      "meaning": "Langevin 原子自由度摩擦系数",
+      "usage": "MDALGO=3时按实际物种区块对应",
+      "caution": "不是fs⁻¹；NpT还需晶格摩擦与质量等设置",
+      "url": "https://vasp.at/wiki/LANGEVIN_GAMMA"
+    },
+    {
+      "tag": "NCORE",
+      "group": "并行",
+      "unit": "正整数",
+      "meaning": "每条能带协作的 MPI ranks 数",
+      "usage": "纯MPI任务按分组、硬件和短基准测试选择",
+      "caution": "勿同时设NPAR；GPU/相应OpenMP路径会重置为1",
+      "url": "https://vasp.at/wiki/NCORE"
+    },
+    {
+      "tag": "NPAR",
+      "group": "并行",
+      "unit": "正整数",
+      "meaning": "能带并行分组数",
+      "usage": "阅读旧输入时识别其与 NCORE 的关系",
+      "caution": "和NCORE并存时此项优先；现代调优通常优先NCORE",
+      "url": "https://vasp.at/wiki/NPAR"
+    },
+    {
+      "tag": "KPAR",
+      "group": "并行",
+      "unit": "正整数",
+      "meaning": "k 点并行分组数",
+      "usage": "需整除可用 MPI ranks并兼顾不可约k点负载",
+      "caution": "没有很多k点时不能靠加大它获得收益；特殊算法另有含义",
+      "url": "https://vasp.at/wiki/KPAR"
+    }
+  ],
+  "downloads": [
+    {
+      "path": "report/calculation-report.md",
+      "title": "计算复现记录模板",
+      "content": "# 计算记录：填写研究问题与体系名称\n\n## 目标与模型\n- 要回答的问题：\n- 目标量、定义、单位及比较对象：\n- 结构来源、原子数、晶胞、组成和电荷：\n- 磁序、表面/缺陷/溶剂/温度等假设：\n- 结构文件 SHA-256：\n\n## 方法与运行环境\n- VASP 版本、可执行类型、编译功能：\n- PAW 数据集名称/版本/价电子配置/校验值（不附受限 POTCAR）：\n- 泛函、色散、U/J、SOC 等设置与依据：\n- 截断、k 网格及中心、展宽、电子与力停止条件：\n- 集群/CPU/GPU、MPI ranks、线程数、并行标签：\n- 输入目录、提交脚本、重启来源：\n\n## 收敛与完整性\n- 正常结束与停止原因证据：\n- ENCUT、k 网格、超胞/真空等测试及目标量变化：\n- 最大残余力/应力、磁态、占据检查：\n- 声子/NEB/MD 等任务特有检查：\n- 失败尝试及处理：\n\n## 结果与证据边界\n- 数值结果、归一化和采用的能量定义：\n- 后处理工具/版本/脚本与图源文件：\n- 数值误差估计、方法误差与备选模型：\n- 结论属于候选预测、计算验证、模拟外推或实验验证：\n- 尚未验证的条件与下一步：\n",
+      "description": "空白研究记录，含模型、方法、收敛、运行环境与证据边界；可按具体任务填写。"
+    }
+  ]
+}
