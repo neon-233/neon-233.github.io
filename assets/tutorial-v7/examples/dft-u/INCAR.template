@@ -1,0 +1,29 @@
+# TEMPLATE ONLY: supply a validated Ni2O2 magnetic cell and choose U_eff.
+# POSCAR species must be Ni O with counts 2 2 for the MAGMOM below.
+SYSTEM = Ni2O2 PBE+U magnetic template
+GGA = PE
+ENCUT = YOUR_CONVERGED_ENCUT
+PREC = Accurate
+LREAL = .FALSE.
+LASPH = .TRUE.
+ISPIN = 2
+MAGMOM = 2.0 -2.0 0.0 0.0
+ISYM = 0
+ISTART = 0
+ICHARG = 2
+ALGO = Normal
+EDIFF = 1E-7
+NELM = 160
+ISMEAR = 0
+SIGMA = 0.05
+LDAU = .TRUE.
+LDAUTYPE = 2
+LDAUL = 2 -1
+LDAUU = YOUR_U_EFF 0.0
+LDAUJ = 0.0 0.0
+LMAXMIX = 4
+LORBIT = 11
+IBRION = -1
+NSW = 0
+LCHARG = .TRUE.
+LWAVE = .TRUE.

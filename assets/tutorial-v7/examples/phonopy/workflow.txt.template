@@ -1,0 +1,16 @@
+# TEMPLATE: Phonopy 4.5-style workflow. Check your installed --version/--help.
+# Need optimized POSCAR-unitcell; this does not run VASP or supply POTCAR.
+phonopy-init -d --dim 2 2 2 --pa auto -c POSCAR-unitcell
+# Copy each generated POSCAR-xxx to its own disp-xxx/POSCAR.
+# Run STATIC VASP forces with the supplied INCAR-force.template there.
+# Replace this sample list with ALL files, in phonopy_disp.yaml order:
+phonopy-init --sp -f disp-001/vasprun.xml disp-002/vasprun.xml
+# --band auto requires seekpath in the SAME active Python environment.
+# Check: python -c "import seekpath"
+# If missing, follow the official install guide; e.g. conda install -c conda-forge seekpath
+# When phonopy_params.yaml has been created successfully:
+phonopy --band auto -p phonopy_params.yaml
+# Example post-processing q mesh; independently converge it:
+phonopy --mesh 20 20 20 -t phonopy_params.yaml
+# Older releases: see the manual; setup may use phonopy -d / phonopy -f,
+# and postprocessing may use phonopy-load. Do not mix CLI generations.

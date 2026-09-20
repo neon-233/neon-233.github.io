@@ -1,0 +1,24 @@
+#!/bin/bash
+#SBATCH --job-name=si-scf
+#SBATCH --partition=YOUR_PARTITION
+#SBATCH --nodes=1
+#SBATCH --ntasks=8
+#SBATCH --cpus-per-task=1
+#SBATCH --time=00:30:00
+#SBATCH --output=slurm-%j.out
+#SBATCH --error=slurm-%j.err
+
+# Save the configured script as submit.slurm INSIDE the calculation directory.
+# Submit after cd into that directory, where all four input files are present.
+# For SOC/noncollinear tasks, replace BOTH vasp_std commands below with vasp_ncl.
+set -euo pipefail
+: "${SLURM_SUBMIT_DIR:?Submit through sbatch after editing placeholders}"
+cd "$SLURM_SUBMIT_DIR"
+module load YOUR_VASP_MODULE
+export OMP_NUM_THREADS=1
+for f in INCAR POSCAR KPOINTS POTCAR; do
+  test -s "$f" || { printf 'Missing or empty input: %s\n' "$f" >&2; exit 1; }
+done
+command -v vasp_std >/dev/null
+sha256sum INCAR POSCAR KPOINTS POTCAR > inputs.sha256
+srun vasp_std > vasp.out 2>&1

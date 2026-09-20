@@ -1,0 +1,17 @@
+SYSTEM = Si final static learning example
+GGA = PE
+ENCUT = 520
+PREC = Accurate
+LREAL = .FALSE.
+ISPIN = 1
+ISTART = 0
+ICHARG = 2
+ALGO = Normal
+EDIFF = 1E-7
+NELM = 120
+ISMEAR = 0
+SIGMA = 0.05
+IBRION = -1
+NSW = 0
+LCHARG = .TRUE.
+LWAVE = .TRUE.

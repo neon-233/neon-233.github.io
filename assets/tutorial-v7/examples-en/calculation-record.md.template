@@ -1,0 +1,14 @@
+# Calculation records: please fill in item by item
+Scientific questions and hypotheses to be tested:
+Structure source / primitive cell or supercell / number of atoms / charge state:
+VASP version/compilation environment/executable program:
+POTCAR RELEASE / TITEL / ZVAL / ENMAX / SHA-256:
+functional/U and J/SOC/spin initial state:
+ENCUT / PREC / k-grid / smearing:
+Electron and ion stopping threshold/fixed degrees of freedom:
+Convergence test target quantity/threshold/control directory:
+Job ID/Date/Resource/Exit Status:
+Whether electrons converge/maximum force/final stress:
+Energy definition/unit/normalization used:
+Post-processing tool version/script/graph data source:
+Known limitations and next steps to verify:

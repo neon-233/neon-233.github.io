@@ -1,0 +1,1 @@
+Use si-scf POSCAR and the same licensed POTCAR. Use a converged uniform KPOINTS mesh. ENCUT=520 is a teaching value: verify it is sufficient for stress/volume, starting from about 1.3*max(ENMAX). Check electronic convergence, forces AND stress. CONTCAR is not automatically a converged structure. No VASP results are distributed.

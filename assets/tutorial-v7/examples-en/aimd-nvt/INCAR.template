@@ -1,0 +1,26 @@
+# TEMPLATE: fixed-cell Langevin NVT; EXAMPLE for exactly TWO species
+# Supply relaxed POSCAR, tested KPOINTS/POTCAR and electronic settings.
+# Replace ENCUT and adapt one LANGEVIN_GAMMA value per POTCAR species.
+SYSTEM = nvt-langevin-test
+GGA = PE
+ENCUT = REPLACE_WITH_FORCE_CONVERGED_ENCUT
+PREC = Accurate
+EDIFF = 1E-6
+NELM = 120
+ALGO = Normal
+LREAL = .FALSE.
+ISMEAR = 0
+SIGMA = 0.05
+IBRION = 0
+MDALGO = 3
+ISIF = 2
+ISYM = 0
+POTIM = 1.0
+NSW = 2000
+TEBEG = 300
+TEEND = 300
+LANGEVIN_GAMMA = 10.0 10.0
+LWAVE = .FALSE.
+LCHARG = .FALSE.
+# No SMASS: it does not set the Langevin thermostat strength.
+# 2000 * 1 fs = 2 ps; this is a short test, not a production guarantee.

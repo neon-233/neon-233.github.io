@@ -1,0 +1,22 @@
+# TEMPLATE: charged bulk defect at fixed host lattice
+# Not a charged-slab template. Supply the actual supercell and references.
+# Replace ENCUT and NELECT. Set a justified spin state / MAGMOM if required.
+SYSTEM = bulk-defect-relax
+GGA = PE
+ENCUT = REPLACE_WITH_CONVERGED_ENCUT
+PREC = Accurate
+EDIFF = 1E-7
+NELM = 150
+ALGO = Normal
+LREAL = .FALSE.
+ISMEAR = 0
+SIGMA = 0.05
+NELECT = REPLACE_WITH_NEUTRAL_DEFECT_ELECTRONS_MINUS_Q
+IBRION = 2
+NSW = 200
+ISIF = 2
+EDIFFG = -0.01
+ISYM = 0
+LWAVE = .FALSE.
+LCHARG = .TRUE.
+# No universal correction tag: specify and validate correction externally.

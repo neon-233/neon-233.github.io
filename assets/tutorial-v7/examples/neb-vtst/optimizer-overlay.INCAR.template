@@ -1,0 +1,16 @@
+# TEMPLATE: VTST-ENABLED VASP ONLY; not a standalone INCAR
+# Replace native ionic-optimizer lines with these (do not leave duplicates).
+# Retain validated electronic settings and fixed-cell NEB directory structure.
+# Confirm the executable was built with a compatible VTST code version.
+IBRION = 3
+POTIM = 0
+IOPT = 7
+ICHAIN = 0
+IMAGES = 5
+SPRING = -5
+ISIF = 2
+NSW = 250
+EDIFFG = -0.03
+LCLIMB = .FALSE.
+# First preconverge the path. For the separate climbing-image continuation:
+# change the existing LCLIMB line to .TRUE. after inspecting the path.

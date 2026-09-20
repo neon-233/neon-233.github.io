@@ -1,0 +1,26 @@
+# TEMPLATE: HSE06 static self-consistent calculation from scratch
+# For a nonmagnetic semiconductor; regular k mesh REQUIRED.
+# Supply POSCAR, KPOINTS and suitable licensed PAW-PBE POTCAR.
+SYSTEM = hse06-static
+GGA = PE
+LHFCALC = .TRUE.
+AEXX = 0.25
+HFSCREEN = 0.2
+ENCUT = REPLACE_WITH_CONVERGED_ENCUT
+PREC = Accurate
+EDIFF = 1E-7
+NELM = 150
+ALGO = Damped
+TIME = 0.4
+LREAL = .FALSE.
+LASPH = .TRUE.
+ISMEAR = 0
+SIGMA = 0.05
+ISTART = 0
+ICHARG = 2
+IBRION = -1
+NSW = 0
+LWAVE = .TRUE.
+LCHARG = .TRUE.
+# PBE WAVECAR restart is possible with compatible settings and ISTART=1;
+# review ICHARG/restart settings then. NEVER set ICHARG=11 for this task.

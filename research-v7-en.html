@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="For undergraduate students, the five research directions of Yujin Ji Research Group are introduced: structural evolution, reaction mechanism, structure–property relationships, high-throughput screening and materials design, and the role of artificial intelligence in computational chemistry and materials science is explained based on published papers.">
+  <meta name="theme-color" content="#142d4b">
+  <title> Research Explained · Jisuan </title>
+  <!-- V7 二级页面：沿用研究内容，返回同版本主页。 -->
+  <script>document.documentElement.classList.add('js');</script>
+  <style>
+    :root { --ink:#142c49; --muted:#5f7186; --blue:#255ee9; --line:#dce3ec; --paper:#f7f9fc; --navy:#142d4b; }
+    *, *::before, *::after { box-sizing:border-box; }
+    html { scroll-behavior:smooth; scroll-padding-top:110px; }
+    body { margin:0; color:var(--ink); background:#fff; font:16px/1.85 "Microsoft YaHei","PingFang SC",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+    h1,h2,h3,p,figure { margin:0; }
+    h1,h2,h3 { line-height:1.45; }
+    a { color:inherit; text-decoration:none; }
+    button { font:inherit; cursor:pointer; }
+    a,button,summary { touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+    img { display:block; max-width:100%; height:auto; }
+    :focus-visible { outline:3px solid #5288ff; outline-offset:5px; }
+    ::selection { background:#d8e6ff; color:#123465; }
+    .wrap { width:min(1180px,calc(100% - 88px)); margin-inline:auto; }
+    .skip-link { position:fixed; top:8px; left:8px; z-index:100; padding:9px 18px; color:#fff; background:var(--navy); transform:translateY(-160%); }
+    .skip-link:focus { transform:translateY(0); }
+    .site-header { position:sticky; top:0; z-index:20; background:rgba(255,255,255,.97); border-bottom:1px solid #e9edf3; backdrop-filter:blur(16px); }
+    .header-inner { min-height:80px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+    .brand { display:flex; align-items:center; gap:18px; flex-shrink:0; }
+    .brand-mark { font-size:29px; font-weight:800; letter-spacing:-.04em; }
+    .brand-mark span { color:var(--blue); }
+    .brand-caption { border-left:1px solid var(--line); padding-left:18px; font-size:12px; line-height:1.65; }
+    .brand-caption small { display:block; color:var(--muted); font:9px/1.7 Arial,sans-serif; letter-spacing:.11em; }
+    .site-nav { display:flex; align-items:center; gap:26px; }
+    .site-nav a { padding-block:11px; font-size:13px; color:#4c5d72; white-space:nowrap; }
+    .site-nav a:hover { color:var(--blue); }
+    .site-nav .home-link { padding:8px 16px; border:1px solid var(--line); border-radius:4px; color:var(--ink); }
+    .menu-toggle { display:none; align-items:center; gap:8px; min-height:44px; padding:8px 12px; color:var(--ink); border:1px solid var(--line); border-radius:4px; background:#fff; font-size:13px; }
+    .menu-icon { width:17px; height:12px; border-block:1.5px solid currentColor; position:relative; }
+    .menu-icon::after { content:""; position:absolute; top:4px; left:0; width:100%; border-top:1.5px solid currentColor; }
+    .eyebrow { display:flex; align-items:center; gap:10px; color:var(--blue); font:600 11px/1.5 Arial,sans-serif; letter-spacing:.17em; }
+    .eyebrow::before { content:""; width:20px; height:2px; background:currentColor; flex-shrink:0; }
+    .hero { padding:29px 0 0; background:var(--paper); }
+    .breadcrumb { display:flex; align-items:center; gap:11px; color:#6b7e94; font-size:12px; }
+    .breadcrumb a:hover { color:var(--blue); }
+    .breadcrumb span[aria-hidden] { color:#a1adbb; }
+    .hero-grid { display:grid; grid-template-columns:1.12fr 1fr; align-items:end; gap:76px; padding:49px 0 46px; }
+    .hero h1 { margin-top:21px; font-size:clamp(34px,4.4vw,53px); line-height:1.38; letter-spacing:-.04em; }
+    .hero h1 span { color:var(--blue); }
+    .hero-intro { padding-bottom:4px; }
+    .hero-intro > p { color:var(--muted); font-size:15px; line-height:2; }
+    .hero-meta { display:flex; flex-wrap:wrap; gap:9px 22px; margin-top:25px; color:#506b89; font-size:11px; }
+    .hero-meta span { display:flex; align-items:center; gap:7px; }
+    .hero-meta span::before { content:""; width:5px; height:5px; border-radius:50%; background:#7998c1; }
+    .topic-nav { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); border-top:1px solid var(--line); }
+    .topic-nav a { position:relative; display:flex; align-items:center; gap:13px; min-height:83px; padding:18px 14px; font-size:13px; }
+    .topic-nav a:first-child { padding-left:0; }
+    .topic-nav a + a { border-left:1px solid var(--line); }
+    .topic-nav a:hover { color:var(--blue); background:#edf2fa; }
+    .topic-nav a span { color:#6481a5; font:11px Arial,sans-serif; }
+    .topic-nav a::after { content:"↓"; margin-left:auto; color:#8298b1; }
+    .section { padding-block:74px; }
+    .topics { padding-top:6px; }
+    .research-topic { padding-block:67px; border-bottom:1px solid var(--line); }
+    .topic-heading { display:flex; align-items:center; gap:20px; margin-bottom:30px; }
+    .topic-number { display:flex; align-items:center; justify-content:center; width:46px; height:46px; border:1px solid #bdcfe7; border-radius:50%; color:#476c9c; font:14px Arial,sans-serif; flex-shrink:0; }
+    .topic-heading h2 { font-size:27px; font-weight:650; }
+    .topic-heading .english { display:block; margin-top:6px; color:#6a83a3; font:10px/1.5 Arial,sans-serif; letter-spacing:.12em; }
+    .topic-grid { display:grid; grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr); align-items:start; gap:52px; }
+    .topic-copy h3 { margin-bottom:17px; font-size:22px; font-weight:600; }
+    .topic-copy > p { color:#52647a; font-size:15px; line-height:2.05; text-align:justify; }
+    .topic-copy strong { color:#294766; font-weight:600; }
+    .keywords { display:flex; flex-wrap:wrap; gap:8px; margin-top:22px; }
+    .keywords span { padding:3px 9px; border:1px solid #e0e6ee; border-radius:3px; color:#667c97; font-size:10px; }
+    .ai-note { margin-top:28px; padding:18px 19px; border-left:3px solid #8daee5; background:var(--paper); }
+    .ai-note h4 { margin:0 0 7px; color:#315c9c; font-size:12px; font-weight:600; }
+    .ai-note p { color:#5d718a; font-size:13px; line-height:1.95; }
+    .ref-link { color:#315fa6; font-size:11px; vertical-align:super; white-space:nowrap; margin-left:3px; }
+    .ref-link:hover { text-decoration:underline; }
+    .research-figure { min-width:0; border:1px solid #dfe6ef; border-radius:5px; overflow:hidden; }
+    .figure-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 19px; border-bottom:1px solid #e6ebf1; background:var(--paper); }
+    .figure-heading p { color:#4e6887; font-size:11px; }
+    .figure-heading a { color:#456794; font-size:11px; white-space:nowrap; }
+    .figure-heading a:hover { text-decoration:underline; }
+    .figure-image { display:flex; align-items:center; justify-content:center; padding:22px; background:#fff; }
+    .figure-image img { width:100%; max-width:100%; max-height:350px; object-fit:contain; }
+    .research-figure.tall .figure-image img { max-height:400px; }
+    .research-figure figcaption { padding:17px 19px 18px; border-top:1px solid #e6ebf1; background:#fafbfd; }
+    .reading-guide { color:#516780; font-size:12px; line-height:1.9; }
+    .reading-guide strong { color:#2c4b71; font-weight:600; }
+    .figure-credit { margin-top:11px; color:#718199; font-size:10px; line-height:1.85; }
+    .figure-credit a { border-bottom:1px solid #c8d5e5; white-space:nowrap; }
+    .figure-credit a:hover { color:var(--blue); }
+    .ai-section { color:#fff; background:var(--navy); }
+    .section-heading { display:flex; justify-content:space-between; align-items:end; gap:32px; margin-bottom:36px; }
+    .section-heading h2 { margin-top:12px; font-size:32px; }
+    .section-heading > p { max-width:380px; color:var(--muted); font-size:13px; line-height:1.95; }
+    .ai-section .eyebrow { color:#90b4ef; }
+    .ai-section .section-heading > p { color:#b3c5dc; }
+    .ai-story { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:32px; margin-bottom:37px; }
+    .ai-story article { padding-top:20px; border-top:1px solid #496380; }
+    .ai-story .story-kicker { color:#8cadd8; font:11px/1.6 Arial,sans-serif; letter-spacing:.1em; }
+    .ai-story h3 { margin-block:9px 13px; font-size:19px; font-weight:500; }
+    .ai-story article > p:last-child { color:#b7c8dc; font-size:13px; line-height:2; }
+    .ai-section .ref-link { color:#a5c5ff; }
+    .workflow { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); margin:0; padding:0; list-style:none; border:1px solid #435e7c; border-radius:4px; }
+    .workflow li { position:relative; padding:21px; }
+    .workflow li + li { border-left:1px solid #435e7c; }
+    .workflow li + li::before { content:"→"; position:absolute; left:-9px; top:23px; width:17px; background:var(--navy); text-align:center; color:#97b6dc; font:15px Arial,sans-serif; }
+    .workflow span { display:block; color:#d6e3f5; font-size:13px; }
+    .workflow small { display:block; margin-top:7px; color:#a8bdd5; font-size:11px; line-height:1.8; }
+    .ai-takeaway { margin-top:22px; color:#a9bfd9; font-size:12px; line-height:1.95; }
+    .reading-tools { background:var(--paper); }
+    .reading-grid { display:grid; grid-template-columns:.9fr 1.1fr; gap:80px; }
+    .reading-intro h2 { margin-top:12px; font-size:28px; }
+    .reading-intro > p:last-child { margin-top:18px; color:var(--muted); font-size:14px; line-height:2; }
+    .glossary details { border-bottom:1px solid #dce3ec; }
+    .glossary details:first-child { border-top:1px solid #dce3ec; }
+    .glossary summary { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:15px 0; font-size:14px; cursor:pointer; list-style:none; }
+    .glossary summary::-webkit-details-marker { display:none; }
+    .glossary summary::after { content:"+"; color:#6788b5; font:19px Arial,sans-serif; }
+    .glossary details[open] summary::after { content:"−"; }
+    .glossary details > p { padding-bottom:17px; color:var(--muted); font-size:12px; line-height:1.95; }
+    .references .section-heading { margin-bottom:23px; }
+    .reference-list { list-style:none; padding:0; margin:0; }
+    .reference-list li { display:grid; grid-template-columns:31px minmax(0,1fr) 106px; gap:18px; padding:20px 0; border-top:1px solid var(--line); }
+    .reference-number { padding-top:3px; color:#6b87aa; font:11px/1.8 Arial,sans-serif; }
+    .reference-list h3 { font:500 14px/1.6 Arial,"Microsoft YaHei",sans-serif; overflow-wrap:anywhere; }
+    .reference-list h3 a:hover { color:var(--blue); }
+    .reference-list .authors { margin-top:5px; color:#718099; font:11px/1.8 Arial,sans-serif; }
+    .reference-list .journal { margin-top:4px; color:#4b6c99; font:11px/1.8 Arial,sans-serif; }
+    .reference-links { display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:7px; font-size:11px; color:#526f96; }
+    .reference-links a { border-bottom:1px solid #cad6e5; }
+    .source-note { margin-top:14px; padding-top:20px; border-top:1px solid var(--line); color:#78899e; font-size:11px; line-height:1.95; }
+    .closing { display:flex; justify-content:space-between; align-items:center; gap:22px; padding:30px 0; border-top:1px solid var(--line); }
+    .closing p { color:var(--muted); font-size:13px; }
+    .button { display:inline-flex; align-items:center; justify-content:center; gap:23px; min-height:46px; padding:10px 21px; border:1px solid var(--navy); border-radius:4px; color:#fff; background:var(--navy); font-size:13px; white-space:nowrap; }
+    .button:hover { background:#27496d; }
+    .site-footer { color:#aabbd0; background:var(--navy); }
+    .footer-inner { display:flex; justify-content:space-between; align-items:center; gap:25px; min-height:83px; font-size:10px; }
+    .footer-inner a { flex-shrink:0; }
+    .footer-inner a:hover { color:#fff; }
+    @media (max-width:1050px) {
+      .brand-caption { display:none; }
+      .topic-grid { gap:32px; }
+      .topic-nav a { gap:8px; padding-inline:10px; font-size:12px; }
+      .topic-nav a::after { display:none; }
+      .hero-grid { gap:40px; }
+      .reading-grid { gap:45px; }
+    }
+    @media (max-width:820px) {
+      html { scroll-padding-top:90px; }
+      .wrap { width:calc(100% - 48px); }
+      .header-inner { min-height:72px; flex-wrap:wrap; gap:0; }
+      .brand { gap:12px; }
+      .brand-mark { font-size:26px; }
+      .brand-caption { display:block; padding-left:12px; font-size:10px; }
+      .brand-caption small { font-size:8px; }
+      .js .menu-toggle { display:inline-flex; }
+      .site-nav { width:100%; flex-wrap:wrap; gap:4px 23px; padding:12px 0 20px; }
+      .js .site-nav { display:none; }
+      .js .site-nav.is-open { display:flex; }
+      .site-nav .home-link { padding:9px 0; border:0; }
+      .hero-grid { grid-template-columns:1fr; gap:24px; padding:35px 0; }
+      .hero h1 br { display:none; }
+      .hero h1 { font-size:37px; }
+      .hero-intro { max-width:640px; }
+      .hero-meta { margin-top:17px; }
+      .topic-nav { grid-template-columns:repeat(3,minmax(0,1fr)); padding-bottom:13px; }
+      .topic-nav a { min-height:50px; padding:9px 14px 9px 0; font-size:12px; }
+      .topic-nav a + a { border-left:0; }
+      .topic-grid { grid-template-columns:1fr; gap:28px; }
+      .topic-copy > p { font-size:15px; }
+      .topic-heading { margin-bottom:23px; }
+      .research-topic { padding-block:47px; }
+      .ai-note { margin-top:22px; }
+      .figure-image { padding:22px 28px; }
+      .figure-image img { max-height:390px; }
+      .research-figure.tall .figure-image img { max-height:440px; }
+      .section { padding-block:54px; }
+      .section-heading { display:block; }
+      .section-heading > p { margin-top:18px; max-width:100%; }
+      .ai-story { gap:24px; }
+      .workflow li { padding:17px 14px; }
+      .workflow span { font-size:12px; }
+      .workflow small { font-size:10px; }
+      .reading-grid { grid-template-columns:1fr; gap:29px; }
+    }
+    @media (max-width:580px) {
+      .wrap { width:calc(100% - 40px); }
+      .brand-caption small { display:none; }
+      .brand-mark { font-size:25px; }
+      .menu-toggle { padding-inline:9px; gap:6px; font-size:11px; }
+      .hero { padding-top:21px; }
+      .hero-grid { padding-top:29px; gap:20px; }
+      .eyebrow { font-size:9px; letter-spacing:.13em; }
+      .hero h1 { margin-top:15px; font-size:34px; }
+      .hero h1 br { display:block; }
+      .hero-intro > p { font-size:13px; }
+      .hero-meta { font-size:10px; gap:8px 16px; }
+      .topic-nav { grid-template-columns:repeat(2,minmax(0,1fr)); padding-block:9px; }
+      .topic-nav a { min-height:42px; font-size:11px; }
+      .topic-nav a span { font-size:10px; }
+      .topic-heading { gap:13px; align-items:flex-start; }
+      .topic-number { width:36px; height:36px; font-size:12px; margin-top:2px; }
+      .topic-heading h2 { font-size:23px; }
+      .topic-heading .english { font-size:8px; letter-spacing:.07em; }
+      .topic-copy h3 { font-size:19px; margin-bottom:14px; }
+      .topic-copy > p { font-size:14px; line-height:2.05; }
+      .ai-note { padding:15px 16px; }
+      .ai-note p { font-size:12px; }
+      .figure-heading { padding:12px 13px; }
+      .figure-heading p,.figure-heading a { font-size:10px; }
+      .figure-image { padding:15px 12px; }
+      .research-figure figcaption { padding:14px 13px; }
+      .reading-guide { font-size:11px; }
+      .figure-credit { font-size:9px; }
+      .section-heading h2 { font-size:27px; }
+      .ai-story { grid-template-columns:1fr; gap:24px; }
+      .ai-story h3 { font-size:18px; margin-bottom:10px; }
+      .ai-story article > p:last-child { font-size:12px; }
+      .workflow { grid-template-columns:1fr 1fr; }
+      .workflow li:nth-child(3) { border-left:0; border-top:1px solid #435e7c; }
+      .workflow li:nth-child(4) { border-top:1px solid #435e7c; }
+      .workflow li::before { display:none; }
+      .workflow span { font-size:11px; }
+      .reading-intro h2 { font-size:25px; }
+      .reading-intro > p:last-child { font-size:13px; }
+      .reference-list li { grid-template-columns:22px minmax(0,1fr); gap:9px; padding-block:18px; }
+      .reference-list h3 { font-size:12px; }
+      .reference-list .authors,.reference-list .journal { font-size:10px; }
+      .reference-links { grid-column:2; flex-direction:row; align-items:center; justify-content:flex-start; gap:20px; font-size:10px; }
+      .closing { align-items:flex-start; flex-direction:column; padding-block:25px 35px; gap:17px; }
+      .closing p { font-size:12px; }
+      .footer-inner { align-items:flex-start; flex-direction:column; gap:13px; padding-block:24px; line-height:1.9; }
+    }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } }
+  </style>
+<link rel="alternate" hreflang="zh-CN" href="https://jisuan.bond/research-v7.html"><link rel="alternate" hreflang="en" href="https://jisuan.bond/research-v7-en.html"><link rel="alternate" hreflang="x-default" href="https://jisuan.bond/research-v7.html"><link rel="canonical" href="https://jisuan.bond/research-v7-en.html"><style>.language-switch{display:flex;align-items:center;gap:2px;border:1px solid #ccd8e8;border-radius:5px;padding:3px;background:#fff;flex-shrink:0;margin-left:14px;order:3;line-height:1.4;white-space:nowrap}
+.language-switch a{font:600 11px/1.5 Arial,"Microsoft YaHei",sans-serif;display:block;padding:5px 8px;color:#39506e;border-radius:3px;text-decoration:none}
+.language-switch a[aria-current="page"]{background:#285ee7;color:#fff}.language-switch a:hover{box-shadow:inset 0 0 0 1px #8baae0}.language-switch a:focus-visible{outline:3px solid #285ee7;outline-offset:3px}
+.header-inner{gap:12px}.header-inner>.brand{order:0}.site-nav,.top-nav{order:2;margin-left:auto}.menu-toggle{order:4}.site-nav{gap:17px}
+html[lang=en] body{font-family:Arial,"Segoe UI",system-ui,sans-serif}html[lang=en] .brand-mark{letter-spacing:-.055em}html[lang=en] .site-nav a{font-size:12px}html[lang=en] .site-nav{gap:14px}html[lang=en] .hero h1{font-size:clamp(36px,4.3vw,62px);line-height:1.13;letter-spacing:-.045em}html[lang=en] .course-hero h1{font-size:clamp(34px,4.1vw,56px);line-height:1.2}html[lang=en] .hero-description{max-width:620px}html[lang=en] .research-row{grid-template-columns:38px minmax(180px,.75fr) minmax(0,1.4fr)}html[lang=en] .learning-panel h3{font-size:22px}html[lang=en] .article-hero h1{font-size:38px;line-height:1.25}html[lang=en] .lesson-head h2{line-height:1.35}html[lang=en] .chapter-name{max-width:140px}html[lang=en] .lesson-content{line-height:1.85}html[lang=en] .parameter-table{min-width:760px}
+@media(max-width:1450px) and (min-width:821px){.header-inner .brand-caption{display:none}.site-nav{gap:14px}.language-switch{margin-left:4px}}
+@media(max-width:1050px) and (min-width:821px){.site-nav{gap:10px}.site-nav a{font-size:11px}html[lang=en] .site-nav{gap:10px}html[lang=en] .site-nav a{font-size:11px}.language-switch a{padding:5px 6px}.header-inner{gap:8px}}
+@media(max-width:820px){.language-switch{margin-left:0;order:4}.header-inner{gap:10px}.menu-toggle{margin-left:auto;order:3}.site-nav{margin-left:0;order:5}.top-nav{margin-left:auto}.top-nav+.language-switch{margin-left:3px}html[lang=en] .hero h1{font-size:clamp(34px,6.4vw,54px)}html[lang=en] .research-row{grid-template-columns:28px 1fr}html[lang=en] .article-hero h1{font-size:32px}}
+@media(max-width:520px){.top-nav .home,.top-nav .reference-link,.top-nav .download-link{display:none}.top-nav{gap:0}.language-switch a{padding:5px 7px}.language-switch{margin-left:auto;font-size:10px}.header-inner{gap:9px}.top-nav+.language-switch{margin-left:1px}html[lang=en] .brand-mark{font-size:25px}html[lang=en] .course-hero h1{font-size:33px}html[lang=en] .article-hero h1{font-size:29px}html[lang=en] .learning-panel h3{font-size:20px}html[lang=en] .recruitment-dialog{max-height:90vh;overflow:auto}html[lang=en] .lesson-head h2{font-size:21px}html[lang=en] .module-card h3{font-size:21px}html[lang=en] .chapter-name{max-width:110px}}
+@media print{.language-switch{display:none!important}}
+
+@media(max-width:580px){.header-inner .brand-caption{display:none}.site-header .header-inner{min-height:66px}.site-nav.is-open{padding-top:4px}html[lang=en] .hero h1{font-size:32px;line-height:1.17}.language-switch{margin-left:0}}
+
+html[lang=en] .mentor-grid>*,html[lang=en] .learning-intro>*,html[lang=en] .mentor-portrait,html[lang=en] .mentor-caption,html[lang=en] .route-form{min-width:0}html[lang=en] .route-form select{width:100%;min-width:0}html[lang=en] .mentor-detail-top{flex-wrap:wrap}html[lang=en] .honor{white-space:normal}html[lang=en] .mentor-caption p{white-space:normal}
+@media(max-width:360px){html[lang=en] .mentor-portrait{grid-template-columns:92px minmax(0,1fr)}html[lang=en] .mentor-caption{padding:15px 11px}html[lang=en] .mentor-caption h3{font-size:20px}html[lang=en] .mentor-caption a{font-size:10px;gap:5px}}
+</style></head>
+<body id="top">
+  <a class="skip-link" href="#main"> Skip to content </a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="./index-v7-en.html#top" aria-label="Jisuan — return to the homepage">
+        <span class="brand-mark"><span>Ji</span>suan</span>
+        <span class="brand-caption">Yujin Ji Research Group<small>FUNSOM · SOOCHOW UNIVERSITY</small></span>
+      </a>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Open navigation menu" aria-controls="site-nav" aria-expanded="false" type="button"><span class="menu-icon" aria-hidden="true"></span><span> Menu </span></button>
+      <nav class="site-nav" id="site-nav" aria-label="Page navigation">
+        <a href="#topics"> Five Research Directions </a><a href="#ai-research"> AI in Computational Research </a><a href="#references"> Paper Sources </a><a class="home-link" href="./index-v7-en.html#research"> Home <span aria-hidden="true">↗</span></a>
+      </nav><div class="language-switch" role="group" aria-label="Language"><a href="research-v7.html" lang="zh-CN" hreflang="zh-CN" data-language-link="zh">中文</a><a href="research-v7-en.html" lang="en" hreflang="en" data-language-link="en" aria-current="page">EN</a></div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="wrap">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="./index-v7-en.html#research"> Home </a><span aria-hidden="true">/</span><span aria-current="page"> Explore Our Research </span></nav>
+        <div class="hero-grid">
+          <div><p class="eyebrow">RESEARCH, EXPLAINED</p><h1 id="page-title"> Starting with atoms, <br><span> explore our research. </span></h1></div>
+          <div class="hero-intro">
+            <p> Why does a material perform well, and how could it perform better? We seek answers at the atomic scale using theoretical calculations and artificial intelligence. This guide introduces our five research directions through papers coauthored by Yujin Ji, helping undergraduates understand the questions, foundational knowledge, and methods behind our work. </p>
+            <div class="hero-meta"><span> A Research Guide for Undergraduates </span><span> 5 figures from published papers </span><span> With figure-reading notes </span></div>
+          </div>
+        </div>
+        <nav class="topic-nav" aria-label="Catalog of research directions">
+          <a href="#dynamics"><span>01</span> Structural Evolution </a>
+          <a href="#mechanism"><span>02</span> Surface Reaction Mechanisms </a>
+          <a href="#relationship"><span>03</span> Structure–Property Relationships </a>
+          <a href="#screening"><span>04</span> High-throughput Materials Screening </a>
+          <a href="#design"><span>05</span> Materials Design &amp; Optimization </a>
+        </nav>
+      </div>
+    </section>
+
+    <div class="wrap topics" id="topics">
+      <article class="research-topic" id="dynamics" aria-labelledby="dynamics-title">
+        <div class="topic-heading"><span class="topic-number" aria-hidden="true">01</span><div><h2 id="dynamics-title"> Structural Evolution </h2><span class="english">ATOMIC STRUCTURE &amp; DYNAMICS</span></div></div>
+        <div class="topic-grid">
+          <div class="topic-copy">
+            <h3> How do atoms in materials rearrange themselves? </h3>
+            <p> A material is not a static structural picture. During synthesis, heating, or use, atoms move, defects emerge, and a crystal may adopt a different arrangement. These changes affect stability, catalytic activity, and heat transport. This direction asks <strong> how structures form, why they change, and what those changes do </strong> . The work draws on structural chemistry, thermodynamics, and statistical physics. We first use density functional theory (DFT) to calculate electronic structures, energies, and atomic forces, then use molecular dynamics (MD) to follow atomic motion and compare the results with diffraction, microscopy, and other experiments. The iridium-oxide nanoribbon study shown here illustrates how precursors can evolve into a metastable crystalline phase. <a class="ref-link" href="#ref-1" aria-label="Reference 1">[1]</a></p>
+            <div class="keywords" aria-label="Knowledge &amp; Methods"><span> structural chemistry </span><span> thermodynamics </span><span> DFT/Molecular Dynamics </span></div>
+            <aside class="ai-note"><h4> How AI Can Help </h4><p> Machine-learning potentials learn energies and forces from quantum calculations, making larger systems and longer dynamical simulations accessible. In a CsPbBr3 study coauthored by Yujin Ji, deep-potential molecular dynamics was used to investigate how cesium vacancies affect heat transport. Reliability in new structures still requires validation. <a class="ref-link" href="#ref-5" aria-label="Reference 5">[5]</a></p></aside>
+          </div>
+          <figure class="research-figure">
+            <div class="figure-heading"><p> Original image of the paper · Structural evolution of nanoribbons </p><a href="./assets/research-v3/structure-evolution-fig2.jpg" target="_blank" rel="noopener" aria-label="Enlarge the original image of structural evolution in a new tab"> View full-size figure ↗ </a></div>
+            <a class="figure-image" href="./assets/research-v3/structure-evolution-fig2.jpg" target="_blank" rel="noopener" aria-label="View the original image of the complete structural evolution"><img src="./assets/research-v3/structure-evolution-fig2.jpg" width="798" height="647" alt="Schematic diagram of the formation of iridium oxide nanoribbons: from IrCl3 and KOH precursors, through potassium-containing intermediate structures, monoclinic phase IrO2 is formed; different colored spheres represent different elements." decoding="async"></a>
+            <figcaption><p class="reading-guide"><strong> How to Read the Figure </strong> Follow the arrows to see how the atomic arrangement changes and the involvement of potassium ions and water molecules. This is a schematic diagram of the formation process and structural evolution, not a molecular dynamics trajectory. </p><p class="figure-credit"> Image source: Fan Liao, Kui Yin, Yujin Ji, etc., <i>Nature Communications</i> (2023),Fig. 2.<a href="https://doi.org/10.1038/s41467-023-36833-1" target="_blank" rel="noopener"> Paper [1] ↗ </a><br>© 2023 The Author(s) · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · Original figure reproduced in full, without modification. </p></figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <article class="research-topic" id="mechanism" aria-labelledby="mechanism-title">
+        <div class="topic-heading"><span class="topic-number" aria-hidden="true">02</span><div><h2 id="mechanism-title"> Surface Reaction Mechanisms </h2><span class="english">SURFACE REACTION MECHANISMS</span></div></div>
+        <div class="topic-grid">
+          <div class="topic-copy">
+            <h3> What steps does a chemical reaction go through? </h3>
+            <p> Energy processes such as water electrolysis and fuel-cell reactions often occur on catalyst surfaces. A seemingly simple overall reaction involves molecular adsorption, bond breaking and formation, and product desorption. This research seeks to identify <strong> the active sites, possible reaction pathways, and steps that limit efficiency </strong> . A foundation in physical chemistry, quantum chemistry, and electrochemistry is useful. We typically use DFT to compare adsorption structures and reaction free energies, search for transition states and calculate activation barriers where necessary, and consider solvent and electrode-potential effects. For example, the study of single tungsten atoms in nickel hydroxide explains changes in oxygen-evolution performance by comparing individual reaction steps. <a class="ref-link" href="#ref-2" aria-label="Reference 2">[2]</a></p>
+            <div class="keywords" aria-label="Knowledge &amp; Methods"><span> electrochemistry </span><span> Adsorption and free energy </span><span> Reaction Path/Transition State </span></div>
+            <aside class="ai-note"><h4> How AI Can Help </h4><p> AI can estimate adsorption energies and screen active sites, directing expensive quantum calculations toward promising pathways. Its predictions still need to be checked with physical models. The figure in this section presents reaction-mechanism analysis, rather than output from an AI model. </p></aside>
+          </div>
+          <figure class="research-figure">
+            <div class="figure-heading"><p> Original image of the paper · Comparison of oxygen evolution reaction pathways </p><a href="./assets/research-v3/reaction-mechanism-fig5.jpg" target="_blank" rel="noopener" aria-label="Enlarge the original image of the reaction mechanism in a new tab"> View full-size figure ↗ </a></div>
+            <a class="figure-image" href="./assets/research-v3/reaction-mechanism-fig5.jpg" target="_blank" rel="noopener" aria-label="View the original diagram of the complete reaction mechanism"><img src="./assets/research-v3/reaction-mechanism-fig5.jpg" width="658" height="456" alt="Oxygen-evolution reaction cycles on tungsten-doped nickel hydroxide (left) and undoped nickel hydroxide (right), showing adsorbed intermediates and the free-energy change of each step." loading="lazy" decoding="async"></a>
+            <figcaption><p class="reading-guide"><strong> How to Read the Figure </strong> Compare the same reaction step left and right to observe changes in intermediates and energy. The values in the figure are the free energy changes of the steps and cannot be directly used as the activation energy barrier corresponding to the reaction speed. </p><p class="figure-credit"> Image source: Junqing Yan, Lingqiao Kong, Yujin Ji, etc., <i>Nature Communications</i> (2019),Fig. 5.<a href="https://doi.org/10.1038/s41467-019-09845-z" target="_blank" rel="noopener"> Paper [2] ↗ </a><br>© 2019 The Author(s) · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · Original figure reproduced in full, without modification. </p></figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <article class="research-topic" id="relationship" aria-labelledby="relationship-title">
+        <div class="topic-heading"><span class="topic-number" aria-hidden="true">03</span><div><h2 id="relationship-title"> Structure–Property Relationships </h2><span class="english">STRUCTURE–PROPERTY RELATIONSHIPS</span></div></div>
+        <div class="topic-grid">
+          <div class="topic-copy">
+            <h3> Why does the performance change if only a few atoms are replaced? </h3>
+            <p> Even with similar chemical compositions, different atomic arrangements, dopant positions, and local coordination can lead to very different conductivity, stability, or catalytic behavior. Structure–property research connects <strong> what changed in the structure with why the properties changed </strong> , seeking principles that can guide materials design. This requires structural chemistry, quantum mechanics, and data analysis. We compare band structures, densities of states, and charge distributions using DFT, then combine these results with adsorption and reaction calculations to identify the structural features that control performance. For phosphorus-doped MoS2, for example, we can vary the number and positions of phosphorus atoms, follow the resulting electronic changes, and analyze their influence on oxygen-reduction activity. <a class="ref-link" href="#ref-3" aria-label="Reference 3">[3]</a></p>
+            <div class="keywords" aria-label="Knowledge &amp; Methods"><span> electronic structure </span><span> Doping and local coordination </span><span> Descriptors/Data Analysis </span></div>
+            <aside class="ai-note"><h4> How AI Can Help </h4><p> Machine learning can identify correlations in large structure–property datasets and help prioritize which features to investigate. Feature importance does not establish a causal mechanism. Controlled calculations that change one structural factor at a time are needed to test an explanation. </p></aside>
+          </div>
+          <figure class="research-figure tall">
+            <div class="figure-heading"><p> Original image of the paper · Doping and electronic structure </p><a href="./assets/research-v3/structure-property-fig1.jpg" target="_blank" rel="noopener" aria-label="Enlarge structure–property relationships original image in new tab"> View full-size figure ↗ </a></div>
+            <a class="figure-image" href="./assets/research-v3/structure-property-fig1.jpg" target="_blank" rel="noopener" aria-label="View full structure–property relationships original image"><img src="./assets/research-v3/structure-property-fig1.jpg" width="760" height="865" alt="Comparison of atomic structures, band structures, projected densities of states, and charge analyses for undoped MoS2, single-phosphorus doping, and different two-phosphorus doping configurations." loading="lazy" decoding="async"></a>
+            <figcaption><p class="reading-guide"><strong> How to Read the Figure </strong> First look at the atomic positions above each group, and then compare the band structure and density of states below. They describe changes in electronic states; to judge the catalytic effect, it needs to be combined with subsequent reaction calculations. </p><p class="figure-credit"> Image source: Cheng Liu, Huilong Dong, Yujin Ji, etc., <i>Scientific Reports</i> (2018),Fig. 1.<a href="https://doi.org/10.1038/s41598-018-31354-0" target="_blank" rel="noopener"> Paper [3] ↗ </a><br>© 2018 The Author(s) · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · Original figure reproduced in full, without modification. </p></figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <article class="research-topic" id="screening" aria-labelledby="screening-title">
+        <div class="topic-heading"><span class="topic-number" aria-hidden="true">04</span><div><h2 id="screening-title"> High-throughput Materials Screening </h2><span class="english">HIGH-THROUGHPUT MATERIALS SCREENING</span></div></div>
+        <div class="topic-grid">
+          <div class="topic-copy">
+            <h3> There are thousands of candidates, which one should be studied first? </h3>
+            <p> Varying elemental composition, crystal structure, and doping strategy rapidly expands the number of candidate materials. High-throughput screening uses consistent, reproducible workflows to <strong> identify candidates that merit further study </strong> . Alongside materials science and quantum chemistry, the work uses Python, Linux, automated task management, and statistical analysis: building structures in batches, calculating stability and target properties, and screening against explicit criteria. In the CrystalGNN study coauthored by Yujin Ji, crystals are represented as graphs of atoms and their relationships. The model learns patterns in DFT data and accelerates the search for metastable IrO2 structures. <a class="ref-link" href="#ref-4" aria-label="Reference 4">[4]</a></p>
+            <div class="keywords" aria-label="Knowledge &amp; Methods"><span> Python/Automation </span><span> Materials Databases </span><span> Graph Neural Networks </span></div>
+            <aside class="ai-note"><h4> How AI Can Help </h4><p> Graph neural networks can quickly estimate candidate properties, narrow the search space, and help select structures for more accurate calculations. Errors must be assessed on independent test data, with particular attention to reliability for elements or structures outside the training distribution. </p></aside>
+          </div>
+          <figure class="research-figure">
+            <div class="figure-heading"><p> Original image of the paper · CrystalGNN model </p><a href="./assets/research-v3/crystal-gnn-fig1.jpg" target="_blank" rel="noopener" aria-label="Enlarge the original image of neural network in a new tab"> View full-size figure ↗ </a></div>
+            <a class="figure-image" href="./assets/research-v3/crystal-gnn-fig1.jpg" target="_blank" rel="noopener" aria-label="View the full picture Neural network original picture"><img src="./assets/research-v3/crystal-gnn-fig1.jpg" width="667" height="563" alt="CrystalGNN feeds atoms, distances, and adjacencies into a graph neural network; the scatter plot below compares machine learning predictions and DFT results for the formation energies of 2D and bulk materials." loading="lazy" decoding="async"></a>
+            <figcaption><p class="reading-guide"><strong> How to Read the Figure </strong> Above is the calculation process of "Crystal Structure → Graph Network → Properties". The closer the lower scatter points are to the diagonal, the more consistent the predictions are with DFT; this does not guarantee that the model will be equally accurate for all unknown materials. </p><p class="figure-credit"> Source: Jie Feng, Zhihao Dong, Yujin Ji, Youyong Li, <i>JACS Au</i> (2023),Fig. 1.<a href="https://doi.org/10.1021/jacsau.2c00709" target="_blank" rel="noopener"> Paper [4] ↗ </a><br>© 2023 The Authors · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a> · Original figure reproduced in full, without modification. </p></figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <article class="research-topic" id="design" aria-labelledby="design-title">
+        <div class="topic-heading"><span class="topic-number" aria-hidden="true">05</span><div><h2 id="design-title"> Materials Design &amp; Optimization </h2><span class="english">MATERIALS DESIGN &amp; OPTIMIZATION</span></div></div>
+        <div class="topic-grid">
+          <div class="topic-copy">
+            <h3> Can we design the structure from the target performance in reverse? </h3>
+            <p> Understanding these relationships also allows us to propose new structures: changing crystal phases, dopants, strain, or interfaces to seek better catalysts and energy materials. Starting from the target properties, this research aims to <strong> balance activity, stability, and synthetic feasibility </strong> . We combine chemical intuition, crystallography, thermodynamics, and optimization, repeatedly evaluating candidates through structure searches, accurate DFT calculations, and surface-reaction analysis. CrystalGNN identified new metastable structures among many IrO2 configurations and evaluated their oxygen-evolution potential, illustrating a propose–predict–validate design process. Computational discoveries still require experimental testing. <a class="ref-link" href="#ref-4" aria-label="Reference 4">[4]</a></p>
+            <div class="keywords" aria-label="Knowledge &amp; Methods"><span> Crystal Structure Search </span><span> multi-objective optimization </span><span> Comparison of theory and experiment </span></div>
+            <aside class="ai-note"><h4> How AI Can Help </h4><p> Beyond graph-network screening, active learning can select the most informative next calculations, while generative models explore ways to propose new structures. Structure generation is an emerging research direction: a generated candidate must not be presented as an already synthesized or validated material. <a class="ref-link" href="#ref-6" aria-label="Reference 6">[6]</a></p></aside>
+          </div>
+          <figure class="research-figure">
+            <div class="figure-heading"><p> Original image of the paper·Discovery of metastable crystalline phases </p><a href="./assets/research-v3/materials-discovery-fig3.jpg" target="_blank" rel="noopener" aria-label="Enlarge the original material design image in a new tab"> View full-size figure ↗ </a></div>
+            <a class="figure-image" href="./assets/research-v3/materials-discovery-fig3.jpg" target="_blank" rel="noopener" aria-label="View full material design artwork"><img src="./assets/research-v3/materials-discovery-fig3.jpg" width="667" height="387" alt="Enthalpy versus volume scatter plots, enlargements of low-enthalpy regions, and atomic structures of known and newly predicted crystal phases for a number of IrO2 candidate structures." loading="lazy" decoding="async"></a>
+            <figcaption><p class="reading-guide"><strong> How to Read the Figure </strong> Each scatter point corresponds to a computational candidate structure. Search from a wide range into a low-enthalpy region, and then observe the selected crystal phase; low enthalpy itself cannot prove good catalytic activity, or it can definitely be prepared in experiments. </p><p class="figure-credit"> Source: Jie Feng, Zhihao Dong, Yujin Ji, Youyong Li, <i>JACS Au</i> (2023),Fig. 3.<a href="https://doi.org/10.1021/jacsau.2c00709" target="_blank" rel="noopener"> Paper [4] ↗ </a><br>© 2023 The Authors · <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a> · Original figure reproduced in full, without modification. </p></figcaption>
+          </figure>
+        </div>
+      </article>
+    </div>
+
+    <section class="section ai-section" id="ai-research" aria-labelledby="ai-title">
+      <div class="wrap">
+        <div class="section-heading"><div><p class="eyebrow">AI × COMPUTATIONAL CHEMISTRY</p><h2 id="ai-title"> Extending what we can compute, <br> with evidence behind every prediction. </h2></div><p> Artificial intelligence is expanding the tools of computational chemistry and materials science: learning structure–property relationships, modeling interatomic interactions, and proposing candidate structures. The following three studies, coauthored by Yujin Ji, illustrate these developments. </p></div>
+        <div class="ai-story">
+          <article><p class="story-kicker">GRAPH NEURAL NETWORKS / 2023</p><h3> Learning Properties from Structure </h3><p> CrystalGNN constructs features directly from atoms and their geometric relationships, reducing reliance on manually chosen descriptors. The study used it to predict the energies of many IrO2 configurations and identify promising metastable phases for further calculation. <a class="ref-link" href="#ref-4" aria-label="Reference 4">[4]</a></p></article>
+          <article><p class="story-kicker">DEEP POTENTIAL / 2025</p><h3> Extending Atomistic Simulations </h3><p> Deep-potential models learn energies and atomic forces from DFT data, reducing the cost of each step of a molecular-dynamics simulation. In the CsPbBr3 study, this approach was used to investigate relationships between vacancies, lattice distortions, and heat transport. <a class="ref-link" href="#ref-5" aria-label="Reference 5">[5]</a></p></article>
+          <article><p class="story-kicker">TRANSFORMERS / PERSPECTIVE</p><h3> From Prediction to Structure Generation </h3><p> The review discusses progress and prospects for Transformers in chemical-property prediction, structure generation, and related tasks. These tools expand data-driven research while requiring careful evaluation of data quality, applicability, and physical plausibility. <a class="ref-link" href="#ref-6" aria-label="Reference 6">[6]</a></p></article>
+        </div>
+        <ol class="workflow" aria-label="A typical workflow for AI-assisted materials research">
+          <li><span> 01 Define the physical question </span><small> Define the material, environment, and target property </small></li>
+          <li><span> 02 Build a reliable dataset </span><small> Obtain data from quantum calculations or experiments </small></li>
+          <li><span> 03 Train and evaluate AI </span><small> Predict, rank, and assess errors </small></li>
+          <li><span> 04 Validate and refine </span><small> Validate with accurate calculations and experiments, then expand the data </small></li>
+        </ol>
+        <p class="ai-takeaway"> A foundation in chemistry and physics helps you ask meaningful questions; programming and machine learning help you investigate them efficiently. Undergraduates should develop both sets of skills together. </p>
+      </div>
+    </section>
+
+    <section class="section reading-tools" aria-labelledby="reading-title">
+      <div class="wrap reading-grid">
+        <div class="reading-intro"><p class="eyebrow">A SMALL READING GUIDE</p><h2 id="reading-title"> You do not need to know every term <br> to begin with a question. </h2><p> Choose a direction that interests you, understand the question it addresses, and then explore the figures and paper abstracts. Physical chemistry, structural chemistry, and basic data processing in Python provide a useful foundation for getting started. </p></div>
+        <div class="glossary" aria-label="Key Terms">
+          <details><summary> DFT · density functional theory </summary><p> A widely used quantum-mechanical method that starts from electron density to calculate a system's energy and electronic structure. It can compare structural stability, calculate forces, and analyze reactions, but results depend on the chosen model and approximations. </p></details>
+          <details><summary> MD · Molecular Dynamics </summary><p> Molecular dynamics computes atomic motion step by step from interatomic interactions. It lets us investigate structural changes and transport at finite temperatures. The accessible system size and simulation duration depend on the model and computational cost. </p></details>
+          <details><summary> GNN · Graph Neural Network </summary><p> A graph neural network treats atoms as nodes and relationships such as neighboring connections as edges. Information passes through the graph to learn structural features. This representation suits molecules and crystals and is often used to predict energies or other material properties. </p></details>
+          <details><summary> What is the difference between reaction free energy and activation energy barrier? </summary><p> Reaction free energy compares the thermodynamic states at the beginning and end of a step. An activation barrier describes the energy needed to cross a transition state. The former indicates thermodynamic driving force; the latter is related to reaction rate. They are different quantities. </p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section references" id="references" aria-labelledby="references-title">
+      <div class="wrap">
+        <div class="section-heading"><div><p class="eyebrow">READ THE ORIGINAL RESEARCH</p><h2 id="references-title"> Explore the original research. </h2></div><p> Yujin Ji is a coauthor of every paper listed below. The figures come from the first four papers; the final two illustrate applications and developments in artificial intelligence. </p></div>
+        <ol class="reference-list">
+          <li id="ref-1"><span class="reference-number">[1]</span><div><h3><a href="https://doi.org/10.1038/s41467-023-36833-1" target="_blank" rel="noopener">Iridium oxide nanoribbons with metastable monoclinic phase for highly efficient electrocatalytic oxygen evolution</a></h3><p class="authors">Fan Liao, Kui Yin, Yujin Ji et al.</p><p class="journal">Nature Communications 14, 1248 (2023) · Fig. 2</p></div><div class="reference-links"><a href="https://doi.org/10.1038/s41467-023-36833-1" target="_blank" rel="noopener"> Journal article ↗ </a><a href="https://europepmc.org/articles/PMC9985653" target="_blank" rel="noopener"> Open-access article ↗ </a></div></li>
+          <li id="ref-2"><span class="reference-number">[2]</span><div><h3><a href="https://doi.org/10.1038/s41467-019-09845-z" target="_blank" rel="noopener">Single atom tungsten doped ultrathin α-Ni(OH)₂ for enhanced electrocatalytic water oxidation</a></h3><p class="authors">Junqing Yan, Lingqiao Kong, Yujin Ji et al.</p><p class="journal">Nature Communications 10, 2149 (2019) · Fig. 5</p></div><div class="reference-links"><a href="https://doi.org/10.1038/s41467-019-09845-z" target="_blank" rel="noopener"> Journal article ↗ </a><a href="https://europepmc.org/articles/PMC6517434" target="_blank" rel="noopener"> Open-access article ↗ </a></div></li>
+          <li id="ref-3"><span class="reference-number">[3]</span><div><h3><a href="https://doi.org/10.1038/s41598-018-31354-0" target="_blank" rel="noopener">Origin of the catalytic activity of phosphorus doped MoS₂ for oxygen reduction reaction (ORR) in alkaline solution: a theoretical study</a></h3><p class="authors">Cheng Liu, Huilong Dong, Yujin Ji, Tingjun Hou, Youyong Li</p><p class="journal">Scientific Reports 8, 13292 (2018) · Fig. 1</p></div><div class="reference-links"><a href="https://doi.org/10.1038/s41598-018-31354-0" target="_blank" rel="noopener"> Journal article ↗ </a><a href="https://europepmc.org/articles/PMC6125367" target="_blank" rel="noopener"> Open-access article ↗ </a></div></li>
+          <li id="ref-4"><span class="reference-number">[4]</span><div><h3><a href="https://doi.org/10.1021/jacsau.2c00709" target="_blank" rel="noopener">Accelerating the Discovery of Metastable IrO₂ for the Oxygen Evolution Reaction by the Self-Learning-Input Graph Neural Network</a></h3><p class="authors">Jie Feng, Zhihao Dong, Yujin Ji, Youyong Li</p><p class="journal">JACS Au 3, 1131–1140 (2023) · Figs. 1 &amp; 3</p></div><div class="reference-links"><a href="https://doi.org/10.1021/jacsau.2c00709" target="_blank" rel="noopener"> Journal article ↗ </a><a href="https://europepmc.org/articles/PMC10131191" target="_blank" rel="noopener"> Open-access article ↗ </a></div></li>
+          <li id="ref-5"><span class="reference-number">[5]</span><div><h3><a href="https://doi.org/10.1039/D4NR05458J" target="_blank" rel="noopener">Effect of Cs vacancy on thermal conductivity in CsPbBr₃ perovskites unveiled by deep potential molecular dynamics</a></h3><p class="authors">Shuhao Han, Yujin Ji, Youyong Li</p><p class="journal">Nanoscale 17, 6793–6803 (2025) · DOI: 10.1039/D4NR05458J</p></div><div class="reference-links"><a href="https://doi.org/10.1039/D4NR05458J" target="_blank" rel="noopener"> Journal article ↗ </a></div></li>
+          <li id="ref-6"><span class="reference-number">[6]</span><div><h3><a href="https://doi.org/10.1021/acs.jpclett.4c03128" target="_blank" rel="noopener">Applications of Transformers in Computational Chemistry: Recent Progress and Prospects</a></h3><p class="authors">Rui Wang, Yujin Ji, Youyong Li, Shuit-Tong Lee</p><p class="journal">The Journal of Physical Chemistry Letters 16, 421–434 (2025) · DOI: 10.1021/acs.jpclett.4c03128</p></div><div class="reference-links"><a href="https://doi.org/10.1021/acs.jpclett.4c03128" target="_blank" rel="noopener"> Journal article ↗ </a></div></li>
+        </ol>
+        <p class="source-note"> Figures are reproduced in full from open-access versions of the papers. Authors, figure numbers, and licenses are credited below each figure. Figures licensed under CC BY-NC-ND are used for this site's noncommercial academic introduction; further reuse must comply with the original license. The introductions and figure-reading notes were prepared for this website. Consult the original papers for the precise models, conditions, and conclusions. Sources checked: September 2026. </p>
+      </div>
+    </section>
+    <div class="wrap closing"><p> Turn your interest into a research question. </p><a class="button" href="./index-v7-en.html#contact"> Contact the Group <span aria-hidden="true">↗</span></a></div>
+  </main>
+  <footer class="site-footer"><div class="wrap footer-inner"><p> © 2026 Jisuan · Yujin Ji Research Group | FUNSOM, Soochow University <br> Copyright in the reproduced figures belongs to the original authors. </p><a href="#top"> Back to top ↑ </a></div></footer>
+  <script>
+    const menuToggle = document.getElementById('menu-toggle');
+    const siteNav = document.getElementById('site-nav');
+    const mobileLayout = window.matchMedia('(max-width: 820px)');
+    function closeMenu() {
+      siteNav.classList.remove('is-open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', "Open navigation menu");
+    }
+    menuToggle.addEventListener('click', () => {
+      const open = siteNav.classList.toggle('is-open');
+      menuToggle.setAttribute('aria-expanded', String(open));
+      menuToggle.setAttribute('aria-label', open ? "Close navigation menu" : "Open navigation menu");
+    });
+    siteNav.addEventListener('click', event => {
+      const link = event.target.closest('a');
+      if (!link) return;
+      closeMenu();
+      const href = link.getAttribute('href');
+      if (mobileLayout.matches && href && href.startsWith('#')) {
+        const target = document.getElementById(href.slice(1));
+        if (target) {
+          target.setAttribute('tabindex', '-1');
+          target.focus({ preventScroll: true });
+          target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
+        }
+      }
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && siteNav.classList.contains('is-open')) {
+        closeMenu();
+        menuToggle.focus();
+      }
+    });
+    mobileLayout.addEventListener('change', closeMenu);
+  </script>
+<script>(() => {
+  document.querySelectorAll('[data-language-link]').forEach(link => {
+    link.addEventListener('click', () => {
+      let hash = location.hash;
+      const active = document.querySelector('.sidebar a.is-active');
+      if (active) hash = new URL(active.href).hash;
+      else {
+        const sections = [...document.querySelectorAll('main section[id]')];
+        const current = sections.filter(s => s.getBoundingClientRect().top <= 125 && s.getBoundingClientRect().bottom > 125).pop();
+        if (current) hash = '#' + current.id;
+      }
+      const destination = new URL(link.href); destination.hash = hash; link.href = destination.href;
+    });
+  });
+})();</script></body>
+</html>

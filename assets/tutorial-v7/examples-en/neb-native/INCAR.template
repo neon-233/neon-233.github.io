@@ -1,0 +1,25 @@
+# TEMPLATE: NATIVE VASP NEB, fixed common cell; five intermediate images
+# Supply 00/POSCAR through 06/POSCAR, parent KPOINTS and licensed POTCAR.
+# Endpoints must be separately relaxed and calculated with matching settings.
+SYSTEM = native-neb
+GGA = PE
+ENCUT = REPLACE_WITH_CONVERGED_ENCUT
+PREC = Accurate
+EDIFF = 1E-7
+NELM = 150
+ALGO = Normal
+LREAL = .FALSE.
+ISMEAR = 0
+SIGMA = 0.05
+IMAGES = 5
+SPRING = -5
+IBRION = 1
+NFREE = 2
+POTIM = 0.3
+ISIF = 2
+NSW = 250
+EDIFFG = -0.03
+ISYM = 0
+LWAVE = .FALSE.
+LCHARG = .FALSE.
+# Native template: NO LCLIMB, NO IOPT, and NOT POTIM=0.

@@ -1,0 +1,20 @@
+# TEMPLATE: independent-particle PBE optics of a nonmagnetic 3D insulator
+# Supply optimized POSCAR, DENSE regular KPOINTS, POTCAR; replace two fields.
+# This is a self-consistent static calculation, not a band-line calculation.
+SYSTEM = pbe-independent-particle-optics
+GGA = PE
+ENCUT = REPLACE_WITH_CONVERGED_ENCUT
+PREC = Accurate
+EDIFF = 1E-8
+ALGO = Normal
+LREAL = .FALSE.
+ISMEAR = 0
+SIGMA = 0.01
+IBRION = -1
+NSW = 0
+LOPTICS = .TRUE.
+NBANDS = REPLACE_WITH_CONVERGED_NUMBER_OF_BANDS
+NEDOS = 2000
+CSHIFT = 0.10
+LWAVE = .TRUE.
+LCHARG = .TRUE.

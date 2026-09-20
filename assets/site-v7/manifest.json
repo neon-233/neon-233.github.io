@@ -1,0 +1,50 @@
+{
+  "version": "v7",
+  "defaultLanguage": "zh-CN",
+  "languages": [
+    "zh-CN",
+    "en"
+  ],
+  "pages": [
+    {
+      "zh": "index-v7.html",
+      "en": "index-v7-en.html"
+    },
+    {
+      "zh": "practice-v7.html",
+      "en": "practice-v7-en.html"
+    },
+    {
+      "zh": "quantum-v7.html",
+      "en": "quantum-v7-en.html"
+    },
+    {
+      "zh": "research-v7.html",
+      "en": "research-v7-en.html"
+    },
+    {
+      "zh": "tutorial-v7.html",
+      "en": "tutorial-v7-en.html"
+    },
+    {
+      "zh": "vasp-advanced-v7.html",
+      "en": "vasp-advanced-v7-en.html"
+    },
+    {
+      "zh": "vasp-electronic-v7.html",
+      "en": "vasp-electronic-v7-en.html"
+    },
+    {
+      "zh": "vasp-reference-v7.html",
+      "en": "vasp-reference-v7-en.html"
+    },
+    {
+      "zh": "vasp-start-v7.html",
+      "en": "vasp-start-v7-en.html"
+    }
+  ],
+  "translatedSegments": 2423,
+  "downloadFilesPerLanguage": 47,
+  "translationRuntimeNetworkRequests": false,
+  "sourceVersion": "v6"
+}

@@ -1,0 +1,1 @@
+Use exactly the same POSCAR, POTCAR and KPOINTS as fe-fm. Do not copy WAVECAR or a magnetized CHGCAR. This tests two opposite initial moments in a two-Fe bcc conventional cell; it does not establish the magnetic ground state or cover every AFM periodicity. Record converged local moments, total moment, energy definition, smearing convergence and final state.

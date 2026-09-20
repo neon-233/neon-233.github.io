@@ -1,0 +1,19 @@
+# TEMPLATE: internal finite-displacement Gamma modes of the INPUT cell
+# Start from a tightly optimized, nonmagnetic semiconductor/insulator.
+# Supply POSCAR / KPOINTS / POTCAR and replace ENCUT.
+SYSTEM = gamma-phonon-internal
+GGA = PE
+ENCUT = REPLACE_WITH_CONVERGED_ENCUT
+PREC = Accurate
+EDIFF = 1E-8
+ALGO = Normal
+LREAL = .FALSE.
+ISMEAR = 0
+SIGMA = 0.01
+IBRION = 6
+NFREE = 2
+POTIM = 0.015
+NSW = 1
+ISIF = 2
+LWAVE = .FALSE.
+LCHARG = .FALSE.
