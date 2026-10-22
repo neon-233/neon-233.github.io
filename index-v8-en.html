@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Yujin Ji Research Group at FUNSOM, Soochow University. Theoretical simulation and design of two-dimensional materials for energy storage and conversion.">
+  <meta name="theme-color" content="#152f50">
+  <title> Jisuan · Yujin Ji Research Group </title>
+  <!-- V7：新增计算化学教程与主页学习入口；历史版本独立保留。 -->
+  <script>document.documentElement.classList.add('js');</script>
+  <style>
+    /* 01. 基础与设计变量 */
+    :root {
+      --ink: #142c49;
+      --muted: #647387;
+      --blue: #255ee9;
+      --line: #dce3ec;
+      --paper: #f7f9fc;
+      --navy: #142d4b;
+      --max-width: 1180px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 98px; }
+    body { margin: 0; color: var(--ink); background: #fff; font: 16px/1.8 "Microsoft YaHei", "PingFang SC", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    body:has(dialog[open]) { overflow: hidden; }
+    h1, h2, h3, h4, p, figure { margin: 0; }
+    h1, h2, h3, h4 { line-height: 1.45; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a, button, summary { touch-action: manipulation; }
+    img { display: block; max-width: 100%; height: auto; }
+    svg { display: block; }
+    :focus-visible { outline: 3px solid #5288ff; outline-offset: 5px; }
+    ::selection { color: #123465; background: #d8e6ff; }
+    .wrap { width: min(var(--max-width), calc(100% - 88px)); margin-inline: auto; }
+    .section { padding-block: 92px; }
+    .eyebrow { display: flex; align-items: center; gap: 10px; color: var(--blue); font: 600 11px/1.5 Arial, sans-serif; letter-spacing: .19em; }
+    .eyebrow::before { content: ""; width: 20px; height: 2px; background: currentColor; flex: 0 0 auto; }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 40px; }
+    .section-heading h2 { margin-top: 11px; font-size: 34px; letter-spacing: .02em; }
+    .section-heading > p { color: var(--muted); font-size: 14px; }
+    .text-link { display: inline-flex; align-items: center; gap: 16px; font-size: 14px; font-weight: 600; }
+    .text-link:hover { color: var(--blue); }
+    .arrow { font-family: Arial, sans-serif; font-size: 20px; font-weight: 400; }
+    .icon { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+    .button { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 22px; padding: 10px 22px; border: 1px solid var(--navy); border-radius: 5px; background: var(--navy); color: #fff; font-size: 14px; font-weight: 600; transition: background .2s, transform .2s; }
+    .button:hover { background: #234569; transform: translateY(-2px); }
+    .button.secondary { background: transparent; color: var(--ink); border-color: #ccd6e3; }
+    .button.secondary:hover { background: #eef3fa; }
+    .skip-link { position: fixed; top: 8px; left: 8px; z-index: 100; padding: 9px 18px; background: var(--navy); color: #fff; transform: translateY(-160%); }
+    .skip-link:focus { transform: translateY(0); }
+    /* 02. 导航与首屏 */
+    .site-header { position: sticky; top: 0; z-index: 20; background: rgba(255,255,255,.96); border-bottom: 1px solid #e9edf3; backdrop-filter: blur(16px); }
+    .header-inner { min-height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
+    .brand-mark { font-size: 29px; font-weight: 800; letter-spacing: -.04em; }
+    .brand-mark span { color: var(--blue); }
+    .brand-caption { border-left: 1px solid var(--line); padding-left: 18px; font-size: 12px; line-height: 1.65; }
+    .brand-caption small { display: block; color: var(--muted); font: 9px/1.7 Arial, sans-serif; letter-spacing: .11em; }
+    .site-nav { display: flex; align-items: center; gap: 25px; }
+    .site-nav a { padding-block: 11px; font-size: 13px; color: #4c5d72; white-space: nowrap; }
+    .site-nav a:hover, .site-nav a[aria-current="location"] { color: var(--blue); }
+    .site-nav a:last-child { padding: 8px 16px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink); }
+    .menu-toggle { display: none; align-items: center; gap: 8px; min-height: 44px; padding: 8px 12px; color: var(--ink); border: 1px solid var(--line); border-radius: 4px; background: #fff; font-size: 13px; }
+    .hero { overflow: hidden; background: var(--paper); }
+    .hero-grid { display: grid; grid-template-columns: 1.08fr 1fr; align-items: center; gap: 16px; padding-top: 74px; padding-bottom: 66px; }
+    .hero-kicker { color: #526a84; font-size: 12px; letter-spacing: .08em; }
+    .hero-kicker::before { display: inline-block; content: ""; width: 7px; height: 7px; margin-right: 10px; border-radius: 50%; background: var(--blue); vertical-align: 1px; }
+    .hero h1 { margin-block: 23px 24px; font-size: clamp(38px, 4.5vw, 58px); font-weight: 700; line-height: 1.35; letter-spacing: -.035em; }
+    .hero h1 span { color: var(--blue); }
+    .hero-description { max-width: 490px; color: #65758a; font-size: 15px; line-height: 2; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 31px; }
+    .hero-affiliation { margin-top: 37px; color: #7a8797; font-size: 11px; letter-spacing: .03em; }
+    .hero-art { position: relative; min-width: 0; margin-left: -14px; padding-top: 20px; }
+    .art-caption { margin-left: 54px; color: #7b8da3; font: 10px/1.6 Arial, sans-serif; letter-spacing: .17em; }
+    .lattice { width: 100%; height: auto; overflow: visible; }
+    .art-footer { display: flex; justify-content: space-between; margin: -6px 31px 0 54px; padding-top: 13px; border-top: 1px solid #d9e3f0; color: #63788f; font-size: 11px; letter-spacing: .08em; }
+    .art-footer span:last-child { font-family: Arial, sans-serif; color: #7f91a5; letter-spacing: .1em; }
+    .news-strip { border-top: 1px solid #dfe6ef; }
+    .news-inner { min-height: 66px; display: flex; align-items: center; gap: 23px; font-size: 13px; }
+    .news-label { display: inline-flex; align-items: center; gap: 8px; color: var(--blue); font-size: 11px; font-weight: 600; letter-spacing: .08em; flex-shrink: 0; }
+    .news-label::before { content: ""; width: 6px; height: 6px; background: var(--blue); border-radius: 50%; }
+    .news-inner time { margin-left: auto; color: #77879a; font: 11px Arial, sans-serif; white-space: nowrap; }
+    .news-inner > .arrow { color: var(--blue); }
+    .news-inner:hover > .news-text { color: var(--blue); }
+    /* 用户指定的 V4 同版更新：重磅动态。 */
+    .news-featured { border-top-color: #f0d8dc; border-bottom: 1px solid #f0d8dc; background: #fff5f6; }
+    .news-featured .news-inner { min-height: 76px; gap: 16px; }
+    .news-featured .news-label { color: #b42332; }
+    .news-featured .news-label::before { background: #b42332; }
+    .news-badge { flex-shrink: 0; padding: 2px 8px; border-radius: 3px; color: #fff; background: #b42332; font-size: 10px; font-weight: 600; letter-spacing: .08em; }
+    .news-featured .news-text { flex: 1; min-width: 0; color: #b42332; font-size: 15px; font-weight: 600; line-height: 1.85; }
+    .news-read { display: inline-flex; align-items: center; gap: 12px; margin-left: auto; color: #b42332; font-size: 11px; white-space: nowrap; }
+    .news-read .arrow { font-size: 19px; }
+    .news-featured .news-inner:hover .news-text { color: #8f1926; text-decoration: underline; text-underline-offset: 5px; }
+    @media (max-width: 580px) {
+      .news-featured .news-inner { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 9px 12px; min-height: 0; padding-block: 16px; }
+      .news-featured .news-label { grid-column: 1; grid-row: 1; font-size: 10px; }
+      .news-badge { grid-column: 2; grid-row: 1; justify-self: start; font-size: 9px; }
+      .news-read { grid-column: 3; grid-row: 1; margin-left: 0; gap: 7px; font-size: 10px; }
+      .news-featured .news-text { grid-column: 1 / -1; grid-row: 2; font-size: 14px; }
+    }
+    /* 03. 简介、导师与研究方向 */
+    .intro-grid { display: grid; grid-template-columns: .65fr 1.35fr; gap: 75px; }
+    .intro-grid h2 { margin-top: 15px; font-size: 34px; }
+    .intro-subtitle { margin-top: 19px; color: var(--muted); font-size: 14px; line-height: 1.9; }
+    .intro-copy { font-size: 16px; color: #506176; line-height: 2.05; }
+    .focus-areas { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 26px; }
+    .focus-areas span { padding: 5px 13px; border: 1px solid #e0e6ee; border-radius: 3px; color: #60728a; font-size: 11px; }
+    .mentor { background: var(--paper); }
+    .mentor-grid { display: grid; grid-template-columns: 235px 1fr; gap: 55px; }
+    .mentor-portrait { border-radius: 5px; overflow: hidden; align-self: start; background: #e8edf5; }
+    .mentor-portrait img { width: 100%; aspect-ratio: 303 / 424; object-fit: cover; }
+    .mentor-caption { padding: 20px 22px; background: #fff; }
+    .mentor-caption h3 { font-size: 23px; }
+    .mentor-caption p { margin-top: 2px; font-size: 12px; color: var(--muted); }
+    .mentor-caption a { display: inline-flex; margin-top: 13px; gap: 8px; align-items: center; color: #3d6490; font: 12px/1.6 Arial, sans-serif; }
+    .mentor-detail-top { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-block: 4px 26px; border-bottom: 1px solid var(--line); }
+    .mentor-detail-top p { font-size: 19px; font-weight: 600; }
+    .honor { padding: 5px 11px; background: #e8efff; border-radius: 3px; color: #3562ab; font-size: 11px; white-space: nowrap; }
+    .mentor-details { display: grid; grid-template-columns: 1fr 1fr; gap: 38px; padding-top: 26px; }
+    .mentor-details h3 { margin-bottom: 22px; font-size: 15px; }
+    .timeline { list-style: none; padding: 0 0 0 16px; margin: 0; border-left: 1px solid #ced9e6; }
+    .timeline li { position: relative; margin-bottom: 22px; }
+    .timeline li:last-child { margin-bottom: 0; }
+    .timeline li::before { position: absolute; top: 7px; left: -20px; content: ""; width: 7px; height: 7px; background: #6685b2; border-radius: 50%; box-shadow: 0 0 0 4px var(--paper); }
+    .timeline time { color: #6580a3; font: 11px/1.6 Arial, sans-serif; }
+    .timeline p { margin-top: 3px; font-size: 13px; color: #52647a; line-height: 1.85; }
+    .mentor-facts { margin: 0; font-size: 13px; }
+    .mentor-facts dt { margin-top: 17px; margin-bottom: 4px; color: #78899c; font-size: 11px; }
+    .mentor-facts dt:first-child { margin-top: 0; }
+    .mentor-facts dd { margin: 0; color: #52647a; line-height: 1.9; }
+    .research { color: #fff; background: var(--navy); }
+    .research .eyebrow { color: #8fb4f3; }
+    .research .section-heading > p { color: #abbdd2; }
+    .research-list { border-top: 1px solid #405774; }
+    .research-row { display: grid; grid-template-columns: 48px 250px 1fr; gap: 23px; align-items: center; padding: 28px 0; border-bottom: 1px solid #3a516e; }
+    .research-number { align-self: start; margin-top: 4px; color: #86a4cb; font: 12px/1.8 Arial, sans-serif; }
+    .research-row h3 { font-size: 18px; font-weight: 500; }
+    .research-row p { color: #b6c6da; font-size: 13px; line-height: 1.95; }
+    /* 04. 成员与课题组活动 */
+    .members-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+    .member { display: grid; grid-template-columns: 154px 1fr; gap: 25px; padding: 23px; border: 1px solid var(--line); border-radius: 6px; }
+    .member > img { width: 154px; height: 206px; object-fit: cover; object-position: top; border-radius: 3px; background: #edf1f7; }
+    .member-info { min-width: 0; padding-top: 12px; }
+    .member-info h3 { font-size: 22px; }
+    .member-degree { margin-top: 7px; color: #70829a; font-size: 11px; }
+    .member-topic { margin-top: 24px; font-size: 13px; line-height: 1.9; }
+    .member-topic small { display: block; margin-bottom: 3px; color: #7b8899; font-size: 10px; letter-spacing: .08em; }
+    .inline-link { border-bottom: 1px solid #bac9dd; }
+    .member-mail { display: inline-block; margin-top: 18px; color: #637a97; font: 11px/1.8 Arial, sans-serif; overflow-wrap: anywhere; }
+    .member-mail:hover { color: var(--blue); }
+    .activities { background: var(--paper); }
+    .activities-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 38px 30px; }
+    .activity { min-width: 0; }
+    .activity-photo { position: relative; overflow: hidden; border-radius: 5px; background: #e6ebf3; }
+    .activity-photo img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+    .activity time { position: absolute; bottom: 14px; left: 14px; padding: 6px 11px; border-radius: 3px; color: #223c5d; background: rgba(255,255,255,.96); font: 11px/1.4 Arial, sans-serif; }
+    .activity h3 { margin-top: 19px; font-size: 20px; }
+    .activity > p { margin-top: 8px; font-size: 13px; line-height: 1.9; color: var(--muted); }
+    /* 05. 成果与联系方式 */
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); margin: 7px 0 48px; padding: 25px 0 31px; border-bottom: 1px solid var(--line); }
+    .metric { padding-left: 40px; border-left: 1px solid var(--line); }
+    .metric:first-child { padding-left: 0; border-left: 0; }
+    .metric strong { font: 500 53px/1.3 Arial, sans-serif; letter-spacing: -.045em; }
+    .metric span { display: block; margin-top: 8px; color: #6e7e92; font-size: 12px; }
+    .publications { list-style: none; margin: 0; padding: 0; counter-reset: papers; }
+    .publication { display: grid; grid-template-columns: 49px 1fr; column-gap: 18px; padding: 28px 0; border-bottom: 1px solid var(--line); counter-increment: papers; }
+    .publication::before { content: counter(papers, decimal-leading-zero); padding-top: 2px; color: #8a9bb0; font: 12px/1.8 Arial, sans-serif; }
+    .publication h3 { font: 500 21px/1.55 Georgia, "Times New Roman", serif; color: #233c5c; }
+    .authors { margin-top: 10px; color: #78869a; font: 12px/1.85 Arial, sans-serif; }
+    .authors strong { color: #3e648e; font-weight: 600; }
+    .journal { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; margin-top: 12px; color: #527196; font: 12px/1.8 Arial, sans-serif; }
+    .paper-tag { padding: 2px 8px; border-radius: 3px; background: #edf3ff; color: #3c66a3; font: 10px/1.8 "Microsoft YaHei", sans-serif; }
+    .more-results { display: flex; justify-content: flex-end; margin-top: 30px; }
+    .contact { color: #fff; background: var(--navy); }
+    .contact .eyebrow { color: #99b9e7; }
+    .contact-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 80px; }
+    .contact h2 { margin-top: 14px; font-size: 36px; line-height: 1.6; }
+    .contact-intro { margin-top: 16px; color: #a9bdd5; font-size: 13px; }
+    .contact .button { margin-top: 24px; background: #fff; color: var(--navy); border-color: #fff; }
+    .contact .button:hover { background: #e6effd; }
+    .contact-list { margin: 0; padding-top: 8px; }
+    .contact-list dt { margin-top: 22px; margin-bottom: 4px; color: #9fb6d3; font-size: 11px; letter-spacing: .05em; }
+    .contact-list dt:first-child { margin-top: 0; }
+    .contact-list dd { margin: 0; font-size: 14px; }
+    .contact-list a { display: inline-flex; gap: 15px; align-items: center; }
+    .contact-list a:hover { color: #bad4ff; }
+    .contact-list .email { padding-bottom: 15px; width: 100%; justify-content: space-between; border-bottom: 1px solid #46617f; font: 25px/1.8 Arial, sans-serif; overflow-wrap: anywhere; }
+    .site-footer { color: #aabbd0; background: var(--navy); }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 25px; min-height: 83px; border-top: 1px solid #354e6d; font-size: 10px; }
+    .footer-inner a { flex-shrink: 0; }
+    .footer-inner a:hover { color: #fff; }
+    /* 06. 招生咨询：按需展开，支持键盘与原生对话框 */
+    .contact-fab { position: fixed; bottom: 23px; right: 24px; z-index: 25; display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 46px; padding: 10px 17px; border: 1px solid rgba(255,255,255,.3); border-radius: 25px; background: var(--blue); color: #fff; box-shadow: 0 5px 20px #14345b26; font-size: 12px; }
+    .contact-fab:hover { background: #194dcc; }
+    .recruitment-dialog { width: min(380px, calc(100% - 32px)); max-height: calc(100dvh - 40px); padding: 33px 30px; color: var(--ink); border: 1px solid #dce5f3; border-radius: 12px; box-shadow: 0 20px 80px #081d4630; }
+    .recruitment-dialog::backdrop { background: rgba(13,31,57,.5); backdrop-filter: blur(4px); }
+    .dialog-close { position: absolute; top: 10px; right: 10px; display: grid; place-items: center; width: 36px; height: 36px; border: 0; border-radius: 50%; background: #f0f4f9; color: var(--ink); }
+    .recruitment-dialog h2 { margin-top: 15px; font-size: 24px; }
+    .recruitment-dialog p { margin-top: 12px; color: #63758c; font-size: 13px; line-height: 1.9; }
+    .recruitment-dialog img { width: 232px; margin: 20px auto 4px; }
+    .qr-caption { text-align: center; font-size: 11px !important; }
+    /* 07. 响应式与减少动态效果 */
+    @media (min-width: 1600px) { .hero-grid { padding-block: 90px 84px; } }
+    @media (max-width: 1080px) {
+      .brand-caption { display: none; }
+      .hero h1 { font-size: 43px; }
+      .hero-grid { gap: 0; }
+      .hero-art { margin-left: 0; }
+      .hero-description { font-size: 14px; }
+      .intro-grid { gap: 44px; }
+      .mentor-grid { grid-template-columns: 200px 1fr; gap: 34px; }
+      .mentor-details { gap: 25px; }
+      .member { grid-template-columns: 118px 1fr; padding: 19px; gap: 18px; }
+      .member > img { width: 118px; height: 177px; }
+      .member-info { padding-top: 0; }
+      .member-topic { margin-top: 16px; }
+      .member-mail { margin-top: 12px; }
+      .research-row { grid-template-columns: 35px 220px 1fr; gap: 18px; }
+      .contact-grid { gap: 50px; }
+    }
+    @media (max-width: 820px) {
+      .wrap { width: calc(100% - 44px); }
+      .section { padding-block: 65px; }
+      .header-inner { min-height: 68px; flex-wrap: wrap; gap: 0; }
+      .brand-mark { font-size: 26px; }
+      .brand-caption { display: block; font-size: 10px; padding-left: 12px; }
+      .brand { gap: 12px; }
+      .brand-caption small { font-size: 8px; }
+      .js .menu-toggle { display: inline-flex; }
+      .site-nav { width: 100%; flex-wrap: wrap; justify-content: flex-start; padding: 16px 0 20px; gap: 8px 25px; }
+      .js .site-nav { display: none; }
+      .js .site-nav.is-open { display: flex; }
+      .site-nav a { padding-block: 8px; }
+      .hero-grid { padding-top: 52px; padding-bottom: 36px; grid-template-columns: 1.1fr 1fr; gap: 0; }
+      .hero h1 { font-size: 36px; }
+      .hero-kicker { font-size: 10px; }
+      .hero-description { font-size: 13px; }
+      .hero-actions { gap: 10px; }
+      .button { padding: 9px 16px; min-height: 44px; font-size: 12px; gap: 13px; }
+      .hero-affiliation { font-size: 10px; margin-top: 24px; }
+      .art-caption { margin-left: 24px; font-size: 8px; }
+      .art-footer { margin-left: 24px; margin-right: 10px; font-size: 9px; }
+      .art-footer span:last-child { display: none; }
+      .intro-grid { grid-template-columns: 1fr; gap: 25px; }
+      .intro-subtitle { margin-top: 10px; }
+      .intro-subtitle br { display: none; }
+      .intro-copy { font-size: 14px; }
+      .section-heading h2, .intro-grid h2 { font-size: 29px; }
+      .section-heading { margin-bottom: 30px; }
+      .section-heading > p { font-size: 12px; }
+      .mentor-grid { grid-template-columns: 190px 1fr; gap: 28px; }
+      .mentor-details { grid-template-columns: 1fr; }
+      .mentor-detail-top { flex-direction: column; align-items: start; gap: 8px; }
+      .mentor-detail-top p { font-size: 16px; }
+      .research-row { grid-template-columns: 28px 1fr; row-gap: 8px; padding-block: 23px; }
+      .research-row h3 { font-size: 17px; }
+      .research-row p { grid-column: 2; }
+      .members-grid { gap: 16px; }
+      .member { grid-template-columns: 1fr; gap: 17px; padding: 19px; }
+      .member > img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-position: center 25%; }
+      .activity h3 { font-size: 18px; }
+      .activities-grid { gap: 30px 20px; }
+      .metric { padding-left: 25px; }
+      .metric strong { font-size: 43px; }
+      .metric span { font-size: 10px; }
+      .publication h3 { font-size: 19px; }
+      .contact h2 { font-size: 29px; }
+      .contact-grid { gap: 30px; }
+      .contact-list .email { font-size: 21px; }
+    }
+    @media (max-width: 580px) {
+      html { scroll-padding-top: 83px; }
+      .wrap { width: calc(100% - 40px); }
+      .section { padding-block: 54px; }
+      .brand-caption { font-size: 10px; }
+      .brand-caption small { display: none; }
+      .brand-mark { font-size: 25px; }
+      .menu-toggle { padding-inline: 9px; gap: 6px; font-size: 11px; }
+      .hero-grid { display: flex; flex-direction: column; align-items: stretch; padding-block: 41px 29px; }
+      .hero h1 { margin-top: 18px; margin-bottom: 19px; font-size: clamp(31px, 8.8vw, 46px); line-height: 1.4; }
+      .hero-description { max-width: 420px; font-size: 13px; line-height: 1.95; }
+      .hero-actions { margin-top: 25px; }
+      .hero-affiliation { margin-top: 24px; font-size: 9px; }
+      .hero-art { align-self: center; width: min(100%, 365px); padding-top: 29px; margin-bottom: 3px; }
+      .art-caption { margin-left: 17px; font-size: 8px; }
+      .lattice { margin-top: -17px; margin-bottom: -23px; }
+      .art-footer { margin-left: 17px; margin-right: 17px; font-size: 9px; }
+      .art-footer span:last-child { display: block; }
+      .news-inner { gap: 12px; min-height: 68px; padding-block: 14px; font-size: 11px; }
+      .news-label { font-size: 9px; gap: 5px; }
+      .news-inner time { display: none; }
+      .news-inner > .arrow { margin-left: auto; font-size: 17px; }
+      .section-heading { align-items: start; gap: 14px; flex-direction: column; margin-bottom: 27px; }
+      .section-heading h2, .intro-grid h2 { font-size: 27px; }
+      .eyebrow { font-size: 9px; }
+      .intro-copy { font-size: 13px; }
+      .focus-areas { gap: 7px; }
+      .focus-areas span { padding: 5px 9px; font-size: 10px; }
+      .mentor-grid { grid-template-columns: 1fr; gap: 29px; }
+      .mentor-portrait { display: grid; grid-template-columns: 123px 1fr; }
+      .mentor-portrait img { width: 123px; height: 172px; }
+      .mentor-caption { display: flex; justify-content: center; flex-direction: column; padding: 18px; }
+      .mentor-caption h3 { font-size: 22px; }
+      .mentor-detail-top { flex-direction: row; align-items: center; padding-bottom: 20px; }
+      .mentor-detail-top p { font-size: 15px; }
+      .honor { font-size: 10px; padding: 4px 8px; }
+      .mentor-details { gap: 30px; padding-top: 22px; }
+      .research-row { column-gap: 15px; }
+      .research-row p { font-size: 12px; }
+      .members-grid { grid-template-columns: 1fr; gap: 17px; }
+      .member { grid-template-columns: 105px 1fr; padding: 18px; gap: 19px; }
+      .member > img { width: 105px; height: 164px; aspect-ratio: auto; object-position: top; }
+      .member-info h3 { font-size: 20px; }
+      .member-degree { font-size: 10px; }
+      .member-topic { font-size: 12px; margin-top: 17px; }
+      .member-mail { font-size: 10px; }
+      .activities-grid { grid-template-columns: 1fr; gap: 29px; }
+      .activity h3 { font-size: 18px; margin-top: 16px; }
+      .activity > p { font-size: 12px; }
+      .metrics { padding-block: 7px 24px; margin-bottom: 10px; }
+      .metric { padding-left: 16px; }
+      .metric strong { font-size: 36px; }
+      .metric span { max-width: 100px; font-size: 9px; line-height: 1.9; }
+      .publication { grid-template-columns: 23px 1fr; column-gap: 10px; padding-block: 23px; }
+      .publication h3 { font-size: 18px; }
+      .publication::before { font-size: 10px; }
+      .authors, .journal { font-size: 11px; }
+      .more-results { justify-content: flex-start; padding-left: 33px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 39px; }
+      .contact h2 { font-size: 30px; }
+      .contact-list .email { font-size: 24px; }
+      .footer-inner { align-items: start; flex-direction: column; gap: 14px; padding-block: 24px 92px; line-height: 1.9; }
+      .contact-fab { bottom: 18px; right: 16px; min-height: 44px; font-size: 11px; padding: 9px 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; animation: none !important; }
+    }
+    .research-heading-aside { display: flex; flex-direction: column; align-items: flex-end; gap: 15px; }
+    .research-heading-aside p { color: #abbdd2; font-size: 14px; }
+    .research-more { display: inline-flex; align-items: center; gap: 26px; min-height: 44px; padding: 8px 18px; border: 1px solid #7792b4; border-radius: 4px; color: #fff; font-size: 14px; }
+    .research-more:hover { background: #27486e; border-color: #c3d5ef; }
+    @media (max-width: 580px) { .research-heading-aside { align-items: flex-start; } .research-heading-aside p { font-size: 12px; } }
+    /* V4：滚动展示。只改变透明度与变换，不截取滚轮或改变页面高度。 */
+    .scroll-progress { position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; pointer-events: none; }
+    .scroll-progress span { display: block; width: 100%; height: 100%; background: var(--blue); transform: scaleX(0); transform-origin: left; }
+    .site-nav a { position: relative; }
+    .site-nav a:not(:last-child)::after { position: absolute; bottom: 3px; left: 0; width: 100%; height: 2px; content: ""; background: var(--blue); transform: scaleX(0); transform-origin: left; transition: transform .35s ease; }
+    .site-nav a[aria-current="location"]::after { transform: scaleX(1); }
+    .motion-ready [data-reveal] {
+      --enter-x: 0px; --enter-y: 36px; --enter-scale: 1;
+      opacity: 0;
+      transform: translate3d(var(--enter-x), var(--enter-y), 0) scale(var(--enter-scale));
+      transition: opacity .72s ease var(--enter-delay, 0ms), transform .95s cubic-bezier(.2,.7,.2,1) var(--enter-delay, 0ms);
+    }
+    .motion-ready [data-reveal="left"] { --enter-x: -26px; --enter-y: 18px; }
+    .motion-ready [data-reveal="image"] { --enter-y: 28px; --enter-scale: .97; }
+    .motion-ready [data-reveal="art"] { --enter-y: 26px; --enter-scale: .96; transition-duration: .95s, 1.25s; }
+    .motion-ready [data-reveal].is-visible { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+    .motion-ready [data-reveal]:focus-within { opacity: 1; transform: none; transition: none; }
+    .motion-ready [data-reveal] .eyebrow::before { transform: scaleX(0); transform-origin: left; transition: transform .7s cubic-bezier(.2,.7,.2,1) .12s; }
+    .motion-ready [data-reveal].is-visible .eyebrow::before { transform: scaleX(1); }
+    .motion-ready .activity[data-reveal] .activity-photo img { transform: scale(1.045); transition: transform 1.3s cubic-bezier(.2,.7,.2,1) var(--enter-delay, 0ms); }
+    .motion-ready .activity[data-reveal].is-visible .activity-photo img { transform: scale(1); }
+    .motion-ready .hero .lattice { animation: lattice-drift 7s ease-in-out infinite; animation-play-state: paused; }
+    .motion-ready .hero.is-on-screen .lattice { animation-play-state: running; }
+    .page-hidden .hero.is-on-screen .lattice { animation-play-state: paused; }
+    @keyframes lattice-drift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+    .chapter-dock { position: fixed; z-index: 18; left: 24px; bottom: calc(24px + var(--footer-clearance, 0px)); display: flex; align-items: center; gap: 14px; padding: 11px 12px 11px 17px; border: 1px solid #dce4ef; border-radius: 7px; color: var(--ink); background: rgba(255,255,255,.96); box-shadow: 0 5px 24px #152f500b; backdrop-filter: blur(12px); }
+    .contact-fab { bottom: calc(24px + var(--footer-clearance, 0px)); }
+    .chapter-dock[hidden] { display: none; }
+    .chapter-label { display: flex; align-items: center; gap: 13px; min-width: 126px; }
+    .chapter-current { min-width: 28px; color: var(--blue); font: 21px/1.2 Arial, sans-serif; letter-spacing: -.03em; }
+    .chapter-copy { display: flex; flex-direction: column; gap: 3px; font-size: 11px; line-height: 1.5; }
+    .chapter-copy small { color: #7b8fa7; font: 8px/1.5 Arial, sans-serif; letter-spacing: .12em; }
+    .motion-toggle { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid #e0e7f0; border-radius: 4px; background: #f6f9fd; color: #5d7695; }
+    .motion-toggle:hover { background: #eaf1ff; color: var(--blue); }
+    .motion-toggle:disabled { cursor: default; opacity: .6; }
+    .motion-toggle svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .play-symbol { display: none; }
+    .motion-toggle[aria-pressed="true"] .play-symbol { display: block; }
+    .motion-toggle[aria-pressed="true"] .pause-symbol { display: none; }
+    .motion-reduced *, .motion-reduced *::before, .motion-reduced *::after { animation: none !important; transition: none !important; }
+    html.motion-reduced { scroll-behavior: auto; }
+    @media (max-width: 820px) {
+      .motion-ready [data-reveal] { --enter-y: 22px; transition-duration: .5s, .7s; transition-delay: 0ms; }
+      .motion-ready [data-reveal="left"] { --enter-x: 0px; --enter-y: 22px; }
+      .motion-ready [data-reveal="image"], .motion-ready [data-reveal="art"] { --enter-scale: .985; }
+      .chapter-dock { left: 16px; bottom: 24px; gap: 10px; padding: 7px 9px; }
+      .chapter-label { min-width: 28px; gap: 0; }
+      .chapter-current { font-size: 18px; text-align: center; }
+      .chapter-copy { display: none; }
+      .motion-toggle { width: 36px; height: 36px; }
+      .motion-ready .hero .lattice { animation: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .motion-ready [data-reveal] { opacity: 1 !important; transform: none !important; }
+      .motion-ready [data-reveal] .eyebrow::before, .motion-ready .activity[data-reveal] .activity-photo img { transform: none !important; }
+    }
+    @media print {
+      .chapter-dock, .scroll-progress, .contact-fab { display: none !important; }
+      .site-header { position: static; }
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+    /* V5：重点成果与近期论文。 */
+    .publication-intro { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; margin: -13px 0 32px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+    .publication-intro p { color: #6a7c91; font-size: 13px; }
+    .publication-intro > span { flex-shrink: 0; color: #8290a2; font-size: 10px; letter-spacing: .04em; }
+    .featured-papers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+    .paper-feature { min-width: 0; display: flex; flex-direction: column; padding: 27px; border: 1px solid #dfe6ef; border-top: 3px solid #2d5d9f; border-radius: 5px; background: #f8fafd; }
+    .paper-journal-name { margin-bottom: 14px; color: #2f5b94; font: 600 14px/1.55 Georgia, "Times New Roman", serif; }
+    .paper-feature h3 { margin: 0; color: #213c5c; font: 500 21px/1.5 Georgia, "Times New Roman", serif; overflow-wrap: anywhere; }
+    .paper-feature h3 a:hover, .publication h3 a:hover { color: var(--blue); text-decoration: underline; text-underline-offset: 4px; }
+    .paper-summary { margin-top: 15px; color: #63758b; font-size: 12px; line-height: 1.95; }
+    .paper-feature .authors { margin-block: 17px 22px; font-size: 11px; line-height: 1.8; }
+    .paper-footer { display: flex; flex-wrap: wrap; align-items: center; gap: 9px 14px; margin-top: 16px; color: #5e7591; font: 11px/1.8 Arial, sans-serif; }
+    .paper-feature > .paper-footer { margin-top: auto; padding-top: 18px; border-top: 1px solid #e0e7f0; }
+    .paper-source { display: inline-flex; align-items: center; gap: 8px; color: #315f9e; font: 11px/1.8 "Microsoft YaHei", sans-serif; white-space: nowrap; }
+    .paper-source:hover { color: var(--blue); text-decoration: underline; text-underline-offset: 4px; }
+    .paper-feature--lead { grid-column: 1 / -1; display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 38px; padding: 35px; border-color: #ead8db; border-top-color: #b42332; background: #fff7f7; }
+    .paper-stamp { padding-top: 3px; }
+    .paper-kicker { color: #a94a54; font-size: 10px; letter-spacing: .09em; }
+    .paper-stamp > p { margin-block: 12px 10px; color: #9d2030; font: 500 41px/1.1 Georgia, "Times New Roman", serif; letter-spacing: -.045em; }
+    .paper-stamp-note { color: #9a747c; font-size: 10px; }
+    .paper-feature--lead h3 { font-size: 28px; line-height: 1.5; }
+    .paper-feature--lead .paper-summary { font-size: 13px; }
+    .paper-feature--lead .authors { margin-bottom: 0; }
+    .paper-feature--lead .paper-tag { color: #a52b3b; background: #f9e6e9; }
+    .publication-group-title { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-top: 42px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    .publication-group-title h3 { font-size: 19px; font-weight: 600; }
+    .publication-group-title > span { color: #8292a6; font: 10px/1.6 Arial, sans-serif; letter-spacing: .11em; }
+    .recent-papers .paper-journal-name { margin-bottom: 9px; font-size: 13px; }
+    .recent-papers .paper-summary { margin-top: 10px; }
+    .recent-papers .paper-footer { margin-top: 12px; }
+    .paper-date-note { display: block; margin-top: 7px; color: #8491a2; font-size: 10px; }
+    .early-papers { margin-top: 30px; border: 1px solid var(--line); border-radius: 5px; padding-inline: 24px; }
+    .early-papers summary { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding-block: 21px; cursor: pointer; color: #345476; font-size: 14px; list-style: none; }
+    .early-papers summary::-webkit-details-marker { display: none; }
+    .early-papers summary small { margin-left: 12px; color: #8492a5; font: 10px/1.8 Arial, sans-serif; }
+    .details-icon { color: #49709c; font-size: 21px; transition: transform .2s; }
+    .early-papers[open] .details-icon { transform: rotate(45deg); }
+    .early-papers .publication:first-child { border-top: 1px solid var(--line); }
+    .early-papers .publication:last-child { border-bottom: 0; }
+    .early-papers .publication h3 { font-size: 18px; }
+    @media (min-width: 1100px) {
+      .members-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+      .member { grid-template-columns: 102px minmax(0, 1fr); gap: 18px; padding: 20px; }
+      .member > img { width: 102px; height: 153px; }
+      .member-info { padding-top: 2px; }
+      .member-info h3 { font-size: 21px; }
+      .member-topic { margin-top: 17px; }
+      .member-mail { margin-top: 13px; font-size: 10px; }
+    }
+    @media (max-width: 1050px) {
+      .featured-papers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .paper-feature:last-child { grid-column: 1 / -1; }
+    }
+    @media (max-width: 580px) {
+      .publication-intro { align-items: start; flex-direction: column; gap: 9px; margin-top: -10px; margin-bottom: 24px; padding-bottom: 19px; }
+      .publication-intro p { font-size: 12px; }
+      .featured-papers { grid-template-columns: 1fr; gap: 17px; }
+      .paper-feature { padding: 23px; }
+      .paper-feature--lead { grid-template-columns: 1fr; gap: 23px; }
+      .paper-stamp > p { font-size: 38px; margin-block: 8px; }
+      .paper-feature--lead h3 { font-size: 23px; }
+      .paper-feature--lead .paper-summary { font-size: 12px; }
+      .paper-feature h3 { font-size: 20px; }
+      .paper-journal-name { margin-bottom: 12px; }
+      .publication-group-title { margin-top: 31px; }
+      .publication-group-title > span { font-size: 9px; letter-spacing: .06em; }
+      .early-papers { padding-inline: 18px; }
+      .early-papers summary > span:first-child { display: flex; flex-direction: column; }
+      .early-papers summary small { margin-left: 0; margin-top: 3px; }
+      .early-papers .publication { grid-template-columns: 1fr; }
+      .early-papers .publication::before { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { .details-icon { transition: none; } }
+
+    /* V7：独立教程入口，保留既有主页内容。 */
+    .site-nav { gap:20px; }
+    .learning-panel { display:flex; align-items:center; justify-content:space-between; gap:30px; margin-top:42px; padding:27px 30px; border:1px solid #476380; border-radius:6px; background:#ffffff08; }
+    .learning-panel .learning-kicker { color:#8cb4f4; font:10px/1.6 Arial,sans-serif; letter-spacing:.16em; margin-bottom:9px; }
+    .learning-panel h3 { font-size:23px; margin-bottom:7px; }
+    .learning-panel p { color:#aebfd5; font-size:12px; }
+    .learning-panel a { display:inline-flex; gap:22px; align-items:center; flex-shrink:0; padding:12px 20px; background:#fff; border:1px solid #fff; color:#163656; border-radius:4px; font-size:12px; }
+    .learning-panel a:hover { background:#eaf1ff; }
+    @media(max-width:1180px) and (min-width:821px) { .brand-caption { display:none; } .site-nav { gap:17px; } }
+    @media(max-width:580px) { .learning-panel { align-items:start; flex-direction:column; gap:20px; padding:22px; margin-top:27px; } .learning-panel h3 { font-size:21px; } .learning-panel p { font-size:11px; } }
+  </style>
+<link rel="alternate" hreflang="zh-CN" href="https://jisuan.bond/"><link rel="alternate" hreflang="en" href="https://jisuan.bond/index-v8-en.html"><link rel="alternate" hreflang="x-default" href="https://jisuan.bond/"><link rel="canonical" href="https://jisuan.bond/index-v8-en.html"><style>.language-switch{display:flex;align-items:center;gap:2px;border:1px solid #ccd8e8;border-radius:5px;padding:3px;background:#fff;flex-shrink:0;margin-left:14px;order:3;line-height:1.4;white-space:nowrap}
+.language-switch a{font:600 11px/1.5 Arial,"Microsoft YaHei",sans-serif;display:block;padding:5px 8px;color:#39506e;border-radius:3px;text-decoration:none}
+.language-switch a[aria-current="page"]{background:#285ee7;color:#fff}.language-switch a:hover{box-shadow:inset 0 0 0 1px #8baae0}.language-switch a:focus-visible{outline:3px solid #285ee7;outline-offset:3px}
+.header-inner{gap:12px}.header-inner>.brand{order:0}.site-nav,.top-nav{order:2;margin-left:auto}.menu-toggle{order:4}.site-nav{gap:17px}
+html[lang=en] body{font-family:Arial,"Segoe UI",system-ui,sans-serif}html[lang=en] .brand-mark{letter-spacing:-.055em}html[lang=en] .site-nav a{font-size:12px}html[lang=en] .site-nav{gap:14px}html[lang=en] .hero h1{font-size:clamp(36px,4.3vw,62px);line-height:1.13;letter-spacing:-.045em}html[lang=en] .course-hero h1{font-size:clamp(34px,4.1vw,56px);line-height:1.2}html[lang=en] .hero-description{max-width:620px}html[lang=en] .research-row{grid-template-columns:38px minmax(180px,.75fr) minmax(0,1.4fr)}html[lang=en] .learning-panel h3{font-size:22px}html[lang=en] .article-hero h1{font-size:38px;line-height:1.25}html[lang=en] .lesson-head h2{line-height:1.35}html[lang=en] .chapter-name{max-width:140px}html[lang=en] .lesson-content{line-height:1.85}html[lang=en] .parameter-table{min-width:760px}
+@media(max-width:1450px) and (min-width:821px){.header-inner .brand-caption{display:none}.site-nav{gap:14px}.language-switch{margin-left:4px}}
+@media(max-width:1050px) and (min-width:821px){.site-nav{gap:10px}.site-nav a{font-size:11px}html[lang=en] .site-nav{gap:10px}html[lang=en] .site-nav a{font-size:11px}.language-switch a{padding:5px 6px}.header-inner{gap:8px}}
+@media(max-width:820px){.language-switch{margin-left:0;order:4}.header-inner{gap:10px}.menu-toggle{margin-left:auto;order:3}.site-nav{margin-left:0;order:5}.top-nav{margin-left:auto}.top-nav+.language-switch{margin-left:3px}html[lang=en] .hero h1{font-size:clamp(34px,6.4vw,54px)}html[lang=en] .research-row{grid-template-columns:28px 1fr}html[lang=en] .article-hero h1{font-size:32px}}
+@media(max-width:520px){.top-nav .home,.top-nav .reference-link,.top-nav .download-link{display:none}.top-nav{gap:0}.language-switch a{padding:5px 7px}.language-switch{margin-left:auto;font-size:10px}.header-inner{gap:9px}.top-nav+.language-switch{margin-left:1px}html[lang=en] .brand-mark{font-size:25px}html[lang=en] .course-hero h1{font-size:33px}html[lang=en] .article-hero h1{font-size:29px}html[lang=en] .learning-panel h3{font-size:20px}html[lang=en] .recruitment-dialog{max-height:90vh;overflow:auto}html[lang=en] .lesson-head h2{font-size:21px}html[lang=en] .module-card h3{font-size:21px}html[lang=en] .chapter-name{max-width:110px}}
+@media print{.language-switch{display:none!important}}
+
+@media(max-width:580px){.header-inner .brand-caption{display:none}.site-header .header-inner{min-height:66px}.site-nav.is-open{padding-top:4px}html[lang=en] .hero h1{font-size:32px;line-height:1.17}.language-switch{margin-left:0}}
+
+html[lang=en] .mentor-grid>*,html[lang=en] .learning-intro>*,html[lang=en] .mentor-portrait,html[lang=en] .mentor-caption,html[lang=en] .route-form{min-width:0}html[lang=en] .route-form select{width:100%;min-width:0}html[lang=en] .mentor-detail-top{flex-wrap:wrap}html[lang=en] .honor{white-space:normal}html[lang=en] .mentor-caption p{white-space:normal}
+@media(max-width:360px){html[lang=en] .mentor-portrait{grid-template-columns:92px minmax(0,1fr)}html[lang=en] .mentor-caption{padding:15px 11px}html[lang=en] .mentor-caption h3{font-size:20px}html[lang=en] .mentor-caption a{font-size:10px;gap:5px}}
+</style><style>
+/* V8: keep the added assistant link readable, with a menu on tablet widths. */
+@media (min-width:821px) and (max-width:1100px) {
+  .header-inner { min-height:68px; flex-wrap:wrap; gap:10px; }
+  .js .menu-toggle { display:inline-flex; margin-left:auto; order:3; }
+  .language-switch { order:4; margin-left:0; }
+  .site-nav, html[lang=en] .site-nav {
+    order:5; width:100%; margin-left:0; flex-wrap:wrap;
+    justify-content:flex-start; padding:4px 0 20px; gap:8px 25px;
+  }
+  .js .site-nav { display:none; }
+  .js .site-nav.is-open { display:flex; }
+  .site-nav a, html[lang=en] .site-nav a { font-size:13px; padding-block:8px; }
+}
+</style>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main"> Skip to main content </a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="#top" aria-label="Jisuan — back to top">
+        <span class="brand-mark"><span>Ji</span>suan</span>
+        <span class="brand-caption">Yujin Ji Research Group<small>FUNSOM · SOOCHOW UNIVERSITY</small></span>
+      </a>
+      <button class="menu-toggle" id="menu-toggle" aria-label="Open navigation menu" aria-controls="site-nav" aria-expanded="false" type="button">
+        <svg class="icon" viewbox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg> Menu </button>
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="#intro">About</a><a href="#resume">PI</a><a href="#research"> Research </a><a href="#students"> People </a><a href="#activities"> Group Life </a><a href="#result"> Publications </a><a href="tutorial-v8-en.html">Tutorials</a>
+        <a href="vasp-assistant-v8.html?site-lang=en" hreflang="zh-CN" title="VASP Assistant (Chinese interface)">VASP Assistant</a><a href="#contact"> Contact </a>
+      </nav><div class="language-switch" role="group" aria-label="Language"><a href="index-v8.html" lang="zh-CN" hreflang="zh-CN" data-language-link="zh">中文</a><a href="index-v8-en.html" lang="en" hreflang="en" data-language-link="en" aria-current="page">EN</a></div>
+    </div>
+    <div class="scroll-progress" aria-hidden="true"><span id="reading-progress"></span></div>
+  </header>
+  <main id="main" tabindex="-1">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="hero-kicker"> Yujin Ji Research Group · Soochow University </p>
+          <h1 id="hero-title">Atomic insights.<br><span>Materials possibilities.</span></h1>
+          <p class="hero-description"> We simulate and design two-dimensional materials for energy storage and conversion, linking atomic structure to material performance. </p>
+          <div class="hero-actions"><a class="button" href="#research"> Explore our research <span class="arrow" aria-hidden="true">↗</span></a><a class="button secondary" href="#intro"> Meet the group <span class="arrow" aria-hidden="true">→</span></a></div>
+          <p class="hero-affiliation"> FUNSOM, Soochow University · Youyong Li Research Group </p>
+        </div>
+        <figure class="hero-art" aria-label="Decoration diagram of two-dimensional material layered structure">
+          <p class="art-caption">EXPLORING MATERIALS, AT THE ATOMIC SCALE.</p>
+          <svg class="lattice" viewbox="0 0 570 450" role="img" aria-labelledby="lattice-title">
+            <title id="lattice-title"> Abstract illustration of multi-layer lattice of two-dimensional material </title>
+            <defs>
+              <lineargradient id="node-blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#81b3ff" /><stop offset=".55" stop-color="#2b68ed" /><stop offset="1" stop-color="#1940a0" /></lineargradient>
+              <lineargradient id="node-teal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b1e4e8" /><stop offset=".6" stop-color="#5babbc" /><stop offset="1" stop-color="#326a88" /></lineargradient>
+              <lineargradient id="plane-fill" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d9e8ff" stop-opacity=".75" /><stop offset="1" stop-color="#d9e8ff" stop-opacity=".08" /></lineargradient>
+              <radialgradient id="art-glow"><stop stop-color="#e5eeff" /><stop offset="1" stop-color="#f7f9fc" stop-opacity="0" /></radialgradient>
+              <pattern id="diagram-grid" width="27" height="27" patternunits="userSpaceOnUse"><circle cx="1" cy="1" r=".65" fill="#9daec6" opacity=".32" /></pattern>
+              <g id="hex-cell"><path d="M0 19 33 0 66 19V57L33 76 0 57Z" fill="none" stroke="currentColor" stroke-width="1.5" /></g>
+              <g id="honeycomb">
+                <use href="#hex-cell" x="0" y="0" /><use href="#hex-cell" x="66" y="0" /><use href="#hex-cell" x="132" y="0" /><use href="#hex-cell" x="198" y="0" /><use href="#hex-cell" x="264" y="0" />
+                <use href="#hex-cell" x="33" y="57" /><use href="#hex-cell" x="99" y="57" /><use href="#hex-cell" x="165" y="57" /><use href="#hex-cell" x="231" y="57" />
+                <use href="#hex-cell" x="0" y="114" /><use href="#hex-cell" x="66" y="114" /><use href="#hex-cell" x="132" y="114" /><use href="#hex-cell" x="198" y="114" /><use href="#hex-cell" x="264" y="114" />
+              </g>
+              <g id="atoms">
+                <circle cx="0" cy="19" r="5" /><circle cx="33" cy="0" r="5" /><circle cx="66" cy="19" r="5" /><circle cx="99" cy="0" r="5" /><circle cx="132" cy="19" r="5" /><circle cx="165" cy="0" r="5" /><circle cx="198" cy="19" r="5" /><circle cx="231" cy="0" r="5" /><circle cx="264" cy="19" r="5" /><circle cx="297" cy="0" r="5" /><circle cx="330" cy="19" r="5" />
+                <circle cx="0" cy="57" r="5" /><circle cx="33" cy="76" r="5" /><circle cx="66" cy="57" r="5" /><circle cx="99" cy="76" r="5" /><circle cx="132" cy="57" r="5" /><circle cx="165" cy="76" r="5" /><circle cx="198" cy="57" r="5" /><circle cx="231" cy="76" r="5" /><circle cx="264" cy="57" r="5" /><circle cx="297" cy="76" r="5" /><circle cx="330" cy="57" r="5" />
+                <circle cx="0" cy="133" r="5" /><circle cx="33" cy="114" r="5" /><circle cx="66" cy="133" r="5" /><circle cx="99" cy="114" r="5" /><circle cx="132" cy="133" r="5" /><circle cx="165" cy="114" r="5" /><circle cx="198" cy="133" r="5" /><circle cx="231" cy="114" r="5" /><circle cx="264" cy="133" r="5" /><circle cx="297" cy="114" r="5" /><circle cx="330" cy="133" r="5" />
+                <circle cx="0" cy="171" r="5" /><circle cx="33" cy="190" r="5" /><circle cx="66" cy="171" r="5" /><circle cx="99" cy="190" r="5" /><circle cx="132" cy="171" r="5" /><circle cx="165" cy="190" r="5" /><circle cx="198" cy="171" r="5" /><circle cx="231" cy="190" r="5" /><circle cx="264" cy="171" r="5" /><circle cx="297" cy="190" r="5" /><circle cx="330" cy="171" r="5" />
+              </g>
+            </defs>
+            <circle cx="285" cy="215" r="235" fill="url(#art-glow)" />
+            <rect x="35" y="23" width="500" height="390" fill="url(#diagram-grid)" />
+            <ellipse cx="296" cy="377" rx="187" ry="28" fill="#c6d6ec" opacity=".13" />
+            <g fill="none" stroke="#a2b9d4" stroke-dasharray="3 5" stroke-width="1"><path d="M138 153V301M257 98V246M477 162V310M357 268V360" /></g>
+            <g transform="matrix(.99,-.29,.64,.45,62,291)" opacity=".44"><path d="M-16-14H346V205H-16Z" fill="url(#plane-fill)" stroke="#b7cce4" /><use href="#honeycomb" color="#829fbe" /><use href="#atoms" fill="#8eaccb" /></g>
+            <g transform="matrix(.99,-.29,.64,.45,62,221)" opacity=".73"><path d="M-16-14H346V205H-16Z" fill="url(#plane-fill)" stroke="#b0cadd" /><use href="#honeycomb" color="#70a7b5" /><use href="#atoms" fill="url(#node-teal)" /></g>
+            <g transform="matrix(.99,-.29,.64,.45,62,151)"><path d="M-16-14H346V205H-16Z" fill="url(#plane-fill)" stroke="#8cafe4" /><use href="#honeycomb" color="#6595dc" /><use href="#atoms" fill="url(#node-blue)" /></g>
+            <g stroke="#92aac7" fill="none" stroke-width="1"><path d="M415 107 456 75H514" /><circle cx="415" cy="107" r="3" fill="#fff" /><path d="M111 315 74 359H28" /><circle cx="111" cy="315" r="3" fill="#fff" /></g>
+            <g fill="#6d86a6" font-size="10" font-family="Arial, sans-serif" letter-spacing="1"><text x="460" y="65">2D LAYERS</text><text x="30" y="378">MULTISCALE</text></g>
+            <g transform="translate(443 363)" stroke-width="1" stroke="#8ea5bf"><path d="M0 20 27 4M0 20 0-9M0 20 25 34" /><g stroke="none" fill="#879eb9" font-size="9" font-family="Arial, sans-serif"><text x="30" y="5">x</text><text x="-3" y="-15">z</text><text x="29" y="39">y</text></g></g>
+          </svg>
+          <figcaption class="art-footer"><span> Structure · Reaction · Performance </span><span>THEORY → DESIGN</span></figcaption>
+        </figure>
+      </div>
+      <div class="news-strip news-featured"><a class="wrap news-inner" href="https://scit.suda.edu.cn/da/20/c5994a711200/page.htm" target="_blank" rel="noopener noreferrer" title="Read the Soochow University story (opens in a new tab)"><span class="news-label"> Group News </span><span class="news-badge"> HIGHLIGHT </span><span class="news-text"> Congratulations to Prof. Ji on his Nature paper as a co-first author! </span><span class="news-read"> Read the story <span class="arrow" aria-hidden="true">↗</span></span></a></div>
+    </section>
+
+    <section class="section" id="intro" aria-labelledby="intro-title">
+      <div class="wrap intro-grid">
+        <div><p class="eyebrow">01 / ABOUT THE GROUP</p><h2 id="intro-title"> About the Group </h2><p class="intro-subtitle"> Understanding materials through simulation. <br> Exploring energy at the atomic scale. </p></div>
+        <div><p class="intro-copy"> The Yujin Ji Research Group is part of Prof. Youyong Li's group at the Institute of Functional Nano &amp; Soft Materials (FUNSOM), Soochow University. We focus on the theoretical simulation and design of two-dimensional materials for energy storage and conversion. Through multiscale modeling, we investigate how surface atomic structures and morphologies evolve, uncover surface reaction mechanisms, and connect atomic and electronic structure with material performance. Combining these insights with databases of two-dimensional materials, we conduct high-throughput screening, material design, and performance optimization to guide the development of new energy materials. </p><div class="focus-areas" aria-label="Research Keywords"><span> Two-dimensional Materials </span><span> Multiscale Modeling </span><span> Energy Storage &amp; Conversion </span><span> High-throughput Screening </span></div></div>
+      </div>
+    </section>
+
+    <section class="section mentor" id="resume" aria-labelledby="resume-title">
+      <div class="wrap">
+        <div class="section-heading"><div><p class="eyebrow">02 / PRINCIPAL INVESTIGATOR</p><h2 id="resume-title"> Principal Investigator </h2></div><p> Institute of Functional Nano &amp; Soft Materials (FUNSOM), Soochow University </p></div>
+        <div class="mentor-grid">
+          <figure class="mentor-portrait"><img src="./teacher_photo.jpg" alt="Prof. Yujin Ji" width="303" height="424" loading="lazy"><figcaption class="mentor-caption"><h3> Yujin Ji </h3><p> Associate Professor · Yujin Ji </p><a href="mailto:yjji@suda.edu.cn"><svg class="icon" viewbox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 6 9 7 9-7" /></svg>yjji@suda.edu.cn</a></figcaption></figure>
+          <div>
+            <div class="mentor-detail-top"><p> Theoretical simulation and materials design </p><span class="honor"> Outstanding Young Scholar, Soochow University </span></div>
+            <div class="mentor-details">
+              <div><h3> Education </h3><ol class="timeline"><li><time>2014.09–2019.12</time><p> PhD, Soochow University, China </p></li><li><time>2018.09–2019.09</time><p> Joint PhD training, The University of Texas at Austin, USA </p></li><li><time>2010.09–2014.06</time><p> Bachelor's degree, Jiangsu University, China </p></li></ol></div>
+              <div><h3> Appointments &amp; Honors </h3><dl class="mentor-facts"><dt> Appointments </dt><dd> Dec 2019–present · Associate Professor, FUNSOM, Soochow University </dd><dt> Research Group </dt><dd> Youyong Li Research Group </dd><dt> Honors </dt><dd> Outstanding Young Scholar, Soochow University </dd><dt> Research Interests </dt><dd> Two-dimensional Materials/Energy Storage and Conversion/Theoretical Simulation and Design </dd></dl></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section research" id="research" aria-labelledby="research-title">
+      <div class="wrap">
+        <div class="section-heading"><div><p class="eyebrow">03 / RESEARCH DIRECTIONS</p><h2 id="research-title"> Research </h2></div><div class="research-heading-aside"><p> Understanding material properties, starting with atomic structure. </p><a class="research-more" href="./research-v8-en.html"> Learn more <span class="arrow" aria-hidden="true">↗</span></a></div></div>
+        <div class="research-list">
+          <article class="research-row"><span class="research-number">01</span><h3> Structural Evolution </h3><p> We use multiscale simulations to study how the surface atomic structure and morphology of two-dimensional materials evolve, identifying the principles behind these changes. </p></article>
+          <article class="research-row"><span class="research-number">02</span><h3> Surface Reaction Mechanisms </h3><p> We investigate surface reactions on two-dimensional materials at the atomic and electronic scales, identifying key reaction steps and the factors that control them. </p></article>
+          <article class="research-row"><span class="research-number">03</span><h3> Structure–Property Relationships </h3><p> We connect the microscopic structure of two-dimensional materials with their macroscopic properties, providing a theoretical basis for improving performance. </p></article>
+          <article class="research-row"><span class="research-number">04</span><h3> High-throughput Materials Screening </h3><p> We combine databases of two-dimensional materials with high-throughput screening to identify promising systems for energy applications. </p></article>
+          <article class="research-row"><span class="research-number">05</span><h3> Materials Design &amp; Optimization </h3><p> We use theoretical insights to design and optimize two-dimensional energy materials for storage and conversion applications. </p></article>
+        </div>
+      <div class="learning-panel"><div><p class="learning-kicker">A NOTEBOOK FOR YOUR FIRST CALCULATION</p><h3> From quantum chemistry to your first VASP calculation. </h3><p> Explore the principles, input files, parameters, and research tasks of computational chemistry, step by step. </p></div><a href="tutorial-v8-en.html"> Explore the tutorials <span aria-hidden="true">↗</span></a></div>
+      </div>
+    </section>
+
+    <section class="section" id="students" aria-labelledby="students-title">
+      <div class="wrap">
+        <div class="section-heading"><div><p class="eyebrow">04 / OUR PEOPLE</p><h2 id="students-title"> Our Students </h2></div><p> Learning and growing through shared discovery. </p></div>
+        <div class="members-grid">
+          <article class="member"><img src="./student1.jpg" alt="Lujie Jin" loading="lazy"><div class="member-info"><h3> Lujie Jin </h3><p class="member-degree"> PhD student · Entered 2024 </p><p class="member-topic"><small> Research </small> Battery Materials Modeling &amp; Design </p><a class="member-mail" href="mailto:1036654816@qq.com" aria-label="Email Lujie Jin: 1036654816@qq.com">1036654816@qq.com ↗</a></div></article>
+          <article class="member"><img src="./student2.jpg" alt="Jiayao Yu" loading="lazy"><div class="member-info"><h3> Jiayao Yu </h3><p class="member-degree"> Master's student · Entered 2024 </p><p class="member-topic"><small> Research </small><a class="inline-link" href="https://ys.mihoyo.com/cloud/#/" target="_blank" rel="noopener noreferrer"> Genshin Impact, let's go! </a></p><a class="member-mail" href="mailto:1347024802@qq.com" aria-label="Email Jiayao Yu: 1347024802@qq.com">1347024802@qq.com ↗</a></div></article>
+          <article class="member"><img src="./assets/v5/liu-baiyan.jpg" alt="Baiyan Liu" width="520" height="738" loading="lazy" decoding="async"><div class="member-info"><h3> Baiyan Liu </h3><p class="member-degree"> Master's student · Entered 2025 </p><p class="member-topic"><small> Research </small> Crystal Structure Generation </p><a class="member-mail" href="mailto:3302356097@qq.com" aria-label="Email Baiyan Liu: 3302356097@qq.com">3302356097@qq.com ↗</a></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section activities" id="activities" aria-labelledby="activities-title">
+      <div class="wrap">
+        <div class="section-heading"><div><p class="eyebrow">05 / LIFE IN THE GROUP</p><h2 id="activities-title"> Group Life </h2></div><p> Moments worth remembering, beyond the research. </p></div>
+        <div class="activities-grid">
+          <article class="activity" id="news-2026"><div class="activity-photo"><img src="./assets/v5/activity3-1280.jpg" srcset="./assets/v5/activity3-640.jpg 640w, ./assets/v5/activity3-1280.jpg 1280w" sizes="(max-width: 580px) calc(100vw - 40px), (max-width: 820px) calc(50vw - 32px), (max-width: 1268px) calc(50vw - 59px), 575px" width="1280" height="853" decoding="async" alt="A group photo of the graduation defense of the 2026 students of the research group" loading="lazy"><time datetime="2026-05-18">2026.05.18</time></div><h3> Celebrating the Class of 2026! </h3><p> Dingyanyan Zhou, from the Class of 2026, successfully completed the thesis defense. Students and faculty gathered for a commemorative photo. </p></article>
+          <article class="activity"><div class="activity-photo"><img src="./assets/v5/pashan-1280.jpg" srcset="./assets/v5/pashan-640.jpg 640w, ./assets/v5/pashan-1280.jpg 1280w" sizes="(max-width: 580px) calc(100vw - 40px), (max-width: 820px) calc(50vw - 32px), (max-width: 1268px) calc(50vw - 59px), 575px" width="1280" height="854" decoding="async" alt="A group photo of students from the research group taking part in the Wufeng Mountain hiking activity" loading="lazy"><time datetime="2026-04-24">2026.04.24</time></div><h3> Hiking at Wufeng Mountain </h3><p> Students explored Wufeng Mountain together, following the China-shaped hiking route and enjoying the spring scenery. </p></article>
+          <article class="activity"><div class="activity-photo"><img src="./assets/v5/activity2-1280.jpg" srcset="./assets/v5/activity2-640.jpg 640w, ./assets/v5/activity2-1280.jpg 789w" sizes="(max-width: 580px) calc(100vw - 40px), (max-width: 820px) calc(50vw - 32px), (max-width: 1268px) calc(50vw - 59px), 575px" width="789" height="526" decoding="async" alt="A group photo of the graduation defense of the 2025 students of the research group" loading="lazy"><time datetime="2025-05-24">2025.05.24</time></div><h3> Celebrating the Class of 2025! </h3><p> Our Class of 2025 students successfully completed their thesis defenses. Students and faculty gathered to celebrate. </p></article>
+          <article class="activity"><div class="activity-photo"><img src="./assets/v5/activity1-1280.jpg" srcset="./assets/v5/activity1-640.jpg 640w, ./assets/v5/activity1-1280.jpg 873w" sizes="(max-width: 580px) calc(100vw - 40px), (max-width: 820px) calc(50vw - 32px), (max-width: 1268px) calc(50vw - 59px), 575px" width="873" height="526" decoding="async" alt="The research team took a group photo at the 34th Annual Academic Meeting of the Chinese Chemical Society" loading="lazy"><time datetime="2024-06-17">2024.06.17</time></div><h3> 34th Chinese Chemical Society Congress </h3><p> The group attended the 34th Chinese Chemical Society Congress, celebrating the acceptance of their research with a photo outside Guangzhou Baiyun International Convention Center. </p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="result" aria-labelledby="result-title">
+      <div class="wrap">
+        <div class="section-heading"><div><p class="eyebrow">06 / SELECTED PUBLICATIONS</p><h2 id="result-title"> Publications </h2></div><p> Theoretical insights into materials science. </p></div>
+        <div class="publication-intro"><p> From atomic-scale understanding to materials design and energy conversion. </p><span> Selected papers · Updated <time datetime="2026-09-19">2026.09</time></span></div>
+        <div class="featured-papers" aria-label="Featured Publication">
+          <article class="paper-feature paper-feature--lead"><div class="paper-stamp"><span class="paper-kicker"> Research Highlight · 2026 </span><p>Nature</p><span class="paper-stamp-note"> Water Electrolysis in Acid · Crystal-phase Design </span></div><div class="paper-feature-body"><h3><a href="https://doi.org/10.1038/s41586-026-10851-7" target="_blank" rel="noopener noreferrer">Octahedral-coordinated Co<sub>3</sub>O<sub>4</sub> for water electrolysis in acid</a></h3><p class="paper-summary"> Crystal-phase design produces two-dimensional layered Co3O4 with octahedral coordination, improving activity and stability for oxygen evolution in acid and offering a route toward less reliance on precious metals in water electrolysis. </p><p class="authors">Yue Wang, <strong>Yujin Ji</strong>, Jing Zhou et al.</p><div class="paper-footer"><span>656, 370–375 (2026)</span><span class="paper-tag"> Yujin Ji · Co-first author </span><a class="paper-source" href="https://doi.org/10.1038/s41586-026-10851-7" target="_blank" rel="noopener noreferrer" aria-label="Read the paper: Octahedral-coordinated Co3O4 for water electrolysis in acid"> Original Paper <span aria-hidden="true">↗</span></a></div></div></article>
+          <article class="paper-feature"><p class="paper-journal-name">Nature Materials</p><h3><a href="https://doi.org/10.1038/s41563-024-01987-w" target="_blank" rel="noopener noreferrer">A metastable pentagonal 2D material synthesized by symmetry-driven epitaxy</a></h3><p class="paper-summary"> Symmetry-driven epitaxy produces metastable pentagonal two-dimensional PdTe2. Theoretical calculations help characterize its lattice, phonons, and electronic structure. </p><p class="authors">Lina Liu, <strong>Yujin Ji</strong>, Marco Bianchi et al.</p><div class="paper-footer"><span>23, 1339–1346 (2024)</span><span class="paper-tag"> Yujin Ji · Co-first author </span><a class="paper-source" href="https://doi.org/10.1038/s41563-024-01987-w" target="_blank" rel="noopener noreferrer" aria-label="Read the paper: A metastable pentagonal 2D material synthesized by symmetry-driven epitaxy"> Original Paper <span aria-hidden="true">↗</span></a></div></article>
+          <article class="paper-feature"><p class="paper-journal-name">Nature Nanotechnology</p><h3><a href="https://doi.org/10.1038/s41565-024-01696-0" target="_blank" rel="noopener noreferrer">Regioselective epitaxial growth of metallic heterostructures</a></h3><p class="paper-summary"> Combining control of precursor reduction rates with interfacial lattice matching directs the growth of metallic heterostructures, improving their catalytic performance for ethanol oxidation. </p><p class="authors">Xuan Huang, Jie Feng, Shengnan Hu, …, <strong>Yujin Ji</strong>, …, Xiaoqing Huang</p><div class="paper-footer"><span>19, 1306–1315 (2024)</span><a class="paper-source" href="https://doi.org/10.1038/s41565-024-01696-0" target="_blank" rel="noopener noreferrer" aria-label="Read the paper: Regioselective epitaxial growth of metallic heterostructures"> Original Paper <span aria-hidden="true">↗</span></a></div></article>
+          <article class="paper-feature"><p class="paper-journal-name">Nature Catalysis</p><h3><a href="https://doi.org/10.1038/s41929-020-00525-6" target="_blank" rel="noopener noreferrer">High-valence metals improve oxygen evolution reaction performance by modulating 3d metal oxidation cycle energetics</a></h3><p class="paper-summary"> High-valence metals tune the oxidation-cycle energetics of Fe, Co, and Ni, revealing how multimetal catalysts can achieve greater oxygen-evolution activity. </p><p class="authors">Bo Zhang, Lie Wang, Zhen Cao, …, <strong>Yujin Ji</strong>, …, Edward H. Sargent</p><div class="paper-footer"><span>3, 985–992 (2020)</span><a class="paper-source" href="https://doi.org/10.1038/s41929-020-00525-6" target="_blank" rel="noopener noreferrer" aria-label="Read the paper: High-valence metals improve oxygen evolution reaction performance by modulating 3d metal oxidation cycle energetics"> Original Paper <span aria-hidden="true">↗</span></a></div></article>
+        </div>
+        <div class="publication-group-title"><h3> Recent Publications </h3><span>2025—2026 · SELECTED RECENT WORK</span></div>
+        <ol class="publications recent-papers">
+          <li class="publication"><div><p class="paper-journal-name">Nature Communications</p><h3><a href="https://doi.org/10.1038/s41467-025-67051-6" target="_blank" rel="noopener noreferrer">Continuous flow photosynthesis of methanol from methane by plasmonic charge accumulation</a></h3><p class="paper-summary"> Plasmonic charge accumulation enables continuous-flow photooxidation of methane to methanol under mild conditions. </p><p class="authors">Huiping Peng, Fei Xue, <strong>Yujin Ji</strong> et al.</p><div class="paper-footer"><span>17, 344 (2026)</span><a class="paper-source" href="https://doi.org/10.1038/s41467-025-67051-6" target="_blank" rel="noopener noreferrer" aria-label="Read the paper: Continuous flow photosynthesis of methanol from methane by plasmonic charge accumulation"> Original Paper <span aria-hidden="true">↗</span></a></div><span class="paper-date-note"> Published online Dec 2025 · Assigned to a 2026 volume </span></div></li>
+          <li class="publication"><div><p class="paper-journal-name">Nature Communications</p><h3><a href="https://doi.org/10.1038/s41467-025-66003-4" target="_blank" rel="noopener noreferrer">Dipole synergy enables fast directional charge transport for solar hydrogen and benzaldehyde coproduction</a></h3><p class="paper-summary"> Synergistic dipoles accelerate directional charge transport for the solar coproduction of hydrogen and benzaldehyde. </p><p class="authors">Zhennan Wang, Dingyanyan Zhou, Kaige Tian, …, <strong>Yujin Ji</strong>, Junqing Yan</p><div class="paper-footer"><span>16, 11066 (2025)</span><a class="paper-source" href="https://doi.org/10.1038/s41467-025-66003-4" target="_blank" rel="noopener noreferrer" aria-label="Read the paper: Dipole synergy enables fast directional charge transport for solar hydrogen and benzaldehyde coproduction"> Original Paper <span aria-hidden="true">↗</span></a></div></div></li>
+          <li class="publication"><div><p class="paper-journal-name">Nature Communications</p><h3><a href="https://doi.org/10.1038/s41467-025-63998-8" target="_blank" rel="noopener noreferrer">A concurrently optimization of H and OH binding energies in atomically Ni anchored Ru/RuO<sub>2</sub> nanosheet driving high CO-tolerant hydrogen oxidation catalysis</a></h3><p class="paper-summary"> Single Ni atoms and the Ru/RuO2 interface tune H and OH adsorption, improving alkaline hydrogen-oxidation activity and CO tolerance. </p><p class="authors">Liangbin Liu, Lujie Jin, Renjie Ren, …, <strong>Yujin Ji</strong>, …, Xiaoqing Huang</p><div class="paper-footer"><span>16, 8951 (2025)</span><a class="paper-source" href="https://doi.org/10.1038/s41467-025-63998-8" target="_blank" rel="noopener noreferrer" aria-label="Read the paper: A concurrently optimization of H and OH binding energies in atomically Ni anchored Ru/RuO2 nanosheet driving high CO-tolerant hydrogen oxidation catalysis"> Original Paper <span aria-hidden="true">↗</span></a></div></div></li>
+          <li class="publication"><div><p class="paper-journal-name">Advanced Materials</p><h3><a href="https://doi.org/10.1002/adma.202520825" target="_blank" rel="noopener noreferrer">Unlocking Built-In Polarization via Single-Atom Nickel Engineering in Hexagonal Cavities for Efficient Photoreforming of Biomass</a></h3><p class="paper-summary"> Single Ni atoms in hexagonal crystal cavities activate a built-in polarization field, promoting charge separation during the photoreforming of biomass derivatives. </p><p class="authors">Zhennan Wang, Dingyanyan Zhou, Kaige Tian, <strong>Yujin Ji</strong> et al.</p><div class="paper-footer"><span>38(13), e20825 (2026)</span><a class="paper-source" href="https://doi.org/10.1002/adma.202520825" target="_blank" rel="noopener noreferrer" aria-label="Read the paper: Unlocking Built-In Polarization via Single-Atom Nickel Engineering in Hexagonal Cavities for Efficient Photoreforming of Biomass"> Original Paper <span aria-hidden="true">↗</span></a></div></div></li>
+          <li class="publication"><div><p class="paper-journal-name">Journal of the American Chemical Society</p><h3><a href="https://doi.org/10.1021/jacs.5c16486" target="_blank" rel="noopener noreferrer">Phase-Rearrangement-Induced Atomic Replacement toward Customizing Noble-Metal Intermetallics</a></h3><p class="paper-summary"> Crystal-phase rearrangement reduces lattice mismatch, enabling atomic replacement while preserving nanomorphology and expanding the design space of noble-metal intermetallics. </p><p class="authors">Xuan Huang, Bingyan Xu, Yang Sun, …, <strong>Yujin Ji</strong>, Qi Shao, Xiaoqing Huang</p><div class="paper-footer"><span>147(50), 46449–46460 (2025)</span><a class="paper-source" href="https://doi.org/10.1021/jacs.5c16486" target="_blank" rel="noopener noreferrer" aria-label="Read the paper: Phase-Rearrangement-Induced Atomic Replacement toward Customizing Noble-Metal Intermetallics"> Original Paper <span aria-hidden="true">↗</span></a></div></div></li>
+        </ol>
+        <details class="early-papers">
+          <summary><span> Earlier Selected Work <small> 2017–2019 · 4 papers </small></span><span class="details-icon" aria-hidden="true">＋</span></summary>
+          <ol class="publications">
+          <li class="publication"><div><h3>Janus structures of transition metal dichalcogenides as the heterojunction photocatalysts for water splitting</h3><p class="authors"><strong>Yujin Ji</strong>, Mingye Yang, Haiping Lin, Tingjun Hou, Lu Wang *, Youyong Li* and Shuit-Tong Lee</p><p class="journal"><span>Journal of Physical Chemistry C, 2018, 122(5), 3123-3129.</span></p></div></li>
+          <li class="publication"><div><h3>Monolayer group IVA monochalogenides as potential and efficient catalysts for the oxygen reduction from first-principles calculations</h3><p class="authors"><strong>Yujin Ji</strong>, Mingye Yang, Huilong Dong *, Lu Wang, Tingjun Hou and Youyong Li*</p><p class="journal">Journal of Materials Chemistry A, 2017, 5(4), 1734-1741.</p></div></li>
+          <li class="publication"><div><h3>Two-dimensional π-conjugated metal-organic nanosheets as single-atom catalysts for the hydrogen evolution reaction</h3><p class="authors"><strong>Yujin Ji</strong>, Huilong Dong, Cheng Liu and Youyong Li*</p><p class="journal">Nanoscale, 2019, 11, 454-458.</p></div></li>
+          <li class="publication"><div><h3><a href="https://doi.org/10.1038/s41467-019-09845-z" target="_blank" rel="noopener noreferrer">Single atom tungsten doped ultrathin α-Ni(OH)2 for enhanced electrocatalytic water oxidation</a></h3><p class="authors">Junqing Yan⸸, Lingqiao Kong⸸, <strong>Yujin Ji⸸</strong>, Jai White⸸ , Youyong Li*, Jing Zhang, Pengfei An, Shengzhong Liu *, Shuit-Tong Lee and Tianyi Ma*</p><p class="journal"><span>Nature Communications, 2019, 10, 2149.</span><span class="paper-tag"> Co-first author </span></p></div></li>
+          </ol>
+        </details>
+        <div class="more-results"><a class="text-link" href="http://modeling.org.cn/publications.html" target="_blank" rel="noopener noreferrer"> More publications <span class="arrow" aria-hidden="true">↗</span></a></div>
+      </div>
+    </section>
+
+    <section class="section contact" id="contact" aria-labelledby="contact-title">
+      <div class="wrap contact-grid">
+        <div><p class="eyebrow"> 07 / GET IN TOUCH </p><h2 id="contact-title"> Let's explore <br> new possibilities in materials. </h2><p class="contact-intro"> Discover our research and opportunities to join the group. </p><button class="button" type="button" data-open-recruitment aria-haspopup="dialog" aria-controls="recruitment-dialog"> Ask about joining us <span class="arrow" aria-hidden="true">↗</span></button></div>
+        <dl class="contact-list"><dt> Email </dt><dd><a class="email" href="mailto:yjji@suda.edu.cn">yjji@suda.edu.cn <span class="arrow" aria-hidden="true">↗</span></a></dd><dt> Affiliation </dt><dd><a href="https://funsom.suda.edu.cn/" target="_blank" rel="noopener noreferrer"> Institute of Functional Nano &amp; Soft Materials (FUNSOM), Soochow University <span aria-hidden="true">↗</span></a></dd><dt> Research Group </dt><dd><a href="http://modeling.org.cn/" target="_blank" rel="noopener noreferrer"> Youyong Li Research Group <span aria-hidden="true">↗</span></a></dd></dl>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="wrap footer-inner"><p> © 2026 Jisuan · Yujin Ji Research Group. All rights reserved. | FUNSOM, Soochow University </p><a href="#top"> Back to top ↑ </a></div></footer>
+  <button class="contact-fab" type="button" data-open-recruitment aria-haspopup="dialog" aria-controls="recruitment-dialog"><svg class="icon" viewbox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 1-8 8H5l-3 3V11a9 9 0 0 1 18 0Z" /><path d="M7 11h8M7 7h5" /></svg> Join Our Group </button>
+  <aside class="chapter-dock" id="chapter-dock" aria-label="Reading progress and animation settings" hidden>
+    <div class="chapter-label" id="chapter-label" aria-hidden="true"><span class="chapter-current" id="chapter-current">↓</span><span class="chapter-copy"><span id="chapter-name"> Scroll to explore </span><small id="chapter-total">SCROLL TO EXPLORE</small></span></div>
+    <button class="motion-toggle" id="motion-toggle" type="button" aria-label="Reduce animations" aria-pressed="false" title="Reduce animations"><svg viewbox="0 0 20 20" aria-hidden="true"><path class="pause-symbol" d="M7 5v10M13 5v10" /><path class="play-symbol" d="m7 4 8 6-8 6Z" /></svg></button>
+  </aside>
+  <dialog class="recruitment-dialog" id="recruitment-dialog" aria-labelledby="recruitment-title" aria-describedby="recruitment-description">
+    <button class="dialog-close" type="button" aria-label="Close recruitment information" autofocus><svg class="icon" viewbox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
+    <p class="eyebrow">JOIN OUR GROUP</p><h2 id="recruitment-title"> Join Our Group </h2><p id="recruitment-description"> Interested in joining our research group? Add our group contact on WeChat to ask about research and admissions opportunities. </p><img src="./qrcode.png" alt="WeChat QR code for the group&#x27;s admissions contact" loading="lazy"><p class="qr-caption"> Scan the QR code in WeChat to get in touch. </p>
+  </dialog>
+  <script>
+    // 导航仅在当前 HTML 内定位；小屏菜单保留键盘操作与状态反馈。
+    const menuToggle = document.getElementById('menu-toggle');
+    const siteNav = document.getElementById('site-nav');
+    function setMenu(open) {
+      siteNav.classList.toggle('is-open', open);
+      menuToggle.setAttribute('aria-expanded', String(open));
+      menuToggle.setAttribute('aria-label', open ? "Close navigation menu" : "Open navigation menu");
+    }
+    menuToggle.addEventListener('click', () => setMenu(menuToggle.getAttribute('aria-expanded') !== 'true'));
+    siteNav.addEventListener('click', event => {
+      const link = event.target.closest('a');
+      if (link) {
+        const openedMenu = menuToggle.getAttribute('aria-expanded') === 'true';
+        setMenu(false);
+        if (openedMenu) {
+          const href = link.getAttribute('href');
+          const destination = href && href.startsWith('#') ? document.getElementById(href.slice(1)) : null;
+          if (destination) { destination.setAttribute('tabindex', '-1'); destination.focus({ preventScroll: true }); }
+        }
+      }
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && menuToggle.getAttribute('aria-expanded') === 'true') { setMenu(false); menuToggle.focus(); }
+    });
+    document.addEventListener('click', event => {
+      if (!event.target.closest('.site-header') && menuToggle.getAttribute('aria-expanded') === 'true') setMenu(false);
+    });
+    const desktopLayout = window.matchMedia('(min-width: 1101px)');
+    desktopLayout.addEventListener('change', () => setMenu(false));
+
+    // 原生模态对话框提供焦点约束、Escape 关闭和关闭后焦点恢复。
+    const recruitmentDialog = document.getElementById('recruitment-dialog');
+    document.querySelectorAll('[data-open-recruitment]').forEach(button => {
+      button.addEventListener('click', () => { if (!recruitmentDialog.open) recruitmentDialog.showModal(); });
+    });
+    recruitmentDialog.querySelector('.dialog-close').addEventListener('click', () => recruitmentDialog.close());
+    recruitmentDialog.addEventListener('click', event => {
+      if (event.target !== recruitmentDialog) return;
+      const bounds = recruitmentDialog.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) recruitmentDialog.close();
+    });
+
+  </script>
+  <script>
+    // 渐进增强：无 JavaScript、无观察器或选择减少动效时，内容直接显示。
+    (() => {
+      const root = document.documentElement;
+      const dock = document.getElementById('chapter-dock');
+      try {
+        const sections = Array.from(document.querySelectorAll('main > section[id]'));
+        const navLinks = Array.from(document.querySelectorAll('#site-nav a'));
+        const progress = document.getElementById('reading-progress');
+        const footer = document.querySelector('.site-footer');
+        const chapterLabel = document.getElementById('chapter-label');
+        const chapterCurrent = document.getElementById('chapter-current');
+        const chapterName = document.getElementById('chapter-name');
+        const chapterTotal = document.getElementById('chapter-total');
+        const motionToggle = document.getElementById('motion-toggle');
+        const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const supportsObserver = 'IntersectionObserver' in window;
+        let manuallyReduced = false;
+        let currentSection = -2;
+        let framePending = false;
+        let chapterAnimation;
+        const reduceMotion = () => manuallyReduced || motionPreference.matches || !supportsObserver;
+
+        const revealNodes = [];
+        function prepare(selector, kind = 'rise', delay = 0, stagger = 0) {
+          document.querySelectorAll(selector).forEach((element, index) => {
+            element.dataset.reveal = kind;
+            element.style.setProperty('--enter-delay', Math.min(delay + index * stagger, 360) + 'ms');
+            revealNodes.push(element);
+          });
+        }
+        prepare('.hero-copy > *', 'rise', 0, 75);
+        prepare('.hero-art', 'art', 140);
+        prepare('.news-inner', 'rise', 100);
+        prepare('.intro-grid > div:first-child', 'left');
+        prepare('.intro-grid > div:last-child', 'rise', 120);
+        prepare('.section-heading');
+        prepare('.mentor-portrait', 'image', 100);
+        prepare('.mentor-detail-top', 'rise', 100);
+        prepare('.mentor-details > div', 'rise', 180, 90);
+        prepare('.research-row', 'rise', 50, 65);
+        prepare('.member', 'image', 80, 110);
+        prepare('.activity', 'image', 50, 65);
+        prepare('.metric', 'rise', 80, 90);
+        prepare('.paper-feature', 'rise', 30, 65);
+        prepare('.recent-papers .publication', 'rise', 30, 45);
+        prepare('.early-papers', 'rise', 30);
+        prepare('.more-results', 'rise', 80);
+        prepare('.contact-grid > div', 'left');
+        prepare('.contact-list', 'rise', 140);
+
+        if (supportsObserver) {
+          // 进入可读区域才展开；完全离开屏幕后才复位，向上回看也有过渡。
+          const revealObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) entry.target.classList.add('is-visible');
+            });
+          }, { threshold: .08, rootMargin: '0px 0px -5% 0px' });
+          const resetObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+              if (!entry.isIntersecting && !reduceMotion() && !entry.target.contains(document.activeElement)) {
+                entry.target.classList.remove('is-visible');
+              }
+            });
+          }, { threshold: 0, rootMargin: '120px 0px 120px 0px' });
+          revealNodes.forEach(element => { revealObserver.observe(element); resetObserver.observe(element); });
+          const heroObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => entry.target.classList.toggle('is-on-screen', entry.isIntersecting));
+          });
+          heroObserver.observe(document.querySelector('.hero'));
+        }
+
+        function applyMotionPreference(initial = false) {
+          const reduced = reduceMotion();
+          if (reduced && chapterAnimation) chapterAnimation.cancel();
+          if (!initial) revealNodes.forEach(element => {
+            const bounds = element.getBoundingClientRect();
+            element.classList.toggle('is-visible', reduced || (bounds.top < innerHeight && bounds.bottom > 0));
+          });
+          root.classList.toggle('motion-ready', !reduced);
+          root.classList.toggle('motion-reduced', reduced);
+          motionToggle.setAttribute('aria-pressed', String(reduced));
+          motionToggle.disabled = motionPreference.matches || !supportsObserver;
+          const label = motionPreference.matches ? "Your system prefers reduced motion" : (!supportsObserver ? "Animations are disabled in this browser" : (reduced ? "Enable animations" : "Reduce animations"));
+          motionToggle.setAttribute('aria-label', motionToggle.disabled ? label : "Reduce animations");
+          motionToggle.title = label;
+        }
+        motionToggle.addEventListener('click', () => {
+          manuallyReduced = !manuallyReduced;
+          applyMotionPreference();
+        });
+        motionPreference.addEventListener('change', () => applyMotionPreference());
+
+        function updateReading() {
+          framePending = false;
+          const y = window.scrollY;
+          const distance = Math.max(1, root.scrollHeight - innerHeight);
+          const fraction = Math.min(1, Math.max(0, y / distance));
+          const readingLine = Math.max(110, innerHeight * .32);
+          let nextSection = -1;
+          sections.forEach((section, index) => {
+            if (section.getBoundingClientRect().top <= readingLine) nextSection = index;
+          });
+          if (distance > 1 && y >= distance - 3) nextSection = sections.length - 1;
+          const footerClearance = innerWidth > 820 ? Math.max(0, innerHeight - footer.getBoundingClientRect().top) : 0;
+          root.style.setProperty('--footer-clearance', Math.round(footerClearance) + 'px');
+          progress.style.transform = 'scaleX(' + fraction.toFixed(4) + ')';
+          if (nextSection === currentSection) return;
+          currentSection = nextSection;
+          const section = sections[nextSection];
+          chapterCurrent.textContent = section ? String(nextSection + 1).padStart(2, '0') : '↓';
+          const chapterLink = section && navLinks.find(link => link.hash === '#' + section.id);
+          chapterName.textContent = chapterLink ? chapterLink.textContent.trim() : "Scroll to explore";
+          chapterTotal.textContent = section ? 'CHAPTER ' + String(nextSection + 1).padStart(2, '0') + ' / 07' : 'SCROLL TO EXPLORE';
+          dock.dataset.chapter = section ? section.id : 'hero';
+          navLinks.forEach(link => {
+            if (section && link.hash === '#' + section.id) link.setAttribute('aria-current', 'location');
+            else link.removeAttribute('aria-current');
+          });
+          if (!reduceMotion() && chapterLabel.animate) {
+            if (chapterAnimation) chapterAnimation.cancel();
+            chapterAnimation = chapterLabel.animate([
+              { opacity: .2, transform: 'translateY(8px)' },
+              { opacity: 1, transform: 'translateY(0)' }
+            ], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
+          }
+        }
+        function requestReadingUpdate() {
+          if (framePending) return;
+          framePending = true;
+          requestAnimationFrame(updateReading);
+        }
+        window.addEventListener('scroll', requestReadingUpdate, { passive: true });
+        window.addEventListener('resize', requestReadingUpdate, { passive: true });
+        window.addEventListener('pageshow', requestReadingUpdate);
+        window.addEventListener('hashchange', requestReadingUpdate);
+        document.querySelector('.early-papers').addEventListener('toggle', requestReadingUpdate);
+        if ('ResizeObserver' in window) new ResizeObserver(requestReadingUpdate).observe(document.body);
+        document.querySelectorAll('img').forEach(img => img.addEventListener('load', requestReadingUpdate));
+        document.addEventListener('focusin', event => {
+          const element = event.target.closest('[data-reveal]');
+          if (element) element.classList.add('is-visible');
+        });
+        document.addEventListener('visibilitychange', () => root.classList.toggle('page-hidden', document.hidden));
+        applyMotionPreference(true);
+        dock.hidden = false;
+        requestReadingUpdate();
+      } catch (error) {
+        root.classList.remove('motion-ready');
+        dock.hidden = true;
+        console.warn("Scroll animations are disabled. The page is displayed without motion.", error);
+      }
+    })();
+  </script>
+<script>(() => {
+  document.querySelectorAll('[data-language-link]').forEach(link => {
+    link.addEventListener('click', () => {
+      let hash = location.hash;
+      const active = document.querySelector('.sidebar a.is-active');
+      if (active) hash = new URL(active.href).hash;
+      else {
+        const sections = [...document.querySelectorAll('main section[id]')];
+        const current = sections.filter(s => s.getBoundingClientRect().top <= 125 && s.getBoundingClientRect().bottom > 125).pop();
+        if (current) hash = '#' + current.id;
+      }
+      const destination = new URL(link.href); destination.hash = hash; link.href = destination.href;
+    });
+  });
+})();</script></body>
+</html>

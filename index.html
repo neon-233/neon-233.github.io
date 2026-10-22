@@ -491,7 +491,7 @@
     @media(max-width:1180px) and (min-width:821px) { .brand-caption { display:none; } .site-nav { gap:17px; } }
     @media(max-width:580px) { .learning-panel { align-items:start; flex-direction:column; gap:20px; padding:22px; margin-top:27px; } .learning-panel h3 { font-size:21px; } .learning-panel p { font-size:11px; } }
   </style>
-<link rel="alternate" hreflang="zh-CN" href="https://jisuan.bond/"><link rel="alternate" hreflang="en" href="https://jisuan.bond/index-v7-en.html"><link rel="alternate" hreflang="x-default" href="https://jisuan.bond/"><link rel="canonical" href="https://jisuan.bond/"><style>.language-switch{display:flex;align-items:center;gap:2px;border:1px solid #ccd8e8;border-radius:5px;padding:3px;background:#fff;flex-shrink:0;margin-left:14px;order:3;line-height:1.4;white-space:nowrap}
+<link rel="alternate" hreflang="zh-CN" href="https://jisuan.bond/"><link rel="alternate" hreflang="en" href="https://jisuan.bond/index-v8-en.html"><link rel="alternate" hreflang="x-default" href="https://jisuan.bond/"><link rel="canonical" href="https://jisuan.bond/"><style>.language-switch{display:flex;align-items:center;gap:2px;border:1px solid #ccd8e8;border-radius:5px;padding:3px;background:#fff;flex-shrink:0;margin-left:14px;order:3;line-height:1.4;white-space:nowrap}
 .language-switch a{font:600 11px/1.5 Arial,"Microsoft YaHei",sans-serif;display:block;padding:5px 8px;color:#39506e;border-radius:3px;text-decoration:none}
 .language-switch a[aria-current="page"]{background:#285ee7;color:#fff}.language-switch a:hover{box-shadow:inset 0 0 0 1px #8baae0}.language-switch a:focus-visible{outline:3px solid #285ee7;outline-offset:3px}
 .header-inner{gap:12px}.header-inner>.brand{order:0}.site-nav,.top-nav{order:2;margin-left:auto}.menu-toggle{order:4}.site-nav{gap:17px}
@@ -506,7 +506,22 @@ html[lang=en] body{font-family:Arial,"Segoe UI",system-ui,sans-serif}html[lang=e
 
 html[lang=en] .mentor-grid>*,html[lang=en] .learning-intro>*,html[lang=en] .mentor-portrait,html[lang=en] .mentor-caption,html[lang=en] .route-form{min-width:0}html[lang=en] .route-form select{width:100%;min-width:0}html[lang=en] .mentor-detail-top{flex-wrap:wrap}html[lang=en] .honor{white-space:normal}html[lang=en] .mentor-caption p{white-space:normal}
 @media(max-width:360px){html[lang=en] .mentor-portrait{grid-template-columns:92px minmax(0,1fr)}html[lang=en] .mentor-caption{padding:15px 11px}html[lang=en] .mentor-caption h3{font-size:20px}html[lang=en] .mentor-caption a{font-size:10px;gap:5px}}
-</style></head>
+</style><style>
+/* V8: keep the added assistant link readable, with a menu on tablet widths. */
+@media (min-width:821px) and (max-width:1100px) {
+  .header-inner { min-height:68px; flex-wrap:wrap; gap:10px; }
+  .js .menu-toggle { display:inline-flex; margin-left:auto; order:3; }
+  .language-switch { order:4; margin-left:0; }
+  .site-nav, html[lang=en] .site-nav {
+    order:5; width:100%; margin-left:0; flex-wrap:wrap;
+    justify-content:flex-start; padding:4px 0 20px; gap:8px 25px;
+  }
+  .js .site-nav { display:none; }
+  .js .site-nav.is-open { display:flex; }
+  .site-nav a, html[lang=en] .site-nav a { font-size:13px; padding-block:8px; }
+}
+</style>
+</head>
 <body id="top">
   <a class="skip-link" href="#main">跳转到主要内容</a>
   <header class="site-header">
@@ -519,8 +534,9 @@ html[lang=en] .mentor-grid>*,html[lang=en] .learning-intro>*,html[lang=en] .ment
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>菜单
       </button>
       <nav class="site-nav" id="site-nav" aria-label="主要导航">
-        <a href="#intro">课题组简介</a><a href="#resume">老师简历</a><a href="#research">研究方向</a><a href="#students">组内成员</a><a href="#activities">课题组活动</a><a href="#result">代表性成果</a><a href="tutorial-v7.html">计算化学教程</a><a href="#contact">联系我们</a>
-      </nav><div class="language-switch" role="group" aria-label="语言切换"><a href="index-v7.html" lang="zh-CN" hreflang="zh-CN" data-language-link="zh" aria-current="page">中文</a><a href="index-v7-en.html" lang="en" hreflang="en" data-language-link="en">EN</a></div>
+        <a href="#intro">课题组简介</a><a href="#resume">老师简历</a><a href="#research">研究方向</a><a href="#students">组内成员</a><a href="#activities">课题组活动</a><a href="#result">代表性成果</a><a href="tutorial-v8.html">计算化学教程</a>
+        <a href="vasp-assistant-v8.html">vasp小助手</a><a href="#contact">联系我们</a>
+      </nav><div class="language-switch" role="group" aria-label="语言切换"><a href="index-v8.html" lang="zh-CN" hreflang="zh-CN" data-language-link="zh" aria-current="page">中文</a><a href="index-v8-en.html" lang="en" hreflang="en" data-language-link="en">EN</a></div>
     </div>
     <div class="scroll-progress" aria-hidden="true"><span id="reading-progress"></span></div>
   </header>
@@ -599,7 +615,7 @@ html[lang=en] .mentor-grid>*,html[lang=en] .learning-intro>*,html[lang=en] .ment
 
     <section class="section research" id="research" aria-labelledby="research-title">
       <div class="wrap">
-        <div class="section-heading"><div><p class="eyebrow">03 / RESEARCH DIRECTIONS</p><h2 id="research-title">研究方向</h2></div><div class="research-heading-aside"><p>从原子结构出发，理解材料性能。</p><a class="research-more" href="./research-v7.html">了解更多 <span class="arrow" aria-hidden="true">↗</span></a></div></div>
+        <div class="section-heading"><div><p class="eyebrow">03 / RESEARCH DIRECTIONS</p><h2 id="research-title">研究方向</h2></div><div class="research-heading-aside"><p>从原子结构出发，理解材料性能。</p><a class="research-more" href="./research-v8.html">了解更多 <span class="arrow" aria-hidden="true">↗</span></a></div></div>
         <div class="research-list">
           <article class="research-row"><span class="research-number">01</span><h3>微观结构动态演变</h3><p>基于多尺度模拟方法，探究二维材料表面微观原子结构及形貌的动态演变过程，解析材料微观结构变化规律。</p></article>
           <article class="research-row"><span class="research-number">02</span><h3>表面反应机制揭示</h3><p>从原子-电子层面，揭示二维材料表面化学反应机制，明确反应过程中的关键步骤与影响因素。</p></article>
@@ -607,7 +623,7 @@ html[lang=en] .mentor-grid>*,html[lang=en] .learning-intro>*,html[lang=en] .ment
           <article class="research-row"><span class="research-number">04</span><h3>材料高通量筛选</h3><p>结合二维材料数据库，开展新型能源材料的高通量筛选，快速挖掘具有潜在应用价值的材料体系。</p></article>
           <article class="research-row"><span class="research-number">05</span><h3>新材料设计与优化</h3><p>基于理论模拟结果，进行二维能源材料的定向设计与性能优化，开发适用于能源存储与转化的新型材料。</p></article>
         </div>
-      <div class="learning-panel"><div><p class="learning-kicker">A NOTEBOOK FOR YOUR FIRST CALCULATION</p><h3>从量子化学，走到第一份 VASP 计算。</h3><p>基础原理、输入文件、参数解释与研究任务，一步一步开始计算化学。</p></div><a href="tutorial-v7.html">进入计算化学教程 <span aria-hidden="true">↗</span></a></div>
+      <div class="learning-panel"><div><p class="learning-kicker">A NOTEBOOK FOR YOUR FIRST CALCULATION</p><h3>从量子化学，走到第一份 VASP 计算。</h3><p>基础原理、输入文件、参数解释与研究任务，一步一步开始计算化学。</p></div><a href="tutorial-v8.html">进入计算化学教程 <span aria-hidden="true">↗</span></a></div>
       </div>
     </section>
 
@@ -698,7 +714,8 @@ html[lang=en] .mentor-grid>*,html[lang=en] .learning-intro>*,html[lang=en] .ment
         const openedMenu = menuToggle.getAttribute('aria-expanded') === 'true';
         setMenu(false);
         if (openedMenu) {
-          const destination = document.querySelector(link.getAttribute('href'));
+          const href = link.getAttribute('href');
+          const destination = href && href.startsWith('#') ? document.getElementById(href.slice(1)) : null;
           if (destination) { destination.setAttribute('tabindex', '-1'); destination.focus({ preventScroll: true }); }
         }
       }
@@ -709,7 +726,7 @@ html[lang=en] .mentor-grid>*,html[lang=en] .learning-intro>*,html[lang=en] .ment
     document.addEventListener('click', event => {
       if (!event.target.closest('.site-header') && menuToggle.getAttribute('aria-expanded') === 'true') setMenu(false);
     });
-    const desktopLayout = window.matchMedia('(min-width: 821px)');
+    const desktopLayout = window.matchMedia('(min-width: 1101px)');
     desktopLayout.addEventListener('change', () => setMenu(false));
 
     // 原生模态对话框提供焦点约束、Escape 关闭和关闭后焦点恢复。
