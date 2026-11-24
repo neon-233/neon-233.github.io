@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>集群算力看板</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<div class="gate" id="gate">
+  <form class="gate-card" id="gateForm" autocomplete="off">
+    <h1>集群算力看板</h1>
+    <p class="gate-sub">请输入访问密码</p>
+    <input id="gatePwd" type="password" placeholder="访问密码" autocomplete="current-password" required>
+    <button class="primary" id="gateBtn" type="submit">进入</button>
+    <p class="gate-hint" id="gateHint">提示：集群的 IP 地址</p>
+    <p class="gate-error" id="gateError" hidden>密码不正确</p>
+  </form>
+</div>
+
+<main id="app" hidden>
+  <header class="topbar">
+    <div class="titles">
+      <h1>集群算力看板</h1>
+      <p class="sub" id="stamp"></p>
+    </div>
+    <button class="ghost" id="lock">退出</button>
+  </header>
+
+  <section class="grid" id="clusters"></section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>用户任务查询</h2>
+      <div class="search">
+        <input id="users" placeholder="输入用户名，多个用逗号或空格分隔" spellcheck="false">
+        <button class="primary" id="query">查询</button>
+      </div>
+    </div>
+    <div class="user-result" id="userResult"></div>
+  </section>
+
+  <p class="foot" id="foot"></p>
+</main>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <section class="modal-body" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <header class="modal-head">
+      <div>
+        <h2 id="modalTitle"></h2>
+        <p class="modal-sub" id="modalSub"></p>
+      </div>
+      <button class="close" id="modalClose" aria-label="关闭">×</button>
+    </header>
+    <div class="modal-tools">
+      <input id="modalFilter" placeholder="筛选用户 / 作业号">
+      <div class="chips" id="modalChips"></div>
+    </div>
+    <div class="modal-list" id="modalList"></div>
+  </section>
+</div>
+
+<script src="./app.js"></script>
+</body>
+</html>
