@@ -16,16 +16,7 @@ function b64ToBytes(text) {
   return bytes;
 }
 
-function secureCryptoAvailable() {
-  return window.isSecureContext === true && window.crypto && window.crypto.subtle;
-}
-
 async function decryptPayload(password, envelope) {
-  if (!secureCryptoAvailable()) {
-    const failure = new Error('Secure cryptography is unavailable');
-    failure.code = 'SECURE_CONTEXT_REQUIRED';
-    throw failure;
-  }
   const base = await crypto.subtle.importKey('raw', enc(password), 'PBKDF2', false, ['deriveKey']);
   const key = await crypto.subtle.deriveKey(
     { name: 'PBKDF2', salt: b64ToBytes(envelope.salt), iterations: envelope.iter, hash: 'SHA-256' },
@@ -294,22 +285,6 @@ function render(data) {
 
 let envelope = null;
 
-function showGateError(message) {
-  const error = document.getElementById('gateError');
-  error.textContent = message;
-  error.hidden = false;
-}
-
-function gateFailureMessage(failure) {
-  if (failure && failure.code === 'SECURE_CONTEXT_REQUIRED') {
-    return '当前连接不安全，请使用 HTTPS 地址打开集群状态页面';
-  }
-  if (failure && failure.name === 'OperationError') {
-    return '密码不正确，请确认后重试';
-  }
-  return '校验暂时失败，请刷新页面后重试';
-}
-
 async function onSubmit(event) {
   event.preventDefault();
   const button = document.getElementById('gateBtn');
@@ -323,7 +298,6 @@ async function onSubmit(event) {
     input.value = '';
     render(data);
   } catch (failure) {
-    error.textContent = gateFailureMessage(failure);
     error.hidden = false;
     input.select();
     await new Promise((resolve) => setTimeout(resolve, 600));
@@ -335,17 +309,9 @@ async function onSubmit(event) {
 
 async function init() {
   try {
-    const response = await fetch('./data/cluster.enc.json', { cache: 'no-store' });
-    if (!response.ok) {
-      const failure = new Error('Cluster data request failed');
-      failure.code = 'DATA_LOAD_FAILED';
-      throw failure;
-    }
-    envelope = await response.json();
+    envelope = await (await fetch('./data/cluster.enc.json', { cache: 'no-store' })).json();
   } catch (failure) {
-    document.getElementById('gateHint').textContent = '数据文件加载失败，请检查网络后刷新页面';
-    showGateError('集群数据暂时无法加载');
-    document.getElementById('gateBtn').disabled = true;
+    document.getElementById('gateHint').textContent = '数据文件加载失败，请稍后重试';
     return;
   }
   document.getElementById('gateForm').addEventListener('submit', onSubmit);

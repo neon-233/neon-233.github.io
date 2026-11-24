@@ -4,14 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>集群算力看板</title>
-<script>
-  (function redirectProductionHttp() {
-    var productionHosts = ['jisuan.bond', 'www.jisuan.bond'];
-    if (location.protocol === 'http:' && productionHosts.indexOf(location.hostname) !== -1) {
-      location.replace('https:' + location.href.slice(5));
-    }
-  }());
-</script>
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -20,10 +12,10 @@
   <form class="gate-card" id="gateForm" autocomplete="off">
     <h1>集群算力看板</h1>
     <p class="gate-sub">请输入访问密码</p>
-    <input id="gatePwd" type="password" placeholder="访问密码" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+    <input id="gatePwd" type="password" placeholder="访问密码" autocomplete="current-password" required>
     <button class="primary" id="gateBtn" type="submit">进入</button>
     <p class="gate-hint" id="gateHint">提示：集群的 IP 地址</p>
-    <p class="gate-error" id="gateError" hidden></p>
+    <p class="gate-error" id="gateError" hidden>密码不正确</p>
   </form>
 </div>
 
